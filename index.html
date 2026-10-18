@@ -1,449 +1,263 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#07111f">
 <title>Dragon War: Rise of Power</title>
 <style>
-:root{--bg:#090d16;--panel:#121a2b;--panel2:#19243a;--gold:#f5bd55;--text:#eef3ff;--muted:#9eacc4;--red:#e75263;--green:#51d5a0}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#18243c,#090d16 65%);color:var(--text);font:15px Arial,sans-serif;min-height:100vh}
-button,input{font:inherit}button{cursor:pointer;border:1px solid #394863;background:#24334e;color:white;padding:11px 14px;border-radius:10px}
-button:hover{filter:brightness(1.18)}button.primary{background:linear-gradient(135deg,#eab34f,#a96821);color:#1b1207;border:0;font-weight:bold}
-button.danger{background:#542431;border-color:#853847}
-input{width:100%;background:#0b1220;color:white;border:1px solid #35425c;border-radius:9px;padding:12px;margin:6px 0 12px}
-label{color:var(--muted);font-size:13px}
-header{position:sticky;top:0;z-index:5;background:#0a101deF;border-bottom:1px solid #29344a;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{font-weight:900;color:var(--gold);letter-spacing:1px}.brand small{display:block;font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:4px}
-.wrap{max-width:1100px;margin:auto;padding:16px}.hidden{display:none!important}
-.panel{background:linear-gradient(145deg,#151f32,#101725);border:1px solid #2c3a54;border-radius:15px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px #0002}
-h1,h2,h3{margin-top:0}h2{font-size:20px}h3{font-size:16px;color:var(--gold)}
-.muted{color:var(--muted)}.gold{color:var(--gold)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.stat{background:#0c1422;border:1px solid #27354d;border-radius:12px;padding:13px}.stat strong{display:block;font-size:20px;color:var(--gold);margin-top:6px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
-nav{display:flex;gap:8px;overflow:auto;padding:10px 0 15px}
-nav button{white-space:nowrap;flex-shrink:0}
-nav button.active{border-color:var(--gold);color:var(--gold)}
-.hero{padding:24px;background:linear-gradient(120deg,#243650,#111827 65%);border:1px solid #42506a;border-radius:16px;margin-bottom:14px}
-.hero .dragon{font-size:44px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.bar{height:8px;background:#2a3549;border-radius:20px;overflow:hidden;margin:8px 0}.bar span{display:block;height:100%;background:var(--green)}
-.item{background:#0b1321;border:1px solid #2d3c55;padding:13px;border-radius:12px}
-.item p{color:var(--muted);font-size:13px;min-height:32px}
-.notice{padding:12px;border-radius:10px;background:#18263b;margin:10px 0;color:#c9d7ee}
-#auth{max-width:440px;margin:8vh auto;padding:18px}
-footer{text-align:center;padding:25px;color:#687791;font-size:12px}
-table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:10px;border-bottom:1px solid #29364d;font-size:13px}
-@media(max-width:520px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.stat{padding:9px;font-size:12px}.stat strong{font-size:17px}.wrap{padding:10px}header{padding:11px}}
+*{box-sizing:border-box} :root{--bg:#050914;--panel:#0b1627ee;--cyan:#20d9ff;--gold:#ffbd45;--red:#ff4e5b;--green:#38e58a;--purple:#b75cff;--text:#eef7ff;--muted:#91a4bd}
+html,body{margin:0;min-height:100%;background:#03060d;color:var(--text);font-family:Arial,Helvetica,sans-serif}body{overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}.app{min-height:100vh;background:radial-gradient(circle at 50% 20%,#18345b 0,#09182d 30%,#040813 72%);position:relative}
+.topbar{min-height:76px;display:flex;align-items:center;gap:16px;padding:8px 18px;background:linear-gradient(180deg,#09172aef,#06101ee8);border-bottom:1px solid #2a5579;position:relative;z-index:5;flex-wrap:wrap}
+.profile{display:flex;align-items:center;gap:10px;min-width:245px}.avatar{width:55px;height:55px;border:2px solid #50dfff;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#426d96,#111c2d 65%);font-size:30px}
+.profile b{display:block}.profile small{color:#a9c2dc}.bars{width:145px}.bar{height:9px;border-radius:10px;background:#17263a;margin:5px 0;overflow:hidden}.bar i{display:block;height:100%}.hp i{width:72%;background:#ff4f4f}.mp i{width:58%;background:#29aaff}
+.logo{flex:1;text-align:center;font-family:Georgia,serif;font-size:27px;letter-spacing:2px;color:#ffd78b;text-shadow:0 0 14px #ff9c39aa}.logo small{display:block;color:#fff;font:11px Arial;letter-spacing:4px}
+.currencies{display:flex;gap:9px;align-items:center;overflow:auto}.currency{background:#071322;border:1px solid #304b67;border-radius:18px;padding:8px 12px;white-space:nowrap}.coin{color:#ffd15a}.gem{color:#7ee9ff}.energy{color:#baff6d}
+.top-icons{display:flex;gap:8px}.iconbtn{border:1px solid #31516e;background:#0b1b2e;border-radius:10px;padding:9px 11px;font-size:18px}
+.layout{display:grid;grid-template-columns:225px 1fr;min-height:calc(100vh - 76px)}.sidebar{padding:18px 13px;background:linear-gradient(90deg,#050b15f5,#071323d9);border-right:1px solid #245172}.side-title{font-size:25px;font-weight:800;text-align:center;color:#ffcf73;margin:6px 0 16px}
+.nav{display:grid;gap:9px}.nav button{border:1px solid #24668b;background:linear-gradient(180deg,#0e2940,#071a2c);padding:13px 15px;border-radius:10px;text-align:left;font-weight:800}.nav button:hover,.nav button.active{border-color:#45dfff;box-shadow:0 0 16px #18cfff55;transform:translateX(2px)}
+.nav .gold{border-color:#9a6626;color:#ffd078}.nav .purple{border-color:#70409b;color:#d5a0ff}.nav .red{border-color:#963e4d;color:#ff9ca5}.nav .green{border-color:#2e8a68;color:#8dffbd}.nav .admin{border-color:#ff4e5b;color:#ff9ca5;background:linear-gradient(180deg,#401723,#1c0a10)}
+.side-info{margin-top:16px;padding:12px;border:1px solid #294965;border-radius:12px;background:#081425cc;color:#a7bad0;font-size:12px}.main{padding:20px;min-width:0}.screen{display:none}.screen.active{display:block}
+.hero{min-height:calc(100vh - 120px);position:relative;border:1px solid #294c6c;border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#081a31b8,#030712f2 72%),radial-gradient(circle at 50% 35%,#235784,#061020 62%)}
+.moon{position:absolute;right:12%;top:8%;width:180px;height:180px;border-radius:50%;background:#d8efff;box-shadow:0 0 70px #9fe5ff88}.dragon{position:absolute;right:13%;top:10%;font-size:120px;filter:drop-shadow(0 0 20px #56d9ff);opacity:.8}
+.hero-center{position:absolute;z-index:2;left:50%;top:49%;transform:translate(-50%,-50%);text-align:center}.warrior{width:190px;height:290px;margin:auto;position:relative;filter:drop-shadow(0 0 30px #28bfff99)}
+.warrior .head{position:absolute;top:15px;left:61px;width:68px;height:72px;border-radius:50%;background:linear-gradient(90deg,#172238,#d0a17c 40% 70%,#151d2d);border:2px solid #263d59}.warrior .hair{position:absolute;top:-18px;left:42px;width:105px;height:70px;background:#07101d;clip-path:polygon(0 75%,20% 20%,35% 62%,50% 0,64% 60%,82% 12%,100% 72%,70% 55%,50% 100%,25% 58%);z-index:2}.warrior .body{position:absolute;top:75px;left:35px;width:120px;height:175px;border-radius:40px 40px 15px 15px;background:linear-gradient(90deg,#07101d,#183f67,#08101b);border:2px solid #3bbfff}.warrior .cape{position:absolute;top:82px;left:18px;width:155px;height:180px;background:linear-gradient(90deg,#080d17,#12253d,#050912);clip-path:polygon(22% 0,78% 0,100% 100%,50% 85%,0 100%);z-index:3;border-bottom:2px solid #3bbfff}.warrior .dw{position:absolute;z-index:4;top:128px;left:72px;color:#8eeeff;font-weight:900;font-size:28px;text-shadow:0 0 12px #28cfff}.warrior .sword{position:absolute;z-index:5;right:-25px;top:105px;width:13px;height:180px;background:linear-gradient(#fff,#52cfff,#fff);transform:rotate(20deg);box-shadow:0 0 16px #4adfff}
+.title{font-family:Georgia,serif;font-size:42px;letter-spacing:3px;color:#ffe0a2;text-shadow:0 0 22px #ff7b28aa;margin-top:8px}.subtitle{color:#b8d5ec;letter-spacing:5px}.hero-actions{display:flex;justify-content:center;gap:12px;margin-top:22px;flex-wrap:wrap}.bigbtn,.fight{border:1px solid #ffad45;border-radius:12px;padding:13px 24px;background:linear-gradient(180deg,#ff9a3d,#b9441c);font-weight:900}.bigbtn.secondary{border-color:#35dfff;background:linear-gradient(180deg,#147ba0,#073451)}
+.quick{position:absolute;right:18px;bottom:18px;z-index:5;width:260px;display:grid;gap:8px}.quick .card,.panel{background:linear-gradient(180deg,#0d1b2df5,#07111eef);border:1px solid #294b68;border-radius:14px;padding:14px}.quick b{color:#70e9ff}.quick span{color:#a9bad0;font-size:12px}
+.section-title{font-family:Georgia,serif;font-size:30px;color:#ffd58a;text-align:center;margin:0 0 15px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.boss{overflow:hidden;border-radius:14px;border:2px solid #238dc4;background:#081322}.boss.fire{border-color:#db782f}.boss.shadow{border-color:#9a55d5}.boss-art{height:185px;display:grid;place-items:center;font-size:100px;background:radial-gradient(circle,#294f73,#080d18 70%)}.boss-body{padding:13px}.boss h3{margin:0}.stats{color:#9fb2c8;font-size:13px;line-height:1.7}.reward{color:#ffd46c;font-size:13px}.fight{width:100%;margin-top:9px;padding:11px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab{padding:9px 14px;border-radius:9px;border:1px solid #36516b;background:#091729}.tab.active{border-color:#ffd15b;color:#ffd15b}.shop-layout,.combat,.skill-layout{display:grid;grid-template-columns:260px 1fr;gap:15px}.merchant{min-height:500px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;background:radial-gradient(circle,#35526a,#0b1220 70%);border:1px solid #304d68;border-radius:14px;padding:15px}.shop-person{font-size:150px}.item{min-height:175px}.item .emoji{font-size:42px}.rarity{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#75dcff}.price{color:#ffd55f;font-weight:900;margin:8px 0}.buy,.equip,.up{border:1px solid #4bdb7f;background:linear-gradient(180deg,#27a95e,#116c3d);border-radius:8px;padding:8px 14px;font-weight:900;width:100%}
+.skill-layout{grid-template-columns:1fr 300px}.tree{min-height:570px;background:radial-gradient(circle at 50% 50%,#2d1c52,#090c1a 62%);border:1px solid #60488a;border-radius:14px;padding:25px}.skill-nodes{display:grid;grid-template-columns:repeat(4,1fr);gap:45px 25px;align-items:center;height:100%}.node{border:2px solid #a45bff;border-radius:50%;width:82px;height:82px;margin:auto;display:grid;place-items:center;background:#140d2d;box-shadow:0 0 22px #9e43ff88;font-size:32px;position:relative}.node.lock{filter:grayscale(1);opacity:.5}.node small{position:absolute;margin-top:105px;width:120px;text-align:center;font-size:11px;color:#d8c8ff}.up{border-color:#c477ff;background:linear-gradient(180deg,#8f43d7,#51218c);margin-top:15px}
+.combat{grid-template-columns:1fr 360px}.arena{min-height:570px;position:relative;background:radial-gradient(circle at 50% 25%,#71331c,#151522 45%,#070b12 72%);border:1px solid #774a34;border-radius:14px;overflow:hidden}.arena .enemy{position:absolute;top:100px;left:50%;transform:translateX(-50%);font-size:190px;filter:drop-shadow(0 0 35px #ff4b27)}.arena .player{position:absolute;bottom:70px;left:23%;font-size:120px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}.actions button{padding:13px;border-radius:9px;border:1px solid #3a6783;background:#0b2134;font-weight:900}.actions .power{border-color:#c25aff;background:#3e1765}.hpbig{height:15px;background:#241521;border-radius:10px;overflow:hidden}.hpbig i{display:block;width:100%;height:100%;background:#ff4f52}.phase{color:#ffd36b;font-weight:900}
+.ranking{max-width:850px;margin:auto}.rankrow{display:grid;grid-template-columns:55px 1fr 120px 100px;align-items:center;gap:10px;padding:13px;border-bottom:1px solid #22354a}.rankrow.me{background:#12304866;border-left:3px solid #ffd15a}.rankpos{font-size:24px;color:#ffd56a}.rankname{font-weight:900}.rankpoints{color:#79dcff;text-align:right}
+.field{display:grid;gap:7px;margin:12px 0}.field input,.field select{padding:12px;border-radius:9px;border:1px solid #36516b;background:#06101d;color:white;width:100%}.toggle{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid #2d4762;border-radius:10px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:100;background:#071729;border:1px solid #36d8ff;padding:13px 17px;border-radius:10px;display:none}.toast.show{display:block}
+.modal{position:fixed;inset:0;background:#000b;z-index:90;display:none;place-items:center;padding:20px}.modal.show{display:grid}.modalbox{max-width:520px;width:100%;background:#091628;border:1px solid #39dfff;border-radius:15px;padding:22px}
+.adminbox{border-color:#ff4e5b}.admin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.admin-stat{padding:18px;border:1px solid #394f68;border-radius:12px;background:#081425}.admin-stat b{display:block;font-size:25px;color:#72eaff;margin-top:5px}.danger{border-color:#ff4e5b!important;background:linear-gradient(180deg,#6d1e2a,#330c13)!important}.success{border-color:#38e58a!important;background:linear-gradient(180deg,#16754a,#0b3b29)!important}
+.hidden{display:none!important}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.sidebar{border-right:0;border-bottom:1px solid #245172}.nav{grid-template-columns:repeat(4,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}.shop-layout,.skill-layout,.combat{grid-template-columns:1fr}.quick{position:relative;right:auto;bottom:auto;width:auto;margin:15px}.hero{min-height:650px}.logo{order:-1;flex-basis:100%}}
+@media(max-width:650px){.profile .bars{display:none}.top-icons{display:none}.main{padding:10px}.nav{grid-template-columns:repeat(2,1fr)}.grid3,.grid4,.admin-grid{grid-template-columns:1fr}.title{font-size:27px}.moon{width:120px;height:120px}.dragon{font-size:80px}.quick{display:none}.rankrow{grid-template-columns:40px 1fr 80px}.hide-mobile{display:none}.shop-person{font-size:110px}.skill-nodes{grid-template-columns:repeat(2,1fr);gap:35px 10px}}
+
+/* Firebase login gate */
+#authGate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at top,#12314b,#030711 70%);overflow:auto}
+#authGate .authbox{width:min(100%,440px);background:#081525;border:1px solid #35d8ff;border-radius:18px;padding:24px;box-shadow:0 20px 80px #0009}
+#authGate h1{margin:0;color:#77e8ff;font-size:28px}#authGate p{color:#b6c9dc;line-height:1.5}
+#authGate input{box-sizing:border-box;width:100%;margin:7px 0;padding:13px;border:1px solid #36516b;border-radius:9px;background:#030b15;color:white;font-size:16px}
+#authGate button{width:100%;margin-top:9px;padding:13px;border:1px solid #39dfff;border-radius:9px;background:linear-gradient(180deg,#17638a,#0b2a42);color:white;font-weight:900}
+#authGate button.secondary{background:#101d2c;border-color:#3b526b}#authMessage{white-space:pre-wrap;color:#ffb4bc;font-size:13px;margin-top:12px}
+body.auth-locked .app{visibility:hidden}
 </style>
 </head>
-<body>
-<header>
-  <div class="brand">🐉 DRAGON WAR <small>RISE OF POWER</small></div>
-  <div id="headAccount" class="muted">Não conectado</div>
+<body class="auth-locked">
+<div id="authGate"><div class="authbox"><h1>🐉 DRAGON WAR</h1>
+<form id="loginForm"><input id="authEmail" type="email" autocomplete="username" placeholder="Seu e-mail" required><input id="authPassword" type="password" autocomplete="current-password" placeholder="Senha da conta do jogo" minlength="6" required><button type="submit">ENTRAR NO JOGO</button></form>
+<button class="secondary" id="registerBtn">CRIAR CONTA</button><button class="secondary" id="resetBtn">ENVIAR RECUPERAÇÃO DE SENHA</button><div id="authMessage" role="status"></div></div></div>
+<div class="app">
+<header class="topbar">
+  <div class="profile"><div class="avatar">⚔️</div><div><b id="topName">Gabriel Cabral</b><small>⚔️ Nível <span id="topLevel">1</span></small><div id="topRankBadge">🏅 INICIANTE</div></div><div class="bars"><div class="bar hp"><i></i></div><div class="bar mp"><i></i></div></div></div>
+  <div class="logo">DRAGON WAR <small>RISE OF POWER</small></div>
+  <div class="currencies"><div class="currency coin">🪙 <b id="coins">1.000</b></div><div class="currency gem">💎 <b id="gems">20</b></div><div class="currency energy">⚡ <b id="energy">100/100</b></div></div>
+  <div class="top-icons"><button class="iconbtn" onclick="openScreen('config')">⚙️</button><button class="iconbtn" onclick="openScreen('ranking')">🏆</button><button class="iconbtn" onclick="openAdminLogin()">🛡️</button><button class="iconbtn" onclick="window.dragonSignOut&&window.dragonSignOut()">↪️</button></div>
 </header>
+<div class="layout">
+<aside class="sidebar">
+<div class="side-title">JOGAR</div>
+<div class="nav">
+<button class="active" onclick="openScreen('home',this)">🏠 INÍCIO</button><button class="gold" onclick="openScreen('jogar',this)">⚔️ JOGAR</button><button onclick="openScreen('loja',this)">🛒 LOJA</button><button class="purple" onclick="openScreen('poderes',this)">✨ PODERES</button><button class="red" onclick="openScreen('combate',this)">🔥 COMBATE</button><button onclick="openScreen('inventario',this)">🎒 INVENTÁRIO</button><button class="green" onclick="openScreen('ranking',this)">🏆 RANKING</button><button onclick="openScreen('eventos',this)">🎁 EVENTOS</button><button onclick="openScreen('config',this)">⚙️ CONFIGURAÇÕES</button>
+<button class="admin" onclick="openAdminLogin()">🛡️ PAINEL ADM</button>
+</div>
+<div class="side-info"><b>Dragon War</b><br>Rise of Power<br><br>Modo público: jogador.<br>Modo ADM: acesso separado.</div>
+</aside>
+<main class="main">
 
-<section id="auth" class="panel">
-  <h1 class="gold">Entre no mundo dos dragões</h1>
-  <p class="muted">Entre ou crie sua conta para salvar seu progresso online.</p>
-  <div id="authNotice" class="notice hidden"></div>
-  <label for="email">E-mail</label>
-  <input id="email" type="email" autocomplete="email" placeholder="seu@email.com">
-  <label for="password">Senha</label>
-  <input id="password" type="password" autocomplete="current-password" placeholder="Mínimo de 6 caracteres">
-  <label for="playerName">Nome de jogador (para cadastro)</label>
-  <input id="playerName" maxlength="20" placeholder="Nome do seu guerreiro">
-  <button class="primary" style="width:100%" id="loginBtn">Entrar</button>
-  <button style="width:100%;margin-top:8px" id="registerBtn">Criar conta</button>
-  <button style="width:100%;margin-top:8px" id="resetBtn">Esqueci minha senha</button>
+<section id="home" class="screen active"><div class="hero"><div class="moon"></div><div class="dragon">🐉</div><div class="hero-center"><div class="warrior"><div class="head"></div><div class="hair"></div><div class="body"></div><div class="cape"></div><div class="dw">DW</div><div class="sword"></div></div><div class="title">DRAGON WAR</div><div class="subtitle">RISE OF POWER</div><div class="hero-actions"><button class="bigbtn" onclick="openScreen('jogar')">▶ JOGAR</button><button class="bigbtn secondary" onclick="openScreen('loja')">🛒 LOJA</button></div></div><div class="quick"><div class="card"><b>👑 SEU PERFIL</b><br><span id="homeProfile">Gabriel Cabral • Nível 1</span></div><div class="card"><b>🎁 RECOMPENSA DIÁRIA</b><br><span>Abra a caixa diariamente.</span><br><button class="fight" onclick="dailyReward()">ABRIR CAIXA</button></div></div></div></section>
+
+<section id="jogar" class="screen"><h1 class="section-title">⚔️ SELECIONE O INIMIGO</h1><div class="grid3" id="bossGrid"></div></section>
+<section id="loja" class="screen"><h1 class="section-title">🛒 LOJA DE ITENS</h1><div class="tabs" id="shopTabs"></div><div class="shop-layout"><div class="merchant"><div class="shop-person">🧝‍♀️</div><h2>Mercadora</h2><p>Equipamentos, armas, poderes e skins.</p></div><div class="grid4" id="shopGrid"></div></div><h2 style="color:#ffd47b;text-align:center">🎭 SKINS</h2><div class="grid4" id="skinShopGrid"></div></section>
+<section id="poderes" class="screen"><h1 class="section-title">✨ PODERES</h1><div class="skill-layout"><div class="tree"><div class="skill-nodes" id="skillNodes"></div></div><div class="panel"><h2 id="skillName">🔥 SOPRO DE FOGO</h2><p>Libera energia elemental contra o inimigo.</p><div class="field"><b>Dano atual</b><span id="skillDamage">35</span></div><div class="field"><b>Pontos disponíveis</b><span id="skillPoints">5</span></div><button class="up" onclick="upgradeSkill()">MELHORAR PODER</button></div></div></section>
+<section id="combate" class="screen"><h1 class="section-title">🔥 COMBATE</h1><div class="combat"><div class="arena"><div class="enemy" id="battleEnemy">🐲</div><div class="player">⚔️</div></div><div class="panel"><div class="phase" id="battlePhase">FASE 1/3</div><h2 id="battleName">KHALDRON</h2><div id="battleReward">RECOMPENSA</div><div class="hpbig"><i id="enemyHp"></i></div><p>HP inimigo: <b id="enemyHpText">100</b></p><hr><p>Seu HP: <b id="playerHpText">100</b></p><div class="actions"><button onclick="attack()">⚔️ ATACAR</button><button class="power" onclick="usePower()">🔥 PODER</button><button onclick="heal()">💚 CURAR</button><button onclick="openScreen('jogar')">🚪 SAIR</button></div></div></div></section>
+<section id="inventario" class="screen"><h1 class="section-title">🎒 INVENTÁRIO</h1><div class="panel" style="text-align:center"><h2>🎭 SKIN EQUIPADA</h2><div id="equippedSkin" style="font-size:60px">⚔️</div><div id="equippedSkinName">Guerreiro</div><div id="equippedSkinAbility"></div></div><div class="grid4" id="inventoryGrid"></div></section>
+<section id="ranking" class="screen"><h1 class="section-title">🏆 RANKING GLOBAL</h1><div class="panel" style="margin-bottom:15px;text-align:center"><b>SEU RANK</b><div id="myRankBig" style="font-size:28px;color:#72eaff">🏅 INICIANTE</div><small id="myRankPoints">0 pontos</small></div><div class="panel ranking"><div class="rankrow"><b>#</b><b>JOGADOR</b><b class="hide-mobile">NÍVEL</b><b>PONTOS</b></div><div id="rankingList"></div></div></section>
+<section id="eventos" class="screen"><h1 class="section-title">🎁 EVENTOS</h1><div class="grid3"><div class="panel"><h2>🎁 Caixa diária</h2><p>Uma recompensa por dia.</p><button class="fight" onclick="dailyReward()">ABRIR</button></div><div class="panel"><h2>🔥 Evento do Dragão</h2><p>Derrote os três inimigos.</p><button class="fight" onclick="openScreen('jogar')">JOGAR</button></div><div class="panel"><h2>💎 Tesouro</h2><p>Use gemas para itens especiais.</p><button class="fight" onclick="openScreen('loja')">LOJA</button></div></div></section>
+<section id="config" class="screen"><h1 class="section-title">⚙️ CONFIGURAÇÕES</h1><div class="panel"><h2>Perfil</h2><div class="field"><label>Nome</label><input id="nameInput" maxlength="18"><button class="fight" onclick="saveName()">SALVAR NOME</button></div><button class="bigbtn" onclick="saveGame()">💾 SALVAR</button> <button class="bigbtn secondary" onclick="loadGame()">📂 CARREGAR</button><button class="fight danger" onclick="newGame()">🆕 NOVO JOGO</button></div></section>
+
+<section id="admin" class="screen">
+<h1 class="section-title">🛡️ PAINEL ADMINISTRATIVO</h1>
+<div class="panel adminbox"><h2>Dragon War • Administração</h2><p style="color:#ffb4bc">Área reservada para administração. No modo demo, os dados são locais neste navegador.</p></div>
+<div class="admin-grid" style="margin-top:15px">
+<div class="admin-stat">👥 Jogadores<b id="admPlayers">1</b></div><div class="admin-stat">🟢 Online<b id="admOnline">1</b></div><div class="admin-stat">🏆 Pontos totais<b id="admPoints">0</b></div>
+</div>
+<div class="grid3" style="margin-top:15px">
+<div class="panel"><h2>👤 Jogador</h2><div class="field"><label>Nome</label><input id="admName"></div><div class="field"><label>Nível</label><input id="admLevel" type="number" min="1"></div><div class="field"><label>Pontos</label><input id="admPointsInput" type="number" min="0"></div><button class="fight success" onclick="adminApplyProfile()">SALVAR PERFIL</button></div>
+<div class="panel"><h2>💰 Recursos</h2><div class="field"><label>Moedas</label><input id="admCoins" type="number" min="0"></div><div class="field"><label>Gemas</label><input id="admGems" type="number" min="0"></div><div class="field"><label>Energia</label><input id="admEnergy" type="number" min="0" max="100"></div><button class="fight success" onclick="adminApplyResources()">APLICAR RECURSOS</button></div>
+<div class="panel"><h2>🎁 Administração</h2><button class="fight" onclick="adminGiveSkin()">🐉 LIBERAR SKIN DRAGÃO</button><button class="fight" onclick="adminGiveReward()">🎁 DAR 5.000 MOEDAS + 50 GEMAS</button><button class="fight danger" onclick="adminResetPlayer()">♻️ RESETAR PROGRESSO</button></div>
+</div>
+<div class="panel" style="margin-top:15px"><h2>📢 Anúncio global</h2><div class="field"><input id="admAnnouncement" maxlength="120" placeholder="Mensagem para os jogadores"></div><button class="fight" onclick="adminAnnouncement()">PUBLICAR ANÚNCIO</button></div>
+<div class="panel" style="margin-top:15px"><h2>☁️ Firebase / modo real</h2><p>Este arquivo funciona como demo local. Para jogadores reais e ranking global, configure Firebase Authentication + Firestore e regras de segurança. O ADM deve ser validado no servidor, não apenas pelo HTML.</p><button class="fight" onclick="showToast('Firebase: configure o projeto e as regras antes de publicar.')">VER STATUS</button></div>
 </section>
+</main></div></div>
 
-<main id="game" class="wrap hidden">
-  <section class="hero">
-    <div class="row">
-      <div><div class="dragon">🐉⚔️</div><h1 id="welcome">Guerreiro</h1><p class="muted">Sua jornada começa agora.</p></div>
-      <div><span class="gold">NÍVEL <b id="level">1</b></span><p id="rankTitle">Iniciante</p></div>
-    </div>
-    <div class="stats">
-      <div class="stat">🪙 Moedas<strong id="coins">1000</strong></div>
-      <div class="stat">💎 Gemas<strong id="gems">20</strong></div>
-      <div class="stat">⚡ Energia<strong id="energy">100/100</strong></div>
-    </div>
-    <p class="muted">Experiência</p><div class="bar"><span id="xpBar" style="width:0%"></span></div>
-    <small id="xpText" class="muted">0 XP</small>
-  </section>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Dragon War</h2><p id="modalText"></p><button class="fight" onclick="closeModal()">OK</button></div></div>
+<script>
+const enemies=[
+{name:"KHALDRON, O DRAGÃO DO PESADELO",emoji:"🐲",hp:100,dmg:8,reward:80,gems:1,points:50},
+{name:"IGNEOUS, O DEMÔNIO DE FOGO",emoji:"👹",hp:250,dmg:18,reward:200,gems:3,points:120},
+{name:"MALAKAI, O GUERREIRO DAS SOMBRAS",emoji:"🧙",hp:500,dmg:30,reward:500,gems:8,points:300}];
+const shop=[
+{name:"Lâmina Celestial",emoji:"🗡️",price:750,currency:"gem",type:"Arma",category:"equipamentos"},
+{name:"Armadura Rei Dragão",emoji:"🛡️",price:1200,currency:"coin",type:"Armadura",category:"equipamentos"},
+{name:"Escudo Real",emoji:"🛡️",price:350,currency:"gem",type:"Escudo",category:"equipamentos"},
+{name:"Manto Sombrio",emoji:"🧥",price:150,currency:"gem",type:"Raro",category:"equipamentos"},
+{name:"Poção Superior",emoji:"🧪",price:2500,currency:"coin",type:"Poção",category:"consumiveis"},
+{name:"Poção de Mana",emoji:"🔵",price:1800,currency:"coin",type:"Consumível",category:"consumiveis"},
+{name:"Elixir Ancestral",emoji:"🧪",price:45000,currency:"coin",type:"Elixir",category:"consumiveis"},
+{name:"Amuleto do Caos",emoji:"📿",price:20000,currency:"coin",type:"Raro",category:"materiais"},
+{name:"Pergaminho",emoji:"📜",price:250,currency:"gem",type:"Material",category:"materiais"},
+{name:"Cocar de Dragão",emoji:"👑",price:850000,currency:"coin",type:"Material",category:"materiais"},
+{name:"Lâmina Rúnica",emoji:"⚔️",price:55000,currency:"coin",type:"Material",category:"materiais"},
+{name:"Botas do Viajante",emoji:"🥾",price:110,currency:"gem",type:"Material",category:"materiais"},
+{name:"10 Gemas",emoji:"💎",price:1000,currency:"coin",type:"Gemas",category:"gemas",gemReward:10},
+{name:"25 Gemas",emoji:"💎",price:2500,currency:"coin",type:"Gemas",category:"gemas",gemReward:25},
+{name:"60 Gemas",emoji:"💎",price:6000,currency:"coin",type:"Gemas",category:"gemas",gemReward:60}];
+const skins=[
+{id:"guerreiro",name:"Guerreiro",emoji:"⚔️",price:0,currency:"coin",ability:"+5 dano"},
+{id:"lua",name:"Lua Azul",emoji:"🌙",price:5,currency:"gem",ability:"+10 dano de poder"},
+{id:"dragao",name:"Dragão Sombrio",emoji:"🐉",price:10,currency:"gem",ability:"+15 dano"},
+{id:"fogo",name:"Guardião de Fogo",emoji:"🔥",price:8,currency:"gem",ability:"+10% moedas"}];
+const skills=[["🔥","Sopro de Fogo",35],["⚡","Golpe de Raio",50],["❄️","Nova de Gelo",60],["🌀","Torrente do Vazio",80],["⚔️","Corte",20],["🗡️","Golpe Duplo",45],["🛡️","Aparar",0],["🐍","Golpe Serpente",70]];
+let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};
+let battle=null,shopCategory="equipamentos",adminLogged=false;
 
-  <nav id="nav">
-    <button data-page="home" class="active">🏰 Início</button>
-    <button data-page="combat">⚔️ Combate</button>
-    <button data-page="powers">✨ Poderes</button>
-    <button data-page="shop">🛒 Loja</button>
-    <button data-page="inventory">🎒 Inventário</button>
-    <button data-page="missions">📜 Missões</button>
-    <button data-page="ranking">🏆 Ranking</button>
-    <button data-page="profile">👤 Perfil</button>
-    <button data-page="community">🌐 Comunidade</button>
-    <button data-page="admin" id="adminNav" class="hidden">🛡️ Painel ADM</button>
-  </nav>
+function $(id){return document.getElementById(id)} function fmt(n){return Number(n||0).toLocaleString("pt-BR")}
+function showToast(t){let x=$("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>x.classList.remove("show"),2400)}
+function openScreen(id,btn){if(id==="admin"&&!adminLogged)return openAdminLogin();document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="ranking")renderRanking();if(id==="loja")renderShop();if(id==="inventario")renderInventory();if(id==="admin")renderAdmin()}
+function updateRank(){let p=state.points;if(p>=10000)state.rank="Lendário";else if(p>=5000)state.rank="Elite";else if(p>=2500)state.rank="Mestre";else if(p>=1000)state.rank="Profissional";else if(p>=500)state.rank="Avançado";else if(p>=200)state.rank="Intermediário";else state.rank="Iniciante"}
+function updateUI(){updateRank();$("topName").textContent=state.name;$("topLevel").textContent=state.level;$("topRankBadge").textContent="🏅 "+state.rank.toUpperCase();$("coins").textContent=fmt(state.coins);$("gems").textContent=fmt(state.gems);$("energy").textContent=state.energy+"/100";$("homeProfile").textContent=state.name+" • Nível "+state.level;$("myRankBig").textContent="🏅 "+state.rank.toUpperCase();$("myRankPoints").textContent=fmt(state.points)+" pontos";$("nameInput").value=state.name}
+function renderBosses(){$("bossGrid").innerHTML=enemies.map((e,i)=>`<article class="boss ${i===1?"fire":i===2?"shadow":""}"><div class="boss-art">${e.emoji}</div><div class="boss-body"><h3>${e.name}</h3><div class="stats">LEVEL ${150-i*5}<br>POWER: ${950000-i*70000}<br>HP: ${fmt(e.hp)}</div><div class="reward">RECOMPENSAS: 💎 ${e.gems} • 🪙 ${fmt(e.reward)}</div><button class="fight" onclick="startBattle(${i})">ENTRAR NA BATALHA</button></div></article>`).join("")}
+function renderShop(){let cats=["equipamentos","consumiveis","materiais","gemas"];$("shopTabs").innerHTML=cats.map(c=>`<button class="tab ${c===shopCategory?"active":""}" onclick="setShopCategory('${c}')">${c.toUpperCase()}</button>`).join("");let items=shop.filter(x=>x.category===shopCategory);$("shopGrid").innerHTML=items.map(it=>{let i=shop.indexOf(it);return `<div class="panel item"><div class="emoji">${it.emoji}</div><div class="rarity">${it.type}</div><h3>${it.name}</h3><div class="price">${it.currency==="gem"?"💎":"🪙"} ${fmt(it.price)}</div><button class="buy" onclick="buyItem(${i})">COMPRAR</button></div>`}).join("");$("skinShopGrid").innerHTML=skins.map(s=>{let owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;return `<div class="panel item"><div class="emoji">${s.emoji}</div><div class="rarity">SKIN</div><h3>${s.name}</h3><p>${s.ability}</p><div class="price">${owned?"✓ POSSUÍDA":(s.currency==="gem"?"💎":"🪙")+" "+fmt(s.price)}</div><button class="equip" onclick="${owned?`equipSkin('${s.id}')`:`buySkin('${s.id}')`}">${eq?"EQUIPADA":owned?"EQUIPAR":"COMPRAR"}</button></div>`}).join("")}
+function setShopCategory(c){shopCategory=c;renderShop()}
+function buyItem(i){let it=shop[i],key=it.currency==="gem"?"gems":"coins";if(state[key]<it.price)return showToast("Recursos insuficientes.");state[key]-=it.price;if(it.gemReward)state.gems+=it.gemReward;else state.inventory.push({name:it.name,emoji:it.emoji});updateUI();renderInventory();renderShop();saveGame(false);showToast("Compra realizada!")}
+function buySkin(id){let s=skins.find(x=>x.id===id);if(state[s.currency==="gem"?"gems":"coins"]<s.price)return showToast("Recursos insuficientes.");if(s.currency==="gem")state.gems-=s.price;else state.coins-=s.price;state.skinsOwned.push(id);state.equippedSkin=id;updateUI();renderShop();renderInventory();saveGame(false);showToast("Skin adquirida!")}
+function equipSkin(id){if(!state.skinsOwned.includes(id))return;state.equippedSkin=id;renderShop();renderInventory();saveGame(false);showToast("Skin equipada!")}
+function renderInventory(){let s=skins.find(x=>x.id===state.equippedSkin)||skins[0];$("equippedSkin").textContent=s.emoji;$("equippedSkinName").textContent=s.name;$("equippedSkinAbility").textContent="Habilidade: "+s.ability;let cards=state.inventory.map(x=>`<div class="panel item"><div class="emoji">${x.emoji}</div><h3>${x.name}</h3></div>`).join("");let sc=skins.filter(x=>state.skinsOwned.includes(x.id)).map(x=>`<div class="panel item"><div class="emoji">${x.emoji}</div><h3>${x.name}</h3><button class="equip" onclick="equipSkin('${x.id}')">${state.equippedSkin===x.id?"✓ EQUIPADA":"EQUIPAR"}</button></div>`).join("");$("inventoryGrid").innerHTML=sc+cards}
+function renderSkills(){$("skillNodes").innerHTML=skills.map((s,i)=>`<div class="node ${i>4?"lock":""}" onclick="selectSkill(${i})">${s[0]}<small>${s[1]}</small></div>`).join("");$("skillPoints").textContent=state.skillPoints}
+function selectSkill(i){$("skillName").textContent=skills[i][0]+" "+skills[i][1];$("skillDamage").textContent=skills[i][2]}
+function upgradeSkill(){if(state.skillPoints<2)return showToast("Você precisa de 2 pontos.");state.skillPoints-=2;renderSkills();saveGame(false);showToast("Poder melhorado!")}
+function startBattle(i){let e=enemies[i];battle={index:i,hp:e.hp,max:e.hp,playerHp:100};$("battleEnemy").textContent=e.emoji;$("battleName").textContent=e.name;$("battlePhase").textContent="FASE "+(i+1)+"/3;$("battleReward").textContent=`RECOMPENSA: 🪙 ${fmt(e.reward)} • 💎 ${e.gems}`;updateBattle();openScreen("combate")}
+function updateBattle(){if(!battle)return;$("enemyHpText").textContent=Math.max(0,battle.hp);$("enemyHp").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("playerHpText").textContent=battle.playerHp}
+function enemyTurn(){if(!battle)return;battle.playerHp=Math.max(0,battle.playerHp-enemies[battle.index].dmg);updateBattle();if(battle.playerHp<=0){battle=null;showToast("Você foi derrotado.");openScreen("jogar")}}
+function attack(){if(!battle)return;battle.hp-=25+state.level*3;if(battle.hp<=0)return winBattle();enemyTurn()}
+function usePower(){if(!battle)return;if(state.energy<15)return showToast("Energia insuficiente.");state.energy-=15;battle.hp-=50+state.level*5;if(battle.hp<=0)return winBattle();enemyTurn();updateUI()}
+function heal(){if(!battle)return;if(battle.playerHp>=100)return showToast("Vida cheia.");if(state.energy<5)return showToast("Energia insuficiente.");state.energy-=5;let old=battle.playerHp;battle.playerHp=Math.min(100,battle.playerHp+35);updateBattle();updateUI();showToast("💚 +"+(battle.playerHp-old)+" HP")}
+function winBattle(){let e=enemies[battle.index];state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,Math.floor(state.points/100)+1);state.skillPoints++;let next=battle.index+1;battle=null;updateUI();saveGame(false);if(next<3){showToast("Vitória! Próxima fase.");setTimeout(()=>startBattle(next),600)}else showModal("🏆 VITÓRIA","Você derrotou os 3 inimigos!")}
+function renderRanking(){let demo=[{name:"Kaelen",level:68,points:12850},{name:"ShadowLord",level:55,points:10200},{name:"DragonMaster",level:42,points:8400},{name:state.name,level:state.level,points:state.points}];demo.sort((a,b)=>b.points-a.points);$("rankingList").innerHTML=demo.map((p,i)=>`<div class="rankrow ${p.name===state.name?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${p.name}</div><div class="hide-mobile">Nível ${p.level}</div><div class="rankpoints">${fmt(p.points)}</div></div>`).join("")}
+function saveName(){let n=$("nameInput").value.trim();if(n.length<3)return showToast("Nome muito curto.");state.name=n;updateUI();saveGame(false);showToast("Nome salvo!")}
+window.gameSetCloudData=function(d){if(!d)return;const fields=["name","level","rank","coins","gems","energy","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();};
+function saveGame(notify=true){
+ const key="dragonWarSave_"+(window.dragonUser?.uid||"guest");
+ localStorage.setItem(key,JSON.stringify(state));
+ if(window.dragonCloudSave) window.dragonCloudSave(state).catch(e=>console.error("Falha ao salvar no Firebase",e));
+ if(notify)showToast("Jogo salvo!")
+}
+function loadGame(){let key="dragonWarSave_"+(window.dragonUser?.uid||"guest");let r=localStorage.getItem(key)||localStorage.getItem("dragonWarSave");if(!r)return;try{state={...state,...JSON.parse(r)};updateUI();renderInventory();renderShop();renderSkills()}catch(e){}}
+function newGame(){if(!confirm("Reiniciar seu progresso local?"))return;let n=state.name;state={name:n,level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};saveGame(false);updateUI();renderInventory();renderShop();showToast("Novo jogo criado!")}
+function dailyReward(){let key="dragonDaily",today=new Date().toDateString();if(localStorage.getItem(key)===today)return showToast("Recompensa já coletada hoje.");localStorage.setItem(key,today);let r=Math.floor(Math.random()*3);if(r===0){state.coins+=500;showToast("🎁 +500 moedas")}else if(r===1){state.gems+=3;showToast("💎 +3 gemas")}else{if(!state.skinsOwned.includes("dragao"))state.skinsOwned.push("dragao");showToast("🐉 Skin Dragão liberada!")}updateUI();renderInventory();renderShop();saveGame(false)}
+function showModal(t,m){$("modalTitle").textContent=t;$("modalText").textContent=m;$("modal").classList.add("show")}function closeModal(){$("modal").classList.remove("show")}
 
-  <div id="pageContent"></div>
-  <div class="panel row">
-    <div><b id="accountName">Conta</b><div id="accountEmail" class="muted"></div></div>
-    <button id="logoutBtn" class="danger">Sair da conta</button>
-  </div>
-</main>
-<footer>DRAGON WAR: RISE OF POWER · Protótipo online</footer>
-
+/* ================= ADMIN =================
+   DEMO LOCAL: a senha abaixo NÃO protege um servidor real.
+   Para produção, use Firebase Authentication + custom claims/rules.
+*/
+function openAdminLogin(){
+ if(!window.dragonUser){showToast("Entre na sua conta primeiro.");return}
+ if(window.dragonUser.email!=="groupsacabraldigital@gmail.com" || !window.dragonUser.emailVerified){showToast("Acesso restrito ao e-mail ADM verificado.");return}
+ adminLogged=true;openScreen("admin");showToast("🛡️ Acesso ADM autenticado")
+}
+function renderAdmin(){$("admPlayers").textContent="1";$("admOnline").textContent="1";$("admPoints").textContent=fmt(state.points);$("admName").value=state.name;$("admLevel").value=state.level;$("admPointsInput").value=state.points;$("admCoins").value=state.coins;$("admGems").value=state.gems;$("admEnergy").value=state.energy}
+function adminApplyProfile(){state.name=String($("admName").value).trim()||state.name;state.level=Math.max(1,Number($("admLevel").value)||1);state.points=Math.max(0,Number($("admPointsInput").value)||0);updateUI();renderAdmin();saveGame(false);showToast("🛡️ Perfil atualizado.")}
+function adminApplyResources(){state.coins=Math.max(0,Number($("admCoins").value)||0);state.gems=Math.max(0,Number($("admGems").value)||0);state.energy=Math.min(100,Math.max(0,Number($("admEnergy").value)||0));updateUI();renderAdmin();saveGame(false);showToast("💰 Recursos atualizados.")}
+function adminGiveSkin(){if(!state.skinsOwned.includes("dragao"))state.skinsOwned.push("dragao");updateUI();renderShop();renderInventory();saveGame(false);showToast("🐉 Skin liberada para o jogador.")}
+function adminGiveReward(){state.coins+=5000;state.gems+=50;updateUI();renderAdmin();saveGame(false);showToast("🎁 Recompensa aplicada.")}
+function adminResetPlayer(){if(!confirm("Resetar o jogador demo?"))return;let n=state.name;state={name:n,level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};updateUI();renderAdmin();renderShop();renderInventory();renderSkills();saveGame(false);showToast("♻️ Jogador resetado.")}
+function adminAnnouncement(){let m=$("admAnnouncement").value.trim();if(!m)return showToast("Digite um anúncio.");localStorage.setItem("dragonAnnouncement",m);$("admAnnouncement").value="";showToast("📢 Anúncio salvo no demo local.")}
+loadGame();renderBosses();renderShop();renderInventory();renderSkills();renderRanking();updateUI();
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-  createUserWithEmailAndPassword, sendEmailVerification,
-  sendPasswordResetEmail, signOut
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {
-  getFirestore, doc, getDoc, setDoc, updateDoc, collection,
-  getDocs, addDoc, query, orderBy, limit, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-/* CONFIGURAÇÃO DO PROJETO FIREBASE INFORMADO */
-const firebaseConfig = {
-  apiKey: "AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",
-  authDomain: "dragon-war-rise-of-power-2a9f1.firebaseapp.com",
-  projectId: "dragon-war-rise-of-power-2a9f1",
-  storageBucket: "dragon-war-rise-of-power-2a9f1.firebasestorage.app",
-  messagingSenderId: "115455691167",
-  appId: "1:115455691167:web:ff3638f67b66c17c5515aa",
-  measurementId: "G-S7XE2EN9CL"
-};
-
-const ADMIN_EMAIL = "groupsacabraldigital@gmail.com";
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const $ = id => document.getElementById(id);
-const fmt = n => Number(n || 0).toLocaleString("pt-BR");
-let user = null, player = null, isAdmin = false, currentPage = "home", busy = false;
-
-function notice(message, bad=false) {
-  const el = $("authNotice");
-  el.textContent = message;
-  el.classList.remove("hidden");
-  el.style.background = bad ? "#4b202a" : "#18263b";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const gate=document.getElementById('authGate'),msg=document.getElementById('authMessage'),emailEl=document.getElementById('authEmail'),passEl=document.getElementById('authPassword');
+function say(t){msg.textContent=t}
+function authError(e){
+ const map={
+ "auth/invalid-credential":"Login recusado pelo Firebase. Confira o e-mail e a senha cadastrada para a conta do jogo.",
+ "auth/wrong-password":"A senha informada não corresponde à senha da conta Firebase.",
+ "auth/user-not-found":"Esta conta não foi encontrada no provedor de login.",
+ "auth/too-many-requests":"Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+ "auth/network-request-failed":"Falha de conexão. Verifique sua internet.",
+ "auth/email-already-in-use":"Este e-mail já tem conta. Use Entrar.",
+ "auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
+ "auth/operation-not-allowed":"Ative E-mail/senha em Firebase Authentication → Sign-in method.",
+ "auth/invalid-email":"O formato do e-mail é inválido.",
+ "auth/user-disabled":"Esta conta foi desativada no Firebase Authentication."
+ };
+ say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"\nCódigo: "+(e.code||"sem código"));
+ console.error("Dragon War Firebase Auth:",e.code,e.message);
 }
-function hideNotice() {$("authNotice").classList.add("hidden");}
-function safeText(v) {
-  return String(v ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-function setBusy(v) {
-  busy = v;
-  $("loginBtn").disabled = v;
-  $("registerBtn").disabled = v;
-}
-function showGame(show) {
-  $("auth").classList.toggle("hidden", show);
-  $("game").classList.toggle("hidden", !show);
-}
-function defaultPlayer(u, name) {
-  return {
-    uid: u.uid,
-    email: u.email || "",
-    name: name || (u.email || "Guerreiro").split("@")[0].slice(0,20),
-    level: 1, xp: 0, coins: 1000, gems: 20, energy: 100,
-    inventory: [], powers: [], wins: 0, losses: 0,
-    createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-  };
-}
-
-async function loadPlayer(u) {
-  const ref = doc(db, "players", u.uid);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) {
-    const p = defaultPlayer(u, "");
-    await setDoc(ref, p);
-    return {...p, createdAt: new Date(), updatedAt: new Date()};
-  }
-  return {...snap.data(), uid:u.uid};
-}
-
-async function savePlayer() {
-  if (!user || !player) return;
-  player.updatedAt = serverTimestamp();
-  /* Atualiza somente o documento do usuário autenticado. */
-  await updateDoc(doc(db, "players", user.uid), {
-    name: player.name,
-    level: player.level,
-    xp: player.xp,
-    coins: player.coins,
-    gems: player.gems,
-    energy: player.energy,
-    inventory: player.inventory || [],
-    powers: player.powers || [],
-    wins: player.wins || 0,
-    losses: player.losses || 0,
-    updatedAt: serverTimestamp()
-  });
-  await setDoc(doc(db, "leaderboard", user.uid), {
-    uid: user.uid, name: player.name, level: player.level,
-    xp: player.xp, wins: player.wins || 0,
-    updatedAt: serverTimestamp()
-  });
-}
-
-function renderStats() {
-  $("welcome").textContent = player.name || "Guerreiro";
-  $("level").textContent = player.level || 1;
-  $("rankTitle").textContent = (player.level || 1) >= 20 ? "Lenda dos Dragões" : (player.level || 1) >= 10 ? "Mestre" : (player.level || 1) >= 5 ? "Guerreiro" : "Iniciante";
-  $("coins").textContent = fmt(player.coins);
-  $("gems").textContent = fmt(player.gems);
-  $("energy").textContent = `${player.energy ?? 100}/100`;
-  $("xpText").textContent = `${fmt(player.xp)} XP`;
-  $("xpBar").style.width = `${Math.min(100, (player.xp || 0) % 100)}%`;
-  $("headAccount").textContent = user.email || "Conectado";
-  $("accountName").textContent = player.name || "Guerreiro";
-  $("accountEmail").textContent = user.email || "";
-}
-
-function card(title, description, action, buttonText, disabled=false) {
-  return `<article class="item"><h3>${title}</h3><p>${description}</p><button data-action="${action}" ${disabled?"disabled":""}>${buttonText}</button></article>`;
-}
-
-function renderPage() {
-  renderStats();
-  const c = $("pageContent");
-  if (currentPage === "home") {
-    c.innerHTML = `<section class="panel"><h2>🏰 Salão do Guerreiro</h2><p class="muted">Treine, evolua seu personagem, colete recompensas e suba no ranking global.</p><div class="grid">
-    ${card("⚔️ Arena de combate","Enfrente um monstro e ganhe experiência e moedas.","fight","Iniciar combate")}
-    ${card("✨ Árvore de poderes","Desbloqueie habilidades para seu guerreiro.","powers","Ver poderes")}
-    ${card("🛒 Mercado","Adquira itens usando suas moedas.","shop","Abrir loja")}
-    ${card("🏆 Ranking global","Compare seu nível com outros jogadores.","ranking","Ver ranking")}
-    </div></section><section class="panel"><h2>📢 Avisos</h2><div id="homeEvents" class="muted">Carregando eventos...</div></section>`;
-    loadEvents("homeEvents");
-  } else if (currentPage === "combat") {
-    c.innerHTML = `<section class="panel"><h2>⚔️ Campo de batalha</h2><div class="hero"><div class="dragon">🐲</div><h2>Dragão das Sombras</h2><p>Um inimigo aguarda seu desafio.</p><div class="stats"><div class="stat">Vida<strong>1000</strong></div><div class="stat">Ataque<strong>75</strong></div><div class="stat">Recompensa<strong>120 🪙</strong></div></div></div><button class="primary" data-action="fight">Atacar monstro</button><div id="battleResult" class="notice hidden"></div></section>`;
-  } else if (currentPage === "powers") {
-    const powers = [
-      ["Bola de Fogo","Dano mágico básico",150,"🔥"],
-      ["Escudo Dracônico","Proteção ancestral",250,"🛡️"],
-      ["Fúria do Dragão","Ataque poderoso",500,"🐉"]
-    ];
-    c.innerHTML = `<section class="panel"><h2>✨ Poderes</h2><div class="grid">${powers.map(p=>`<article class="item"><h3>${p[3]} ${p[0]}</h3><p>${p[1]}</p><p>Preço: ${p[2]} 🪙</p><button data-action="buyPower" data-name="${p[0]}" data-cost="${p[2]}">Desbloquear</button></article>`).join("")}</div></section>`;
-  } else if (currentPage === "shop") {
-    const items = [
-      ["Poção de Energia","Recupera energia",100,"🧪"],
-      ["Espada de Ferro","Arma para iniciantes",250,"⚔️"],
-      ["Armadura Dracônica","Armadura resistente",500,"🛡️"]
-    ];
-    c.innerHTML = `<section class="panel"><h2>🛒 Loja</h2><div class="grid">${items.map(p=>`<article class="item"><h3>${p[3]} ${p[0]}</h3><p>${p[1]}</p><p>Preço: ${p[2]} 🪙</p><button data-action="buyItem" data-name="${p[0]}" data-cost="${p[2]}">Comprar</button></article>`).join("")}</div></section>`;
-  } else if (currentPage === "inventory") {
-    c.innerHTML = `<section class="panel"><h2>🎒 Inventário</h2><div class="grid">${(player.inventory||[]).length ? player.inventory.map((x,i)=>`<article class="item"><h3>${safeText(x)}</h3><p>Item adquirido</p></article>`).join("") : '<p class="muted">Seu inventário está vazio. Visite a loja para adquirir itens.</p>'}</div></section>`;
-  } else if (currentPage === "missions") {
-    c.innerHTML = `<section class="panel"><h2>📜 Missões</h2><div class="grid">
-    ${card("Primeiro combate","Derrote um inimigo uma vez. Recompensa: 100 moedas.","mission","Resgatar recompensa",!!player.mission1)}
-    ${card("Aprendiz","Alcance o nível 3. Recompensa: 10 gemas.","mission2","Resgatar recompensa",!!player.mission2 || (player.level||1)<3)}
-    </div></section>`;
-  } else if (currentPage === "ranking") {
-    c.innerHTML = `<section class="panel"><h2>🏆 Ranking global</h2><div id="rankingData" class="muted">Carregando ranking...</div></section>`;
-    loadRanking();
-  } else if (currentPage === "profile") {
-    c.innerHTML = `<section class="panel"><h2>👤 Perfil do jogador</h2><label>Nome público</label><input id="editName" maxlength="20" value="${safeText(player.name)}"><p class="muted">Nível ${player.level||1} · ${fmt(player.xp)} XP</p><button class="primary" data-action="saveProfile">Salvar perfil</button></section>`;
-  } else if (currentPage === "community") {
-    c.innerHTML = `<section class="panel"><h2>🌐 Comunidade</h2><label>Mensagem</label><input id="chatText" maxlength="300" placeholder="Escreva uma mensagem..."><button class="primary" data-action="sendChat">Enviar</button><div id="chatData" style="margin-top:15px">Carregando mensagens...</div></section>`;
-    loadChat();
-  } else if (currentPage === "admin") {
-    if (!isAdmin) { currentPage = "home"; renderPage(); return; }
-    c.innerHTML = `<section class="panel"><h2>🛡️ Painel administrativo</h2><div class="notice">Administrador: ${safeText(user.email)}</div><div class="grid">
-    ${card("Jogadores","Consultar perfis de jogadores.","adminPlayers","Carregar jogadores")}
-    ${card("Denúncias","Consultar denúncias recebidas.","adminReports","Carregar denúncias")}
-    ${card("Eventos","Publicar um aviso para os jogadores.","adminEvent","Criar evento")}
-    </div><div id="adminResult" style="overflow:auto;margin-top:15px"></div></section>`;
-  }
-}
-
-async function loadEvents(target) {
+async function enter(user){
+  // Abre o jogo imediatamente após o Firebase autenticar; a nuvem carrega em segundo plano.
+  window.dragonUser=user;
+  const localKey='dragonWarSave_'+user.uid;
+  const defaultState={uid:user.uid,name:(user.displayName||user.email.split('@')[0]).slice(0,24),level:1,rank:'Iniciante',coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro'};
+  let localData=null;
+  try { const raw=localStorage.getItem(localKey); if(raw) localData=JSON.parse(raw); } catch(e) { console.warn('Save local inválido',e); }
+  window.restoreLocalBeforeCloud=localData||defaultState;
+  document.body.classList.remove('auth-locked');
+  gate.style.display='none';
   try {
-    const snap = await getDocs(query(collection(db,"events"), orderBy("createdAt","desc"), limit(10)));
-    const el = $(target); if (!el) return;
-    el.innerHTML = snap.empty ? "Nenhum evento publicado." : snap.docs.map(d=>`<div class="notice"><b>${safeText(d.data().title||"Evento")}</b><br>${safeText(d.data().text||"")}</div>`).join("");
-  } catch(e) {
-    const el = $(target); if(el) el.textContent = "Não foi possível carregar eventos. Verifique as regras do Firestore.";
+    if(typeof loadGame==='function') loadGame();
+    if(window.restoreLocalBeforeCloud && typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(window.restoreLocalBeforeCloud);
+  } catch(e) { console.warn('Falha aplicando save local',e); }
+  if(user.email==='groupsacabraldigital@gmail.com' && !user.emailVerified){
+    say('A conta ADM entrou, mas o e-mail precisa estar verificado.');
+    gate.style.display='grid'; document.body.classList.add('auth-locked'); return;
   }
-}
-async function loadRanking() {
-  const el = $("rankingData"); if(!el) return;
-  try {
-    const snap = await getDocs(query(collection(db,"leaderboard"), orderBy("level","desc"), limit(50)));
-    if (!el.isConnected) return;
-    if (snap.empty) { el.textContent = "Ainda não há jogadores no ranking."; return; }
-    el.innerHTML = `<table><thead><tr><th>#</th><th>Jogador</th><th>Nível</th><th>XP</th><th>Vitórias</th></tr></thead><tbody>${snap.docs.map((d,i)=>{const p=d.data();return `<tr><td>${i+1}</td><td>${safeText(p.name||"Guerreiro")}</td><td>${fmt(p.level)}</td><td>${fmt(p.xp)}</td><td>${fmt(p.wins)}</td></tr>`}).join("")}</tbody></table>`;
-  } catch(e) { if(el.isConnected) el.textContent = "Ranking indisponível. As regras do Firestore precisam permitir leitura da coleção leaderboard."; }
-}
-async function loadChat() {
-  const el = $("chatData"); if(!el) return;
-  try {
-    const snap = await getDocs(query(collection(db,"chat"), orderBy("createdAt","desc"), limit(30)));
-    if(!el.isConnected) return;
-    el.innerHTML = snap.empty ? '<p class="muted">Nenhuma mensagem ainda.</p>' : snap.docs.map(d=>`<div class="notice"><b>${safeText(d.data().name||"Jogador")}</b><br>${safeText(d.data().text||"")}</div>`).join("");
-  } catch(e) { if(el.isConnected) el.textContent = "Chat indisponível. Verifique as regras do Firestore."; }
-}
-async function adminCheck(u) {
-  if (!u || !u.emailVerified || u.email?.toLowerCase() !== ADMIN_EMAIL) return false;
-  try {
-    const snap = await getDoc(doc(db,"admins",u.uid));
-    return snap.exists() && snap.data().active === true;
-  } catch(e) { return false; }
-}
-async function fight() {
-  if ((player.energy||0) < 10) return alert("Você não tem energia suficiente.");
-  player.energy -= 10; player.xp = (player.xp||0)+35;
-  player.coins = (player.coins||0)+120; player.wins=(player.wins||0)+1;
-  if(player.xp >= (player.level||1)*100) { player.xp -= player.level*100; player.level++; alert("Você subiu de nível!"); }
-  await savePlayer(); renderPage();
-  const result=$("battleResult"); if(result){result.classList.remove("hidden");result.textContent="Vitória! Você ganhou 120 moedas e 35 XP.";}
-  alert("Vitória! +120 moedas, +35 XP.");
-}
-async function handleAction(btn) {
-  const action=btn.dataset.action;
-  if(action==="fight") return fight();
-  if(action==="powers"){currentPage="powers";return renderPage();}
-  if(action==="shop"){currentPage="shop";return renderPage();}
-  if(action==="ranking"){currentPage="ranking";return renderPage();}
-  if(action==="buyPower" || action==="buyItem") {
-    const name=btn.dataset.name, cost=Number(btn.dataset.cost);
-    if((player.coins||0)<cost) return alert("Moedas insuficientes.");
-    if(action==="buyPower" && (player.powers||[]).includes(name)) return alert("Você já possui esse poder.");
-    player.coins-=cost;
-    if(action==="buyPower") player.powers=[...(player.powers||[]),name];
-    else player.inventory=[...(player.inventory||[]),name];
-    await savePlayer(); renderPage(); return alert(`${name} adquirido!`);
-  }
-  if(action==="mission") {
-    if(player.mission1) return;
-    player.mission1=true; player.coins=(player.coins||0)+100;
-    await savePlayer(); renderPage(); return alert("Recompensa de 100 moedas resgatada!");
-  }
-  if(action==="mission2") {
-    if(player.mission2 || (player.level||1)<3) return;
-    player.mission2=true; player.gems=(player.gems||0)+10;
-    await savePlayer(); renderPage(); return alert("Você recebeu 10 gemas!");
-  }
-  if(action==="saveProfile") {
-    const name=$("editName").value.trim();
-    if(name.length<3) return alert("Use pelo menos 3 caracteres.");
-    player.name=name.slice(0,20); await savePlayer(); renderPage(); return alert("Perfil salvo.");
-  }
-  if(action==="sendChat") {
-    const textValue=$("chatText").value.trim();
-    if(!textValue || textValue.length>300) return alert("A mensagem deve ter entre 1 e 300 caracteres.");
-    await addDoc(collection(db,"chat"),{uid:user.uid,name:player.name,text:textValue,createdAt:serverTimestamp()});
-    renderPage(); return;
-  }
-  if(action==="adminPlayers") return adminPlayers();
-  if(action==="adminReports") return adminReports();
-  if(action==="adminEvent") {
-    const title=prompt("Título do evento:"); if(!title) return;
-    const textValue=prompt("Mensagem do evento:"); if(!textValue) return;
-    await addDoc(collection(db,"events"),{title:title.slice(0,80),text:textValue.slice(0,500),createdAt:serverTimestamp(),createdBy:user.uid});
-    alert("Evento publicado."); renderPage(); return;
-  }
-}
-async function adminPlayers() {
-  const el=$("adminResult"); if(!isAdmin || !el) return;
-  try {
-    const snap=await getDocs(query(collection(db,"players"),limit(100)));
-    el.innerHTML=snap.empty?"Nenhum jogador cadastrado.":`<table><thead><tr><th>Nome</th><th>Nível</th><th>Moedas</th><th>Gemas</th></tr></thead><tbody>${snap.docs.map(d=>{const p=d.data();return `<tr><td>${safeText(p.name||"Jogador")}</td><td>${fmt(p.level)}</td><td>${fmt(p.coins)}</td><td>${fmt(p.gems)}</td></tr>`}).join("")}</tbody></table>`;
-  } catch(e) { el.textContent="Acesso negado ou falha ao carregar jogadores. Confira as regras."; }
-}
-async function adminReports() {
-  const el=$("adminResult"); if(!isAdmin || !el) return;
-  try {
-    const snap=await getDocs(query(collection(db,"reports"),limit(100)));
-    el.innerHTML=snap.empty?"Nenhuma denúncia.":snap.docs.map(d=>`<div class="notice"><b>${safeText(d.data().title||"Denúncia")}</b><p>${safeText(d.data().text||d.data().message||"")}</p><small>${safeText(d.data().reporterUid||"")}</small></div>`).join("");
-  } catch(e) { el.textContent="Acesso negado ou falha ao carregar denúncias."; }
-}
+  window.dragonIsAdmin=(user.email==='groupsacabraldigital@gmail.com' && user.emailVerified===true);
+  say(window.dragonIsAdmin?'Conta ADM reconhecida.':'Login realizado.');
 
-$("loginBtn").addEventListener("click",async()=>{
-  if(busy)return; hideNotice();setBusy(true);
-  try {
-    const email=$("email").value.trim(),password=$("password").value;
-    await signInWithEmailAndPassword(auth,email,password);
-  } catch(e) { notice(authError(e),true); }
-  finally {setBusy(false);}
-});
-$("registerBtn").addEventListener("click",async()=>{
-  if(busy)return; hideNotice();setBusy(true);
-  try {
-    const email=$("email").value.trim(),password=$("password").value;
-    const name=$("playerName").value.trim();
-    if(name.length<3) throw new Error("Escolha um nome com pelo menos 3 caracteres.");
-    if(password.length<6) throw new Error("A senha precisa ter pelo menos 6 caracteres.");
-    const cred=await createUserWithEmailAndPassword(auth,email,password);
-    await sendEmailVerification(cred.user);
-    const p=defaultPlayer(cred.user,name.slice(0,20));
-    await setDoc(doc(db,"players",cred.user.uid),p);
-    notice("Conta criada. Verifique seu e-mail para confirmar o endereço.");
-  } catch(e) { notice(authError(e),true); }
-  finally {setBusy(false);}
-});
-$("resetBtn").addEventListener("click",async()=>{
-  const email=$("email").value.trim();
-  if(!email) return notice("Digite seu e-mail primeiro.",true);
-  try { await sendPasswordResetEmail(auth,email); notice("Se a conta existir, você receberá um e-mail para redefinir a senha."); }
-  catch(e) { notice(authError(e),true); }
-});
-$("logoutBtn").addEventListener("click",()=>signOut(auth));
-$("nav").addEventListener("click",e=>{
-  const btn=e.target.closest("button[data-page]"); if(!btn)return;
-  const page=btn.dataset.page;
-  if(page==="admin" && !isAdmin) return alert("Acesso restrito.");
-  currentPage=page;
-  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b===btn));
-  renderPage();
-});
-$("pageContent").addEventListener("click",async e=>{
-  const btn=e.target.closest("button[data-action]");if(!btn)return;
-  try { await handleAction(btn); } catch(err) { alert("Não foi possível concluir a ação: "+authError(err)); }
-});
-
-function authError(e) {
-  const code=e?.code||"";
-  const messages={
-    "auth/invalid-credential":"E-mail ou senha incorretos.",
-    "auth/invalid-email":"O e-mail não é válido.",
-    "auth/email-already-in-use":"Este e-mail já possui uma conta.",
-    "auth/weak-password":"Use uma senha com pelo menos 6 caracteres.",
-    "auth/too-many-requests":"Muitas tentativas. Aguarde e tente novamente.",
-    "auth/network-request-failed":"Falha de conexão. Verifique a internet.",
-    "permission-denied":"O Firestore bloqueou a operação. Verifique as regras."
-  };
-  return messages[code] || e?.message || "Erro desconhecido.";
-}
-
-onAuthStateChanged(auth,async u=>{
-  user=u; player=null; isAdmin=false;
-  if(!u) {
-    showGame(false); $("headAccount").textContent="Não conectado";
-    $("adminNav").classList.add("hidden"); return;
-  }
-  try {
-    player=await loadPlayer(u);
-    isAdmin=await adminCheck(u);
-    $("adminNav").classList.toggle("hidden",!isAdmin);
-    showGame(true); currentPage="home";
-    document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.page==="home"));
-    renderPage();
-    if(!u.emailVerified) {
-      const msg=document.createElement("div");
-      msg.className="notice";msg.textContent="Confirme seu e-mail para ativar todos os recursos. Confira sua caixa de entrada.";
-      $("pageContent").prepend(msg);
+  // Sincronização de nuvem sem bloquear a tela do jogo.
+  (async()=>{
+    try {
+      const snap=await Promise.race([getDoc(doc(db,'players',user.uid)),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
+      if(snap.exists()){
+        const cloud=snap.data();
+        const merged={...defaultState,...cloud,...(localData||{})};
+        window.restoreLocalBeforeCloud=merged;
+        localStorage.setItem(localKey,JSON.stringify(merged));
+        try { if(typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(merged); } catch(e) { console.warn('Falha aplicando dados da nuvem',e); }
+      } else {
+        await Promise.race([setDoc(doc(db,'players',user.uid),{...defaultState,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
+        localStorage.setItem(localKey,JSON.stringify(defaultState));
+      }
+    } catch(e) {
+      console.warn('Nuvem indisponível; jogo segue com save local:',e);
+      if(!localStorage.getItem(localKey)) localStorage.setItem(localKey,JSON.stringify(window.restoreLocalBeforeCloud||defaultState));
     }
-  } catch(e) {
-    showGame(false); notice("Não foi possível carregar seu perfil: "+authError(e),true);
-  }
-});
+  })();
+}
+window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
+window.dragonSignOut=async()=>{await signOut(auth);window.dragonUser=null;window.adminLogged=false;gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta.')};
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),12000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O Firebase não respondeu em 12 segundos. Verifique a conexão, se o domínio do jogo está autorizado em Authentication → Settings → Authorized domains, e se a configuração do projeto está correta.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
+document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say('Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
+document.getElementById('resetBtn').addEventListener('click',async()=>{if(!emailEl.value.trim()){say('Digite seu e-mail primeiro.');return}try{await sendPasswordResetEmail(auth,emailEl.value.trim());say('Se a conta permitir recuperação por e-mail, a mensagem foi enviada. Confira spam/lixo eletrônico.')}catch(e){authError(e)}});
+onAuthStateChanged(auth,async user=>{if(user){say('Conta autenticada. Abrindo o jogo...');try{await enter(user)}catch(e){authError(e)}}});
+window.addEventListener('unhandledrejection',e=>{console.error('Erro assíncrono Dragon War:',e.reason);if(document.body.classList.contains('auth-locked') && e.reason?.code){authError(e.reason)}});
+// Integra estado do arquivo existente com o documento Firestore.
+window.gameSetCloudData=d=>{if(d)window.applyCloudPlayer?.(d)};
 </script>
 </body>
 </html>
