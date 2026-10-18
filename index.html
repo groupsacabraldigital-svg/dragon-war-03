@@ -908,6 +908,91 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 })();
 </script>
 
+<script>
+/* Dragon War: loja organizada, pets até nível 100 e decisões de recompensa */
+(function(){
+  const extraItems=[
+    {name:'Espada do Eclipse',emoji:'🌑',price:250000,currency:'coin',type:'Arma Mítica',category:'armas',attackBonus:900,unlockWorld:8},
+    {name:'Lâmina do Deus Dragão',emoji:'🐉',price:1800,currency:'gem',type:'Arma Divina',category:'armas',attackBonus:2500,unlockWorld:10},
+    {name:'Katana Estelar',emoji:'🌠',price:950,currency:'gem',type:'Arma Lendária',category:'armas',attackBonus:1200,unlockWorld:7},
+    {name:'Espada do Iniciante',emoji:'🗡️',price:1200,currency:'coin',type:'Arma',category:'armas',attackBonus:25},
+    {name:'Armadura de Ferro',emoji:'🛡️',price:1500,currency:'coin',type:'Armadura',category:'armaduras',defenseBonus:15},
+    {name:'Armadura Celestial',emoji:'✨',price:900,currency:'gem',type:'Armadura Mítica',category:'armaduras',defenseBonus:250,unlockWorld:8},
+    {name:'Armadura do Deus Dragão',emoji:'🐲',price:2200,currency:'gem',type:'Armadura Divina',category:'armaduras',defenseBonus:500,unlockWorld:10},
+    {name:'Poção de Vida',emoji:'❤️',price:180, currency:'coin',type:'Poção',category:'pocoes',heal:30},
+    {name:'Poção Suprema de Vida',emoji:'🧪',price:5,currency:'gem',type:'Poção Rara',category:'pocoes',heal:100},
+    {name:'Ração para Pet',emoji:'🍖',price:100,currency:'coin',type:'Ração',category:'racoes',petFood:true},
+    {name:'Ração Dourada',emoji:'🌟',price:3,currency:'gem',type:'Ração Especial',category:'racoes',petFood:true},
+    {name:'Ovo Comum de Pet',emoji:'🥚',price:800,currency:'coin',type:'Ovo de Pet',category:'pets',petEggTier:'comum'},
+    {name:'Ovo Épico de Pet',emoji:'🥚',price:12,currency:'gem',type:'Ovo Épico',category:'pets',petEggTier:'epico'},
+    {name:'Ovo Lendário de Pet',emoji:'🥚',price:40,currency:'gem',type:'Ovo Lendário',category:'pets',petEggTier:'lendario'}
+  ];
+  extraItems.forEach(x=>{if(!shop.some(y=>y.name===x.name))shop.push(x)});
+  const oldRenderShop=renderShop;
+  window.renderShop=function(){
+    renderPet();
+    const cats=['armas','armaduras','pocoes','racoes','pets','equipamentos','consumiveis','materiais','gemas','skins'];
+    const labels={armas:'⚔️ Armas',armaduras:'🛡️ Armaduras',pocoes:'❤️ Poções e vidas',racoes:'🍖 Rações',pets:'🥚 Pets e ovos',equipamentos:'🎒 Equipamentos',consumiveis:'🧪 Consumíveis',materiais:'📦 Materiais',gemas:'💎 Gemas',skins:'🎭 Skins'};
+    $('shopTabs').innerHTML=cats.map(c=>'<button class="tab '+(c===shopCategory?'active':'')+'" onclick="setShopCategory(\''+c+'\')">'+labels[c]+'</button>').join('');
+    if(shopCategory==='skins'){
+      $('shopGrid').innerHTML=skins.map(s=>{const owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;return '<div class="panel item"><div class="emoji">'+s.emoji+'</div><h3>'+s.name+'</h3><p>'+s.ability+'</p><div class="price">'+(owned?'POSSUÍDA':(s.currency==='gem'?'💎 ':'🪙 ')+fmt(s.price))+'</div><button class="equip" onclick="'+(owned?'equipSkin':'buySkin')+'(\''+s.id+'\')">'+(eq?'EQUIPADA':owned?'EQUIPAR':'COMPRAR')+'</button></div>'}).join('');
+    }else{
+      const items=shop.filter(x=>x.category===shopCategory&&(!x.unlockWorld||Number(state.unlockedLevel||1)>=x.unlockWorld));
+      $('shopGrid').innerHTML=items.map(it=>{const i=shop.indexOf(it);return '<div class="panel item"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==='gem'?'💎 ':'🪙 ')+fmt(it.price)+'</div><button class="buy" onclick="buyItem('+i+')">COMPRAR</button></div>'}).join('')||'<div class="panel">Nenhum item disponível nesta categoria.</div>';
+    }
+    const sh=document.querySelector('#loja h2[style*="color:#ffd47b"]');if(sh)sh.style.display='none';if($('skinShopGrid'))$('skinShopGrid').style.display='none';
+  };
+  window.setShopCategory=function(c){shopCategory=c;renderShop()};
+  const oldBuyItem=window.buyItem||buyItem;
+  window.buyItem=function(i){const it=shop[i];if(!it)return;const key=it.currency==='gem'?'gems':'coins';if((Number(state[key])||0)<it.price)return showToast('Recursos insuficientes.');
+    if(it.petEggTier){state[key]-=it.price;const egg=addPetEgg('loja',it.petEggTier);updateUI();renderPet();saveGame(false);showEggDecision(egg);return;}
+    if(it.heal){state[key]-=it.price;state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+it.heal);updateUI();saveGame(false);renderShop();return showToast('Poção usada: +'+it.heal+' de vida/energia.');}
+    oldBuyItem(i);
+  };
+  function showEggDecision(egg){
+    const t=(eggTypes&&eggTypes[egg.tier])?eggTypes[egg.tier].label:egg.tier;
+    const old=document.getElementById('eggDecisionDialog');if(old)old.remove();
+    const ov=document.createElement('div');ov.id='eggDecisionDialog';ov.style.cssText='position:fixed;inset:0;z-index:100001;background:#020617eF;display:flex;align-items:center;justify-content:center;padding:16px';
+    const box=document.createElement('div');box.style.cssText='width:min(420px,100%);background:#111827;color:#fff;border:1px solid #e4b65d;border-radius:16px;padding:22px;text-align:center';
+    box.innerHTML='<div style="font-size:54px">🥚</div><h2>OVO RECEBIDO!</h2><p>Você recebeu um Ovo '+t+'. O que deseja fazer?</p>';
+    const btn=(label,color,fn)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='width:100%;margin-top:10px;padding:12px;border:0;border-radius:9px;font-weight:800;background:'+color+';color:white';b.onclick=()=>{ov.remove();fn()};box.appendChild(b)};
+    btn('✅ ACEITAR E GUARDAR','#16803d',()=>{showToast('Ovo guardado na coleção de ovos.');renderPet();renderInventory();saveGame(false)});
+    btn('🎁 DOAR O OVO','#64748b',()=>{state.petEggs=state.petEggs.filter(e=>e.id!==egg.id);renderPet();renderInventory();saveGame(false);showToast('Ovo doado.')});
+    ov.appendChild(box);document.body.appendChild(ov);
+  }
+  const originalRescue=window.maybeRescuePet||maybeRescuePet;
+  window.maybeRescuePet=function(e){const before=state.petEggs.length;const r=originalRescue.apply(this,arguments);if(state.petEggs.length>before)showEggDecision(state.petEggs[state.petEggs.length-1]);return r};
+  const originalSpin=window.spinRoulette||spinRoulette;
+  window.spinRoulette=function(mode){const before=new Set((state.petEggs||[]).map(e=>e.id));originalSpin.apply(this,arguments);const egg=(state.petEggs||[]).find(e=>!before.has(e.id));if(egg)showEggDecision(egg)};
+  const originalDaily=window.dailyReward||dailyReward;
+  window.dailyReward=function(){const before=new Set((state.petEggs||[]).map(e=>e.id));originalDaily.apply(this,arguments);const egg=(state.petEggs||[]).find(e=>!before.has(e.id));if(egg)showEggDecision(egg)};
+  function rationCount(){return (state.inventory||[]).reduce((n,it)=>n+(it.petFood?Math.max(1,Number(it.quantity)||1):0),0)}
+  function consumeRation(amount){let left=amount;for(let i=(state.inventory||[]).length-1;i>=0&&left>0;i--){const it=state.inventory[i];if(!it.petFood)continue;const q=Math.max(1,Number(it.quantity)||1);if(q>left){it.quantity=q-left;left=0}else{left-=q;state.inventory.splice(i,1)}}return left===0}
+  window.renderPet=function(){const box=$('petDetails');if(!box)return;state.petCollection=Array.isArray(state.petCollection)?state.petCollection:[];state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos recebidos ('+state.petEggs.length+')</h3>';
+    if(!state.petEggs.length)html+='<p>Nenhum ovo no momento.</p>';else html+='<div class="grid4">'+state.petEggs.map(e=>{const t=eggTypes[e.tier]||eggTypes.comum;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">🥚</div><h3>Ovo '+t.label+'</h3><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">ACEITAR / CHOCAR</button><button class="equip" onclick="donatePetEgg(\''+e.id+'\')">DOAR</button></div>'}).join('')+'</div>';
+    html+='</div><hr style="margin:14px 0;border-color:#334155"><h3>🐾 Coleção ('+state.petCollection.length+')</h3>';
+    if(!state.petCollection.length)html+='<p>Você ainda não tem pets. Consiga um ovo e aceite para chocar.</p>';else html+='<div class="grid4">'+state.petCollection.map(p=>{const t=eggTypes[p.tier]||eggTypes.comum,lvl=Math.min(100,Math.max(1,Number(p.level)||1)),cost=10*lvl;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">'+(p.emoji||'🐲')+'</div><h3>'+p.name+'</h3><p>'+t.label+' • Nível '+lvl+'/100</p><p>⚔️ +'+(lvl*3)+'% ataque<br>🛡️ -'+lvl+'% dano recebido</p><button class="equip" onclick="setActivePet(\''+p.id+'\')">'+(state.activePetId===p.id?'✓ ATIVO':'USAR')+'</button><button class="buy" onclick="feedPetById(\''+p.id+'\')">UPAR • '+cost+' RAÇÕES</button><button class="equip" onclick="donatePet(\''+p.id+'\')">DOAR PET</button></div>'}).join('');
+    html+='</div><div class="panel" style="margin-top:12px"><h3>🍖 Rações disponíveis: '+rationCount()+'</h3><p>O custo aumenta conforme o nível: 10 rações × nível atual. Ex.: nível 1 custa 10; nível 20 custa 200.</p></div>';
+    box.innerHTML=html;
+  };
+  window.donatePetEgg=function(id){const e=state.petEggs.find(x=>x.id===id);if(!e)return;state.petEggs=state.petEggs.filter(x=>x.id!==id);renderPet();renderInventory();saveGame(false);showToast('Ovo doado.')};
+  window.donatePet=function(id){const p=state.petCollection.find(x=>x.id===id);if(!p)return;const ok=confirm('Doar '+p.name+'? Essa ação não pode ser desfeita.');if(!ok)return;state.petCollection=state.petCollection.filter(x=>x.id!==id);if(state.activePetId===id)state.activePetId=null;syncActivePet();renderPet();renderInventory();saveGame(false);showToast('Pet doado.')};
+  window.feedPetById=function(id){const p=state.petCollection.find(x=>x.id===id);if(!p)return;const lvl=Math.min(100,Math.max(1,Number(p.level)||1));if(lvl>=100)return showToast('Pet no nível máximo 100.');const cost=lvl*10;if(rationCount()<cost)return showToast('Você precisa de '+cost+' rações. Você tem '+rationCount()+'.');consumeRation(cost);p.level=lvl+1;p.xp=0;syncActivePet();renderPet();renderInventory();updateUI();saveGame(false);showToast(p.name+' subiu para o nível '+p.level+'!');};
+  window.feedPet=function(){syncActivePet();if(!state.pet)return showToast('Aceite um ovo e choque para obter um pet.');feedPetById(state.pet.id)};
+  /* Bloqueios visíveis: itens trancados explicam o requisito e não navegam para outra tela. */
+  document.addEventListener('click',function(ev){const el=ev.target.closest('.lock,[data-locked="true"],button[disabled],.locked');if(!el)return;ev.preventDefault();ev.stopPropagation();const req=el.getAttribute('data-requirement')||'Este conteúdo ainda está bloqueado. Continue avançando na campanha para desbloqueá-lo.';showModal('🔒 CONTEÚDO BLOQUEADO',req);closeModalAfterChoice();},true);
+  function closeModalAfterChoice(){const m=$('modal');if(!m)return;let b=m.querySelector('[data-lock-close]');if(!b){b=document.createElement('button');b.dataset.lockClose='1';b.textContent='FECHAR';b.className='buy';b.style.marginTop='12px';b.onclick=()=>closeModal();$('modalText').appendChild(document.createElement('br'));$('modalText').appendChild(b)}}
+  /* Melhorias de poder: preço e dano crescem a cada nível de melhoria. */
+  window.upgradeSkill=function(){state.skillUpgrades=state.skillUpgrades||{};const i=Number(state.selectedSkill||0),level=Number(state.skillUpgrades[i]||0),cost=Math.ceil(100*Math.pow(1.7,level));if((Number(state.coins)||0)<cost)return showToast('Melhorar este poder custa '+cost+' moedas.');state.coins-=cost;state.skillUpgrades[i]=level+1;state.powerBonus=(Number(state.powerBonus)||0)+Math.ceil(10+level*8);renderSkills();updateUI();saveGame(false);showToast('Poder melhorado para nível '+(level+1)+'. Dano aumentado; próxima melhoria: '+Math.ceil(100*Math.pow(1.7,level+1))+' moedas.')};
+  /* Recompensas e itens no inventário também podem ser aceitos ou doados. */
+  const baseInventory=window.renderInventory||renderInventory;
+  window.renderInventory=function(){baseInventory();const grid=$('inventoryGrid');if(!grid)return;const cards=grid.querySelectorAll('.panel.item');cards.forEach((card,i)=>{if(card.querySelector('[data-donate-item]'))return;const item=state.inventory[i];if(!item)return;const b=document.createElement('button');b.className='equip';b.dataset.donateItem='1';b.textContent='DOAR';b.onclick=()=>{if(!confirm('Doar '+item.name+'?'))return;state.inventory.splice(i,1);renderInventory();renderShop();saveGame(false);showToast('Item doado.')};card.appendChild(b)})};
+  /* Os itens bloqueados da loja são mostrados como bloqueados, sem compra acidental. */
+  const baseStartBattle=window.startBattle||startBattle;
+  window.startBattle=function(i){const e=enemies[i];if(e&&e.unlockWorld&&Number(state.unlockedLevel||1)<e.unlockWorld){showModal('🔒 FASE BLOQUEADA','Desbloqueie o Mundo '+e.unlockWorld+' para acessar esta batalha.');closeModalAfterChoice();return}return baseStartBattle.apply(this,arguments)};
+})();
+</script>
+
 </body>
 </html>
 <script>
