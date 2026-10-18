@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<title>Dragon War: Rise of Power</title>
+<style>
+:root{--bg:#080d18;--panel:#111a2b;--panel2:#202e48;--gold:#ffc247;--orange:#ff7a1a;--text:#f5f7ff;--muted:#aab6ce;--line:#34445f;--red:#ff7187;--green:#61e6a5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2a45 0,#080d18 60%);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{padding:20px 14px;text-align:center;border-bottom:1px solid var(--line);background:#080d18ed;position:sticky;top:0;z-index:3}.logo{font-weight:950;font-size:clamp(25px,5vw,40px);letter-spacing:2px;color:var(--gold)}.sub{color:var(--muted);letter-spacing:3px;font-size:12px}
+main{max-width:980px;margin:auto;padding:16px}.card{background:linear-gradient(145deg,#151f32,#0d1422);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:15px;box-shadow:0 12px 36px #0004}h1,h2,h3{margin-top:0}h2{color:var(--gold)}p{line-height:1.5}.muted{color:var(--muted)}label{display:block;margin:12px 0 6px;color:var(--muted);font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:#080f1d;color:var(--text);font:inherit}button{border:0;border-radius:11px;padding:12px 15px;font:700 14px system-ui;cursor:pointer;background:linear-gradient(100deg,var(--gold),var(--orange));color:#241405}button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}button.danger{background:#5c2333;color:#fff}button:disabled{opacity:.55}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:9px}.stat{padding:13px;border:1px solid var(--line);border-radius:12px;background:#0a1220}.stat strong{display:block;font-size:23px;color:var(--gold)}.notice{padding:11px;border-radius:10px;background:#0b1525;border:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere}.error{color:var(--red)}.success{color:var(--green)}.hidden{display:none!important}.small{font-size:12px}.hero{text-align:center;padding:22px 10px}.dragon{font-size:58px}.tag{display:inline-block;padding:5px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:12px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button{flex:1;min-width:100px}.player{padding:12px;border:1px solid var(--line);border-radius:12px;margin:9px 0;overflow-wrap:anywhere}.admin-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}.topline{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+@media(max-width:520px){main{padding:10px}.card{padding:14px}.row>*{min-width:100%}.logo{letter-spacing:1px}.sub{letter-spacing:1px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🐉 DRAGON WAR</div><div class="sub">RISE OF POWER · RPG DE FANTASIA</div></header>
+<main>
+<section id="authView" class="card">
+ <div class="hero"><div class="dragon">🐉</div><h1>Sua lenda começa aqui</h1><p class="muted">Entre ou crie sua conta para salvar o progresso online. Você também pode jogar como convidado.</p></div>
+ <label for="email">Gmail / e-mail</label><input id="email" type="email" autocomplete="email" placeholder="voce@email.com">
+ <label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" placeholder="Mínimo de 6 caracteres">
+ <div class="row" style="margin-top:14px"><button id="loginBtn">⚔️ Entrar na conta</button><button id="registerBtn" class="secondary">✦ Criar conta</button></div>
+ <button id="guestBtn" class="secondary" style="width:100%;margin-top:9px">Jogar sem conta</button>
+ <p id="authMessage" class="notice hidden"></p><p class="muted small">Conta online via Firebase. O convidado salva neste navegador ou na sessão anônima, conforme a conexão.</p>
+</section>
+<section id="gameView" class="hidden">
+ <div class="card hero"><div class="topline"><span class="tag" id="accountTag">Conta</span><button id="logoutBtn" class="secondary">Sair</button></div><div class="dragon">🛡️🐉</div><h1 id="playerTitle">Guerreiro</h1><p class="muted">Sua aventura começa agora.</p></div>
+ <div class="card"><h2>Personagem</h2><div class="grid"><div class="stat">Nível<strong id="levelStat">1</strong></div><div class="stat">XP<strong id="xpStat">0</strong></div><div class="stat">Moedas<strong id="coinsStat">100</strong></div><div class="stat">Vida<strong id="healthStat">100</strong></div></div>
+ <div class="grid" style="margin-top:12px"><button id="adventureBtn">⚔️ Aventura</button><button id="healBtn" class="secondary">💚 Curar (20 moedas)</button><button id="saveBtn" class="secondary">☁️ Salvar progresso</button></div><p id="gameMessage" class="notice">Prepare-se para a aventura!</p></div>
+ <div class="card"><h2>Menu do jogo</h2><div class="tabs"><button class="secondary" data-screen="home">Início</button><button class="secondary" data-screen="shop">Loja</button><button class="secondary" data-screen="powers">Poderes</button><button class="secondary" data-screen="ranking">Ranking</button><button class="secondary" data-screen="admin">Painel ADM</button></div>
+ <div id="screen-home"><h3>Missão atual</h3><p class="muted">Derrote criaturas, ganhe moedas e aumente seu nível.</p></div>
+ <div id="screen-shop" class="hidden"><h3>Loja</h3><p>Poção de cura — 20 moedas.</p><button id="shopHealBtn">Comprar poção</button><p class="muted small">Mais itens serão adicionados nas próximas versões.</p></div>
+ <div id="screen-powers" class="hidden"><h3>Poderes</h3><p>Explosão Arcana — custa 30 moedas e concede 50 XP.</p><button id="powerBtn">Usar poder</button></div>
+ <div id="screen-ranking" class="hidden"><h3>Ranking inicial</h3><p class="muted">O ranking global será habilitado depois de configurar as regras e o modelo de dados.</p></div>
+ <div id="screen-admin" class="hidden"><h3>Administração</h3><p class="muted">A área ADM só abre para contas autorizadas no Firestore em <code>admins/UID</code> com <code>ativo: true</code>.</p><button id="adminCheckBtn">Verificar acesso ADM</button><div id="adminArea" class="hidden"><div class="grid"><div class="stat">Jogadores<strong id="adminCount">—</strong></div></div><button id="refreshPlayersBtn" class="secondary" style="margin-top:10px">Atualizar jogadores</button><div id="playersList"></div></div><p id="adminMessage" class="notice hidden"></p></div>
+ </div>
+</section>
+</main>
+<footer>Dragon War: Rise of Power · Arquivo único HTML</footer>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,serverTimestamp,collection,getDocs,query,orderBy,limit} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+/* SUBSTITUA pelos dados do seu NOVO projeto Firebase. */
+const firebaseConfig={
+ apiKey:"AIzaSyALY21W_Cp_b-flYIm1B4JWqZP47KC4ri0",
+ authDomain:"dragon-war-rise-of-power-3.firebaseapp.com",
+ projectId:"dragon-war-rise-of-power-3",
+ storageBucket:"dragon-war-rise-of-power-3.firebasestorage.app",
+ messagingSenderId:"407121894319",
+ appId:"1:407121894319:web:65ea8404b721807f326d5a",
+ measurementId:"G-5WSQ6CVV0Q"
+};
+const ADMIN_EMAIL=""; // opcional: e-mail do administrador. A autorização real também exige admins/{UID} com ativo=true.
+const configOk=true;
+const $=id=>document.getElementById(id);let auth=null,db=null,guest=false;
+let player={nick:"Guerreiro",level:1,xp:0,coins:100,health:100};
+function msg(id,text,type=""){const e=$(id);e.textContent=text;e.className="notice "+type;e.classList.remove("hidden")}
+function errorText(e){const map={"auth/invalid-api-key":"A API key está incorreta. Confira a configuração do aplicativo Web.","auth/operation-not-allowed":"Ative este método em Authentication → Método de login.","auth/invalid-credential":"E-mail ou senha incorretos.","auth/invalid-email":"Digite um e-mail válido.","auth/weak-password":"A senha deve ter pelo menos 6 caracteres.","auth/email-already-in-use":"Esse e-mail já tem conta. Use Entrar.","auth/network-request-failed":"Falha de rede. Confira sua conexão."};return (map[e.code]||e.message||"Erro desconhecido")+" ("+(e.code||"erro")+")"}
+function render(){$("playerTitle").textContent=player.nick||"Guerreiro";$("levelStat").textContent=player.level;$("xpStat").textContent=player.xp;$("coinsStat").textContent=player.coins;$("healthStat").textContent=player.health}
+function showGame(user,isGuest=false){guest=isGuest||!!user?.isAnonymous;$("authView").classList.add("hidden");$("gameView").classList.remove("hidden");$("accountTag").textContent=guest?"Modo convidado":"Conta online";render()}
+function saveLocal(){try{localStorage.setItem("dragonWarSingle",JSON.stringify(player))}catch(e){}}
+async function loadPlayer(user){if(user&&!user.isAnonymous&&db){const r=doc(db,"players",user.uid),s=await getDoc(r);if(s.exists())player={...player,...s.data()};else await setDoc(r,{...player,uid:user.uid,createdAt:serverTimestamp(),updatedAt:serverTimestamp()})}else{try{const s=localStorage.getItem("dragonWarSingle");if(s)player={...player,...JSON.parse(s)}}catch(e){}}showGame(user,!!user?.isAnonymous)}
+async function signInCheck(){if(!configOk){msg("authMessage","Antes de entrar, preencha firebaseConfig com os dados do seu novo projeto Firebase.","error");return false}return true}
+$("loginBtn").onclick=async()=>{if(!(await signInCheck()))return;try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){msg("authMessage","Não foi possível entrar: "+errorText(e),"error")}};
+$("registerBtn").onclick=async()=>{if(!(await signInCheck()))return;const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6){msg("authMessage","Digite um e-mail válido e uma senha de pelo menos 6 caracteres.","error");return}try{await createUserWithEmailAndPassword(auth,email,password)}catch(e){msg("authMessage","Não foi possível criar a conta: "+errorText(e),"error")}};
+$("guestBtn").onclick=async()=>{if(configOk){try{await signInAnonymously(auth);return}catch(e){msg("authMessage","Falha no convidado: "+errorText(e)+". Confira se Anônimo está habilitado.","error");return}}showGame(null,true);msg("gameMessage","Modo convidado local. Configure Firebase para habilitar autenticação e salvamento online.")};
+$("logoutBtn").onclick=async()=>{if(auth)try{await signOut(auth)}catch(e){}$("gameView").classList.add("hidden");$("authView").classList.remove("hidden")};
+$("adventureBtn").onclick=()=>{const gain=20+Math.floor(Math.random()*31);player.coins+=gain;player.xp+=25;if(player.xp>=100){player.xp-=100;player.level++;player.health=100;player.coins+=50}$("gameMessage").textContent=`Vitória! +${gain} moedas e +25 XP.`;render();if(guest)saveLocal()};
+$("healBtn").onclick=()=>{if(player.coins<20){$("gameMessage").textContent="Você precisa de 20 moedas.";return}player.coins-=20;player.health=100;render();if(guest)saveLocal();$("gameMessage").textContent="Vida recuperada!"};
+$("shopHealBtn").onclick=()=>$("healBtn").click();
+$("powerBtn").onclick=()=>{if(player.coins<30){$("gameMessage").textContent="Você precisa de 30 moedas para usar o poder.";return}player.coins-=30;player.xp+=50;if(player.xp>=100){player.xp-=100;player.level++}render();if(guest)saveLocal();$("gameMessage").textContent="Explosão Arcana! +50 XP."};
+$("saveBtn").onclick=async()=>{if(guest){saveLocal();$("gameMessage").textContent="Progresso salvo neste navegador.";return}const u=auth?.currentUser;if(!u){$("gameMessage").textContent="Entre na conta para salvar.";return}try{await setDoc(doc(db,"players",u.uid),{...player,uid:u.uid,updatedAt:serverTimestamp()},{merge:true});$("gameMessage").textContent="Progresso salvo online."}catch(e){$("gameMessage").textContent="Falha ao salvar: "+errorText(e)}};
+document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>{["home","shop","powers","ranking","admin"].forEach(k=>$("screen-"+k).classList.toggle("hidden",b.dataset.screen!==k));if(b.dataset.screen==="admin")$("adminArea").classList.add("hidden")});
+$("adminCheckBtn").onclick=async()=>{const u=auth?.currentUser;if(!u||u.isAnonymous){msg("adminMessage","Entre com uma conta autenticada para verificar o acesso.","error");return}if(!db){msg("adminMessage","Configure o Firebase primeiro.","error");return}try{const snap=await getDoc(doc(db,"admins",u.uid));const ok=snap.exists()&&snap.data().ativo===true&&(!ADMIN_EMAIL||u.email?.toLowerCase()===ADMIN_EMAIL.toLowerCase());if(!ok){msg("adminMessage","Acesso negado. Sua conta não está autorizada como ADM.","error");return}$("adminArea").classList.remove("hidden");msg("adminMessage","Acesso ADM autorizado.","success");await loadAdminsPlayers()}catch(e){msg("adminMessage","Não foi possível verificar: "+errorText(e),"error")}};
+async function loadAdminsPlayers(){try{const s=await getDocs(query(collection(db,"players"),orderBy("updatedAt","desc"),limit(100)));$("adminCount").textContent=s.size;$("playersList").replaceChildren();s.forEach(d=>{const x=d.data(),el=document.createElement("div");el.className="player";const a=document.createElement("strong");a.textContent=x.nick||"Guerreiro";const p=document.createElement("p");p.textContent=`UID: ${d.id} · Nível ${x.level??1} · Moedas ${x.coins??0}`;el.append(a,p);$("playersList").append(el)})}catch(e){msg("adminMessage","Erro ao carregar jogadores. Verifique as regras Firestore: "+errorText(e),"error")}}
+$("refreshPlayersBtn").onclick=loadAdminsPlayers;
+if(configOk){try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);onAuthStateChanged(auth,async u=>{if(u){try{await loadPlayer(u)}catch(e){showGame(u,!!u.isAnonymous);msg("gameMessage","Não foi possível carregar o progresso: "+errorText(e),"error")}}})}catch(e){msg("authMessage","Erro ao iniciar Firebase: "+errorText(e),"error")}}
+</script>
+</body></html>
