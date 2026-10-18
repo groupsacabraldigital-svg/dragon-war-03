@@ -247,8 +247,8 @@ const shop=[
 {name:"Escudo Real",emoji:"🛡️",price:350,currency:"gem",type:"Escudo",category:"equipamentos"},
 {name:"Manto Sombrio",emoji:"🧥",price:150,currency:"gem",type:"Raro",category:"equipamentos"},
 {name:"Poção Superior",emoji:"🧪",price:2500,currency:"coin",type:"Poção",category:"consumiveis"},
-{name:"Espada Infernal",emoji:"🔥",price:2500,currency:"coin",type:"Arma Lendária",category:"equipamentos",attackBonus:50},
-{name:"Armadura do Dragão",emoji:"🐉",price:3000,currency:"coin",type:"Armadura Lendária",category:"equipamentos",defenseBonus:30},
+{name:"Espada Infernal",emoji:"🔥",price:10000,currency:"coin",type:"Arma Lendária",category:"equipamentos",attackBonus:50},
+{name:"Armadura do Dragão",emoji:"🐉",price:10000,currency:"coin",type:"Armadura Lendária",category:"equipamentos",defenseBonus:30},
 {name:"Baú Misterioso",emoji:"🎁",price:500,currency:"coin",type:"Baú",category:"materiais",mysteryChest:true},
 {name:"Ração Mágica",emoji:"🍖",price:250,currency:"coin",type:"Pet",category:"consumiveis",petFood:true},
 {name:"Poção de Mana",emoji:"🔵",price:1800,currency:"coin",type:"Consumível",category:"consumiveis"},
@@ -273,7 +273,7 @@ const skins=[
 {id:"cristal",name:"Dragão de Cristal",emoji:"💎",price:20,currency:"gem",ability:"Visual lendário"},
 {id:"solar",name:"Cavaleiro Solar",emoji:"☀️",price:3500,currency:"coin",ability:"Visual radiante"}];
 const skills=[["🔥","Sopro de Fogo",35],["⚡","Golpe de Raio",50],["❄️","Nova de Gelo",60],["🌀","Torrente do Vazio",80],["⚔️","Corte",20],["🗡️","Golpe Duplo",45],["🛡️","Aparar",0],["🐍","Golpe Serpente",70]];
-let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,energyUpdatedAt:Date.now(),points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};
+let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:0,gems:0,energy:100,energyUpdatedAt:Date.now(),points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};
 let battle=null,shopCategory="equipamentos";
 // Regeneração passiva: 1 ponto de energia por minuto, inclusive com o jogo fechado.
 const ENERGY_MAX=100, ENERGY_REGEN_MS=60*1000;
@@ -858,6 +858,91 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 </script>
 
 </body>
+
+<script>
+/* Ajustes pontuais solicitados: pets, progressão, login diário e consumíveis. */
+(function(){
+ const oldBuyItem=window.buyItem;
+ window.buyItem=function(i){
+   const it=shop[i];
+   if(!it)return;
+   const key=it.currency==="gem"?"gems":"coins";
+   if(state[key]<it.price)return showToast("Recursos insuficientes.");
+   state[key]-=it.price;
+   if(it.gemReward){state.gems+=it.gemReward;}
+   else if(it.petFood){state.inventory=state.inventory||[];state.inventory.push({id:"food_"+Date.now()+"_"+Math.random().toString(36).slice(2),name:it.name,emoji:it.emoji,type:"Ração",petFood:true});showToast("Ração guardada na mochila. Use Alimentar Pet para consumir 1 unidade.");}
+   else if(it.category==="consumiveis"){
+     state.battleConsumables=state.battleConsumables||{};
+     state.battleConsumables[it.name]=(Number(state.battleConsumables[it.name])||0)+1;
+     showToast(it.name+" guardado para usar durante a batalha.");
+   }
+   else if(it.mysteryChest){const roll=Math.random();if(roll<.55)state.coins+=500+Math.floor(Math.random()*1501);else if(roll<.8)state.gems+=5;else state.attackBonus=(state.attackBonus||0)+10;}
+   else {state.inventory=state.inventory||[];state.inventory.push({name:it.name,emoji:it.emoji,type:it.type,attackBonus:it.attackBonus||0,defenseBonus:it.defenseBonus||0});if(it.attackBonus)state.attackBonus=(state.attackBonus||0)+it.attackBonus;if(it.defenseBonus)state.defenseBonus=(state.defenseBonus||0)+it.defenseBonus;if(it.type==='Arma'||it.type==='Arma Lendária')state.weaponEquipped=it.name;}
+   updateUI();renderInventory();renderShop();saveGame(false);
+ };
+ const oldFeed=window.feedPet;
+ window.feedPet=function(){
+   const p=(state.petCollection||[]).find(x=>x.id===state.activePetId)||state.pet;
+   if(!p)return showToast("Escolha um pet primeiro.");
+   const inv=state.inventory||[],idx=inv.findIndex(x=>x.petFood);
+   if(idx<0)return showToast("Você não tem ração na mochila. Compre na loja.");
+   if((Number(p.level)||1)>=10)return showToast("Esse pet já atingiu o nível máximo!");
+   inv.splice(idx,1);p.xp=(Number(p.xp)||0)+1;p.level=Math.min(10,(Number(p.level)||1)+1);
+   state.pet=p;state.inventory=inv;
+   if(typeof syncActivePet==='function')syncActivePet();
+   renderPet();renderInventory();updateUI();saveGame(false);showToast("Ração consumida. "+p.name+" subiu para o nível "+p.level+".");
+ };
+ const oldRenderInventory=window.renderInventory;
+ window.renderInventory=function(){if(oldRenderInventory)oldRenderInventory();const el=$("inventoryGrid")||$("inventoryItems");if(el&&Array.isArray(state.inventory)){/* Mantém ração visível; consumíveis de batalha nunca entram na mochila. */}}
+ const oldStartBattle=window.startBattle;
+ window.startBattle=function(){oldStartBattle.apply(this,arguments);renderBattleConsumables();};
+ function renderBattleConsumables(){
+   const root=$("battleName")?.parentElement?.parentElement||$("battleEnemy")?.parentElement;
+   if(!root)return;
+   let box=$("battleConsumablesBox");if(!box){box=document.createElement('div');box.id='battleConsumablesBox';box.className='panel';box.style.cssText='margin:12px 0;padding:12px';root.appendChild(box);}
+   const stock=state.battleConsumables||{},items=shop.filter(x=>x.category==='consumiveis'&&(Number(stock[x.name])||0)>0);
+   box.innerHTML='<h3>🧪 Consumíveis da batalha</h3>'+(items.length?items.map(x=>'<button class="secondary" style="margin:4px" onclick="useBattleConsumable(\''+x.name.replace(/'/g,"\\'")+'\')">'+x.emoji+' '+x.name+' × '+stock[x.name]+'</button>').join(''):'<p>Você não tem consumíveis disponíveis. Compre na loja antes da batalha.</p>');
+ }
+ window.useBattleConsumable=function(name){
+   if(!battle)return showToast("Entre em uma batalha para usar consumíveis.");
+   const stock=state.battleConsumables||{};if(!(Number(stock[name])>0))return showToast("Consumível indisponível.");
+   const it=shop.find(x=>x.name===name);if(!it)return;
+   stock[name]--;if(stock[name]<=0)delete stock[name];
+   const nm=name.toLowerCase();
+   if(nm.includes('mana')||nm.includes('energia')){const before=state.energy;state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+35);state.energyUpdatedAt=Date.now();showToast('Energia recuperada: +'+(state.energy-before)+'.');}
+   else if(nm.includes('poção')||nm.includes('elixir')){if(typeof battle.playerHp==='number')battle.playerHp=Math.min(battle.maxPlayerHp||100,battle.playerHp+40);else state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+25);showToast('Consumível usado.');}
+   else {state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+15);showToast('Consumível usado: +15 energia.');}
+   updateBattle();updateUI();renderBattleConsumables();saveGame(false);
+ };
+ // A campanha nunca aumenta o nível por pontos ou por repetir uma fase.
+ const baseWin=window.winBattle;
+ window.winBattle=function(){
+   if(!battle)return;
+   const e=battle.enemy;
+   const oldLevel=Number(state.unlockedLevel)||1,oldPhase=Number(state.unlockedPhase)||1;
+   const replay=!!battle.isReplay || (Number(e.level)<oldLevel || (Number(e.level)===oldLevel&&Number(e.phase)<oldPhase));
+   const coins=Number(e.reward)||0;
+   state.coins+=coins;
+   if(!replay){state.gems+=Number(e.gems)||0;state.points+=Number(e.points)||0;state.level=1;state.rank='Iniciante';state.skillPoints=Number(state.skillPoints)||0;state.skillPoints++;}
+   if(state.activePetId){const pet=(state.petCollection||[]).find(p=>p.id===state.activePetId);if(pet){pet.petPoints=(Number(pet.petPoints)||0)+Math.max(1,Math.floor((Number(e.points)||10)/25));state.petPoints=(Number(state.petPoints)||0)+Math.max(1,Math.floor((Number(e.points)||10)/25));}}
+   if(!replay){if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1;}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1;}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1;}}
+   const finished=e.boss&&e.level===1&&!state.world1ChestClaimed;
+   if(finished){state.world1ChestClaimed=true;state.coins+=10000;state.gems+=1000;state.inventory.push({name:'Baú do Mundo 1',emoji:'🎁',type:'Baú',legendaryEgg:true});if(typeof addPetEgg==='function')addPetEgg('mundo1');showModal('🎁 BAÚ DO MUNDO 1','Você recebeu 10.000 moedas, 1.000 diamantes, uma caixa de armadura, armas e um ovo lendário. Bônus do chefão: +50.000 moedas, +5.000 diamantes e +50.000 pontos.');state.coins+=50000;state.gems+=5000;state.points+=50000;}
+   battle=null;updateUI();saveGame(false);renderInventory();renderShop();if(typeof renderBosses==='function')renderBosses();if(!finished)showToast(replay?'Fase repetida: você ganhou apenas moedas.':'Vitória! Progresso salvo.');
+ };
+ // Evita subir nível por pontos em qualquer atualização do ranking.
+ const rankFn=window.updateRank;window.updateRank=function(){state.level=1;state.rank='Iniciante';};
+ // Bônus de primeiro login: 5.000 moedas, 50 diamantes e um giro grátis.
+ function claimLoginBonus(){const today=new Date().toDateString(),key='dragonLoginBonus_'+(window.dragonUser?.uid||state.name||'player');if(localStorage.getItem(key)===today)return;localStorage.setItem(key,today);state.coins=(Number(state.coins)||0)+5000;state.gems=(Number(state.gems)||0)+50;state.rouletteDate='';state.rouletteFreeUsed=false;state.level=1;state.rank='Iniciante';updateUI();saveGame(false);showModal('🎁 BÔNUS DE LOGIN','Você recebeu 5.000 moedas, 50 diamantes e 1 giro grátis na Roleta da Sorte.');}
+ const oldLoadGame=window.loadGame;window.loadGame=function(){if(oldLoadGame)oldLoadGame.apply(this,arguments);state.level=1;state.rank='Iniciante';state.coins=Number(state.coins)||0;state.gems=Number(state.gems)||0;state.battleConsumables=state.battleConsumables||{};state.world1ChestClaimed=!!state.world1ChestClaimed;claimLoginBonus();updateUI();};
+ // Armas e armaduras poderosas custam no mínimo 10 mil moedas.
+ shop.forEach(it=>{if((String(it.type).toLowerCase().includes('arma')||String(it.type).toLowerCase().includes('lendária')||String(it.type).toLowerCase().includes('armadura'))&&it.currency==='coin')it.price=Math.max(10000,Number(it.price)||0);});
+ const oldRenderPet=window.renderPet;window.renderPet=function(){if(oldRenderPet)oldRenderPet();const pet=(state.petCollection||[]).find(p=>p.id===state.activePetId);if(pet){pet.damageBonus=Math.max(1,({comum:5,incomum:10, raro:20,epico:35,épico:35, lendario:50, lendário:50}[String(pet.tier||'comum').toLowerCase()]||5));}}
+ const oldAttack=window.attack;window.attack=function(){if(!battle)return;const pet=(state.petCollection||[]).find(p=>p.id===state.activePetId);const bonus=pet?Math.max(5,({comum:5,incomum:10,raro:20,epico:35,'épico':35,lendario:50,'lendário':50}[String(pet.tier||'comum').toLowerCase()]||5)):0;const before=battle.hp;if(oldAttack)oldAttack.apply(this,arguments);if(pet&&battle&&before>battle.hp){const extra=Math.floor((25+(Number(state.level)||1)*3)*bonus/100);battle.hp=Math.max(0,battle.hp-extra);updateBattle();if(battle.hp<=0)window.winBattle();}};
+ claimLoginBonus();
+})();
+</script>
+
 </html>
 <script>
 // Atualiza a energia automaticamente e salva quando houver regeneração.
