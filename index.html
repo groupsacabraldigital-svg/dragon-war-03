@@ -412,7 +412,7 @@ async function enter(user){
   // Abre o jogo imediatamente após o Firebase autenticar; a nuvem carrega em segundo plano.
   window.dragonUser=user;
   const localKey='dragonWarSave_'+user.uid;
-  const defaultState={uid:user.uid,name:(user.displayName||user.email.split('@')[0]).slice(0,24),level:1,rank:'Iniciante',coins:5000,gems:50,energy:100,energyMax:100,energyUpdatedAt:Date.now(),points:0,xp:0,skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:2,achievements:['login_bronze'],achievementStats:{wins:0,levelReached:1,pointsEarned:0,petsHatched:0},settings:{sfx:true,animations:true,music:false},selectedSkill:0,profileAvatar:'knight',profileAvatarEmoji:'🛡️',characterClass:'Guerreiro',weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial'};
+  const defaultState={uid:user.uid,name:(user.displayName||user.email.split('@')[0]).slice(0,24),level:1,rank:'Iniciante',coins:5000,gems:50,energy:100,energyMax:100,energyUpdatedAt:Date.now(),points:0,xp:0,skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:3,achievements:['login_bronze'],achievementStats:{wins:0,levelReached:1,pointsEarned:0,petsHatched:0},settings:{sfx:true,animations:true,music:false},selectedSkill:0,profileAvatar:'knight',profileAvatarEmoji:'🛡️',characterClass:'Guerreiro',weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial'};
   let localData=null;
   try { const raw=localStorage.getItem(localKey); if(raw) localData=JSON.parse(raw); } catch(e) { console.warn('Save local inválido',e); }
   window.restoreLocalBeforeCloud=localData||defaultState;
@@ -439,12 +439,12 @@ async function enter(user){
         const cloud=snap.data();
         // Migração única: todas as contas existentes começam a campanha novamente, sem apagar a conta.
         // O marcador no Firestore impede que o reinício aconteça em todo login.
-        if(Number(cloud.progressResetVersion||0)<2){
+        if(Number(cloud.progressResetVersion||0)<3){
           const fresh={
             uid:user.uid,name:(cloud.name||defaultState.name),level:1,rank:'Iniciante',coins:5000,gems:50,energy:100,energyMax:100,energyUpdatedAt:Date.now(),points:0,xp:0,
             skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],
             stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,
-            wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:2,
+            wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:3,
             achievements:['login_bronze'],achievementStats:{wins:0,levelReached:1,pointsEarned:0,petsHatched:0},settings:{sfx:true,animations:true,music:false},selectedSkill:0,
             profileAvatar:'knight',profileAvatarEmoji:'🛡️',profilePhoto:null,characterClass:'Guerreiro',weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial',friendCode:cloud.friendCode||null,
             friendInviteUsed:!!cloud.friendInviteUsed,friendInvitedBy:cloud.friendInvitedBy||null,createdAt:cloud.createdAt||serverTimestamp(),updatedAt:serverTimestamp()
@@ -972,7 +972,7 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
       $('shopGrid').innerHTML=skins.map(s=>{const owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;return '<div class="panel item"><div class="emoji">'+s.emoji+'</div><h3>'+s.name+'</h3><p>'+s.ability+'</p><div class="price">'+(owned?'POSSUÍDA':(s.currency==='gem'?'💎 ':'🪙 ')+fmt(s.price))+'</div><button class="equip" onclick="'+(owned?'equipSkin':'buySkin')+'(\''+s.id+'\')">'+(eq?'EQUIPADA':owned?'EQUIPAR':'COMPRAR')+'</button></div>'}).join('');
     }else{
       const items=shop.filter(x=>x.category===shopCategory);
-      $('shopGrid').innerHTML=items.map(it=>{const i=shop.indexOf(it),locked=!!(it.unlockWorld&&Number(state.unlockedLevel||1)<it.unlockWorld);return '<div class="panel item" style="'+(locked?'opacity:.72;border:1px solid #64748b':'')+'"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==='gem'?'💎 ':'🪙 ')+fmt(it.price)+'</div>'+(locked?'<p>🔒 Desbloqueia no mundo '+it.unlockWorld+'</p><button class="buy" onclick="showLockedShopItem('+it.unlockWorld+')">BLOQUEADO</button>':'<button class="buy" onclick="buyItem('+i+')">COMPRAR</button>')+'</div>'}).join('')||'<div class="panel">Nenhum item disponível nesta categoria.</div>';
+      $('shopGrid').innerHTML=items.map(it=>{const i=shop.indexOf(it),locked=false;return '<div class="panel item" style="'+(locked?'opacity:.72;border:1px solid #64748b':'')+'"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==='gem'?'💎 ':'🪙 ')+fmt(it.price)+'</div>'+(locked?'<p>🔒 Desbloqueia no mundo '+it.unlockWorld+'</p><button class="buy" onclick="showLockedShopItem('+it.unlockWorld+')">BLOQUEADO</button>':'<button class="buy" onclick="buyItem('+i+')">COMPRAR</button>')+'</div>'}).join('')||'<div class="panel">Nenhum item disponível nesta categoria.</div>';
     }
     const sh=document.querySelector('#loja h2[style*="color:#ffd47b"]');if(sh)sh.style.display='none';if($('skinShopGrid'))$('skinShopGrid').style.display='none';
   };
@@ -980,7 +980,7 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
   window.setShopCategory=function(c){shopCategory=c;renderShop()};
   const oldBuyItem=window.buyItem||buyItem;
   window.buyItem=function(i){const it=shop[i];if(!it)return;const key=it.currency==='gem'?'gems':'coins';if((Number(state[key])||0)<it.price)return showToast('Recursos insuficientes.');
-    if(it.unlockWorld&&Number(state.unlockedLevel||1)<it.unlockWorld)return showModal('🔒 ITEM BLOQUEADO','Avance até o mundo '+it.unlockWorld+' para comprar este item.');
+
     if(it.petEggTier){state[key]-=it.price;const egg=addPetEgg('loja',it.petEggTier);updateUI();renderPet();saveGame(false);showEggDecision(egg);return;}
     if(it.petFood){state[key]-=it.price;state.inventory=Array.isArray(state.inventory)?state.inventory:[];let stack=state.inventory.find(x=>x.petFood&&x.name===it.name);if(stack)stack.quantity=(Number(stack.quantity)||1)+(Number(it.rationQty)||1);else state.inventory.push({name:it.name,emoji:it.emoji,type:it.type,petFood:true,quantity:Number(it.rationQty)||1,purchased:true});updateUI();renderInventory();renderPet();saveGame(false);renderShop();return showToast('Comprou '+(Number(it.rationQty)||1)+' ração(ões). Só rações do inventário permitem upar pets.');}
     if(it.heal||it.energyRestore){state[key]-=it.price;state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+(Number(it.heal)||Number(it.energyRestore)));updateUI();saveGame(false);renderShop();return showToast('Consumível aplicado: +'+(Number(it.heal)||Number(it.energyRestore))+' vida/energia.');}
@@ -1030,6 +1030,78 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
   /* Os itens bloqueados da loja são mostrados como bloqueados, sem compra acidental. */
   const baseStartBattle=window.startBattle||startBattle;
   window.startBattle=function(i){const e=enemies[i];if(e&&e.unlockWorld&&Number(state.unlockedLevel||1)<e.unlockWorld){showModal('🔒 FASE BLOQUEADA','Desbloqueie o Mundo '+e.unlockWorld+' para acessar esta batalha.');closeModalAfterChoice();return}return baseStartBattle.apply(this,arguments)};
+})();
+</script>
+
+
+<script>
+/* Ajuste pontual: habilidades de pet por nível do jogador, com bônus reais; loja liberada. */
+(function(){
+  if(typeof state==='undefined')return;
+  const petSkillLevels={bite:2,guard:4,heal:6,fury:8};
+  const petSkillLabels={bite:'Mordida Forte',guard:'Escamas Guardiãs',heal:'Vínculo Vital',fury:'Fúria Dracônica'};
+  const oldRenderPetSkills=window.renderPetSkills;
+  if(typeof oldRenderPetSkills==='function'){
+    window.renderPetSkills=function(){
+      const box=document.getElementById('petSkillNodes');
+      if(!box)return oldRenderPetSkills.apply(this,arguments);
+      state.petSkills=state.petSkills||{};
+      const level=Math.max(1,Number(state.level)||1);
+      const costs={bite:2,guard:3,heal:4,fury:6};
+      const desc={bite:'+5% de ataque do pet por nível do jogador.',guard:'Reduz em 10% o dano recebido.',heal:'Recupera 10% da vida máxima ao vencer batalhas.',fury:'+25% de ataque adicional do pet.'};
+      box.innerHTML=Object.keys(petSkillLevels).map(id=>{
+        const req=petSkillLevels[id],owned=!!state.petSkills[id],can=level>=req;
+        return '<div class="panel" style="padding:10px"><h3>'+({bite:'🦷',guard:'🛡️',heal:'💚',fury:'🔥'}[id])+' '+petSkillLabels[id]+'</h3><p class="stats">'+desc[id]+'<br>Requer nível do jogador '+req+'<br>'+(owned?'Desbloqueada':can?'Custo: '+costs[id]+' pontos de pet':'🔒 Desbloqueia no nível '+req)+'</p><button class="buy" '+(owned||!can?'disabled':'')+' onclick="buyPetSkill(\''+id+'\')">'+(owned?'DESBLOQUEADA':can?'DESBLOQUEAR':'BLOQUEADA')+'</button></div>';
+      }).join('');
+      const pts=document.getElementById('petSkillPoints');if(pts)pts.textContent=state.petSkillPoints||0;
+    };
+  }
+  window.buyPetSkill=function(id){
+    const req=petSkillLevels[id],cost={bite:2,guard:3,heal:4,fury:6}[id];
+    if(!req)return;
+    if((Number(state.level)||1)<req)return showToast('Esta habilidade desbloqueia no nível '+req+' do jogador.');
+    state.petSkills=state.petSkills||{};
+    if(state.petSkills[id])return showToast('Esta habilidade já foi desbloqueada.');
+    if((Number(state.petSkillPoints)||0)<cost)return showToast('Você precisa de '+cost+' pontos de pet.');
+    state.petSkillPoints-=cost;state.petSkills[id]=true;
+    if(typeof renderPetSkills==='function')renderPetSkills();
+    if(typeof updateUI==='function')updateUI();if(typeof saveGame==='function')saveGame(false);
+    showToast(petSkillLabels[id]+' desbloqueada! Bônus aplicado nas batalhas.');
+  };
+  const oldAttack=window.attack;
+  if(typeof oldAttack==='function')window.attack=function(){
+    const result=oldAttack.apply(this,arguments);
+    const skills=state.petSkills||{},p=state.pet;
+    if(p&&window.battle&&window.battle.hp>0){
+      let extra=0;
+      if(skills.bite)extra+=Math.floor((25+(Number(state.level)||1)*3)*0.05*(Number(state.level)||1));
+      if(skills.fury)extra+=Math.floor((25+(Number(state.level)||1)*3)*0.25);
+      if(extra>0&&typeof window.battle.hp==='number'){
+        window.battle.hp=Math.max(0,window.battle.hp-extra);
+        const hp=document.getElementById('enemyHpText');if(hp)hp.textContent=window.battle.hp;
+        const bar=document.getElementById('enemyHp');if(bar&&window.battle.max)bar.style.width=(window.battle.hp/window.battle.max*100)+'%';
+        if(window.battle.hp<=0&&typeof winBattle==='function')winBattle();
+      }
+    }
+    return result;
+  };
+  const oldWin=window.winBattle;
+  if(typeof oldWin==='function')window.winBattle=function(){
+    const hadPet=!!state.pet,heal=state.petSkills&&state.petSkills.heal;
+    const before=Number(state.hp)||0, max=Number(state.maxHp)||100;
+    const result=oldWin.apply(this,arguments);
+    if(hadPet&&heal){state.hp=Math.min(max,(Number(state.hp)||before)+Math.ceil(max*.1));if(typeof updateUI==='function')updateUI();if(typeof saveGame==='function')saveGame(false);}
+    return result;
+  };
+  const oldEnemy=window.enemyTurn;
+  if(typeof oldEnemy==='function')window.enemyTurn=function(){
+    if(state.petSkills&&state.petSkills.guard&&window.battle&&typeof enemies!=='undefined'){
+      const e=enemies[window.battle.index];if(e){const d=e.dmg;e.dmg=Math.floor((Number(d)||0)*.9);try{return oldEnemy.apply(this,arguments)}finally{e.dmg=d;}}
+    }
+    return oldEnemy.apply(this,arguments);
+  };
+  if(typeof renderPetSkills==='function')renderPetSkills();
+  if(typeof renderShop==='function')renderShop();
 })();
 </script>
 
@@ -1451,7 +1523,21 @@ renderPet();
   window.startTraining=function(){window.trainingMode=true;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};openScreen('combate');const combat=$('combate');if(!combat)return;const fight=combat.querySelector('.combat');if(fight)fight.style.display='none';let d=$('trainingDummyOnly');if(!d){d=document.createElement('div');d.id='trainingDummyOnly';d.className='panel';d.style.cssText='text-align:center;padding:28px;margin-top:12px';d.innerHTML='<div style="font-size:100px">🎯</div><h2>BONECO DE TREINO</h2><div class="hpbig"><i id="trainingDummyBar" style="display:block;width:100%"></i></div><p>Resistência do alvo: <b id="trainingDummyHp">200</b></p><p class="stats">Treino sem batalha de campanha e sem recompensas de inimigos.</p><button class="fight" onclick="attack()">⚔️ TESTAR ATAQUE</button><button class="buy" onclick="resetTrainingDummy()">🔄 REINICIAR BONECO</button>';combat.appendChild(d)}d.style.display='block';if($('trainingStatus'))$('trainingStatus').textContent='Treinamento iniciado. O alvo é apenas um boneco de treino.';if($('battleEnemy'))$('battleEnemy').textContent='🎯';};
   window.resetTrainingDummy=function(){window.trainingMode=true;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};if($('trainingDummyOnly'))$('trainingDummyOnly').style.display='block';if($('trainingDummyHp'))$('trainingDummyHp').textContent='200';if($('trainingDummyBar'))$('trainingDummyBar').style.width='100%';const f=$('combate')?.querySelector('.combat');if(f)f.style.display='none';if($('trainingStatus'))$('trainingStatus').textContent='Boneco reiniciado.'};
   // Inventário separado em categorias; itens de equipamento ficam equipáveis individualmente.
-  window.renderInventory=function(){const s=skins.find(x=>x.id===state.equippedSkin)||skins[0];if($('equippedSkin'))$('equippedSkin').textContent=s.emoji;if($('equippedSkinName'))$('equippedSkinName').textContent=s.name;if($('equippedSkinAbility'))$('equippedSkinAbility').textContent='Habilidade: '+s.ability;const grid=$('inventoryGrid');if(!grid)return;const items=Array.isArray(state.inventory)?state.inventory:[];const cat=i=>{const t=String(i.type||'').toLowerCase(),n=String(i.name||'').toLowerCase();if(t.includes('escudo')||n.includes('escudo'))return '🛡️ Escudos';if(t.includes('armadura')||n.includes('armadura'))return '🥋 Armaduras';if(t.includes('arma')||i.attackBonus)return '⚔️ Armas';if(i.petFood||t.includes('ração')||n.includes('ração'))return '🍖 Rações';if(i.tempBuff||i.heal||i.energyRestore||i.consumable)return '🧪 Consumíveis';if(t.includes('material')||n.includes('fragmento'))return '🔮 Materiais';if(i.petArmor)return '🐾 Equipamento de pet';return '📦 Outros'};const groups=['⚔️ Armas','🥋 Armaduras','🛡️ Escudos','🧪 Consumíveis','🍖 Rações','🔮 Materiais','🐾 Equipamento de pet','📦 Outros'];grid.innerHTML=groups.map(g=>{const subset=items.map((it,i)=>({it,i})).filter(x=>cat(x.it)===g);return '<section style="grid-column:1/-1;margin:10px 0"><h2>'+g+' ('+subset.length+')</h2><div class="grid4">'+(subset.length?subset.map(({it,i})=>'<article class="panel item"><div class="emoji">'+(it.emoji||'📦')+'</div><h3>'+it.name+'</h3><p class="stats">'+(it.type||'Item')+(it.quantity?' • Quantidade: '+it.quantity:'')+(it.equipped?' • EQUIPADO':'')+'</p>'+(['⚔️ Armas','🥋 Armaduras','🛡️ Escudos'].includes(g)?'<button class="equip" onclick="toggleKitItem('+i+')">'+(it.equipped?'DESEQUIPAR':'EQUIPAR NO KIT')+'</button>':'')+((it.tempBuff||it.heal||it.energyRestore)?'<button class="buy" onclick="useInventoryMaterial('+i+')">USAR NA BATALHA</button>':'')+'<button class="equip" onclick="donateKitItem('+i+')">DOAR</button></article>').join(''):'<p class="stats">Nenhum item nesta categoria.</p>')+'</div></section>'}).join('')+skins.filter(x=>state.skinsOwned.includes(x.id)).map(x=>'<article class="panel item"><div class="emoji">'+x.emoji+'</div><h3>'+x.name+'</h3><button class="equip" onclick="equipSkin(\''+x.id+'\')">'+(state.equippedSkin===x.id?'✓ EQUIPADA':'EQUIPAR SKIN')+'</button></article>').join('')};
+  window.renderInventory=function(){const s=skins.find(x=>x.id===state.equippedSkin)||skins[0];if($('equippedSkin'))$('equippedSkin').textContent=s.emoji;if($('equippedSkinName'))$('equippedSkinName').textContent=s.name;if($('equippedSkinAbility'))$('equippedSkinAbility').textContent='Habilidade: '+s.ability;const grid=$('inventoryGrid');if(!grid)return;const items=Array.isArray(state.inventory)?state.inventory:[];const cat=i=>{const t=String(i.type||'').toLowerCase(),n=String(i.name||'').toLowerCase();if(t.includes('escudo')||n.includes('escudo'))return '🛡️ Escudos';if(t.includes('armadura')||n.includes('armadura'))return '🥋 Armaduras';if(t.includes('arma')||i.attackBonus)return '⚔️ Armas';if(i.petFood||t.includes('ração')||n.includes('ração'))return '🍖 Rações';if(i.tempBuff||i.heal||i.energyRestore||i.consumable)return '🧪 Consumíveis';if(t.includes('material')||n.includes('fragmento'))return '🔮 Materiais';if(i.petArmor)return '🐾 Equipamento de pet';return '📦 Outros'};const groups=['⚔️ Armas','🥋 Armaduras','🛡️ Escudos','🧪 Consumíveis','🍖 Rações','🔮 Materiais','🐾 Equipamento de pet','📦 Outros'];grid.innerHTML=groups.map(g=>{const subset=items.map((it,i)=>({it,i})).filter(x=>cat(x.it)===g);return '<section style="grid-column:1/-1;margin:10px 0"><h2>'+g+' ('+subset.length+')</h2><div class="grid4">'+(subset.length?subset.map(({it,i})=>'<article class="panel item"><div class="emoji">'+(it.emoji||'📦')+'</div><h3>'+it.name+'</h3><p class="stats">'+(it.type||'Item')+(it.quantity?' • Quantidade: '+it.quantity:'')+(it.equipped?' • EQUIPADO':'')+'</p>'+(['⚔️ Armas','🥋 Armaduras','🛡️ Escudos'].includes(g)?'<button class="equip" onclick="toggleKitItem('+i+')">'+(it.equipped?'DESEQUIPAR':'EQUIPAR NO KIT')+'</button>':'')+((it.mysteryChest||/baú|bau|caixa de equipamentos/i.test(it.name||''))?'<button class="buy" onclick="openInventoryChest('+i+')">🎁 ABRIR</button>':'')+((it.tempBuff||it.heal||it.energyRestore)?'<button class="buy" onclick="useInventoryMaterial('+i+')">USAR NA BATALHA</button>':'')+'<button class="equip" onclick="donateKitItem('+i+')">DOAR</button></article>').join(''):'<p class="stats">Nenhum item nesta categoria.</p>')+'</div></section>'}).join('')+skins.filter(x=>state.skinsOwned.includes(x.id)).map(x=>'<article class="panel item"><div class="emoji">'+x.emoji+'</div><h3>'+x.name+'</h3><button class="equip" onclick="equipSkin(\''+x.id+'\')">'+(state.equippedSkin===x.id?'✓ EQUIPADA':'EQUIPAR SKIN')+'</button></article>').join('')};
+  window.openInventoryChest=function(i){
+    const it=state.inventory[i];if(!it||!(it.mysteryChest||/baú|bau|caixa de equipamentos/i.test(it.name||'')))return showToast('Esse baú ou caixa não está mais no inventário.');
+    if(!confirm('Abrir '+it.name+' e receber uma recompensa aleatória? O baú/caixa será consumido.'))return;
+    state.inventory.splice(i,1);
+    let reward,roll=Math.random();
+    if(roll<.30){const n=1000+Math.floor(Math.random()*4001);state.coins=(Number(state.coins)||0)+n;reward={emoji:'🪙',text:'+'+n.toLocaleString('pt-BR')+' moedas'};}
+    else if(roll<.52){const n=5+Math.floor(Math.random()*21);state.gems=(Number(state.gems)||0)+n;reward={emoji:'💎',text:'+'+n+' diamantes'};}
+    else if(roll<.75){const n=1+Math.floor(Math.random()*3);state.inventory.push({name:'Ração Mágica',emoji:'🍖',type:'Ração',petFood:true,quantity:n});reward={emoji:'🍖',text:n+' rações mágicas'};}
+    else if(roll<.92){const n=50+Math.floor(Math.random()*151);state.inventory.push({name:'Equipamento do Baú',emoji:'⚔️',type:'Arma',attackBonus:n});reward={emoji:'⚔️',text:'arma especial com +'+n+' de ataque'};}
+    else {const n=1+Math.floor(Math.random()*3);state.points=(Number(state.points)||0)+n;reward={emoji:'✨',text:'+'+n+' pontos de poder'};}
+    updateUI();renderInventory();renderShop();saveGame(false);
+    if(typeof showModal==='function')showModal('🎁 RECOMPENSA RECEBIDA!',reward.emoji+' Você abriu '+it.name+' e recebeu '+reward.text+'. O baú/caixa foi removido do inventário.');
+    else showToast('Recompensa recebida: '+reward.text);
+  };
   window.toggleKitItem=function(i){const it=state.inventory[i];if(!it)return;const type=String(it.type||'').toLowerCase(),name=String(it.name||'').toLowerCase(),slot=type.includes('escudo')||name.includes('escudo')?'shield':type.includes('armadura')||name.includes('armadura')?'armor':'weapon';it.equipped=!it.equipped;if(it.equipped){state.inventory.forEach((x,j)=>{if(i===j)return;const t=String(x.type||'').toLowerCase(),n=String(x.name||'').toLowerCase(),sl=t.includes('escudo')||n.includes('escudo')?'shield':t.includes('armadura')||n.includes('armadura')?'armor':(t.includes('arma')||x.attackBonus)?'weapon':'';if(sl===slot)x.equipped=false});if(slot==='weapon')state.weaponEquipped=it.name;if(slot==='armor')state.armorEquipped=it.name}renderInventory();updateUI();saveGame(false);showToast(it.equipped?'Item equipado no kit.':'Item removido do kit.')};
   window.donateKitItem=function(i){const it=state.inventory[i];if(!it||!confirm('Doar '+it.name+'?'))return;state.inventory.splice(i,1);renderInventory();renderShop();saveGame(false)};
   window.useInventoryMaterial=function(i){const it=state.inventory[i];if(!it)return;if(it.tempBuff){state.battleBuffs=state.battleBuffs||{};state.battleBuffs[it.tempBuff]={amount:Number(it.buffAmount)||.25,battles:1}}else if(it.heal){state.battleHeal=Number(it.heal)}else if(it.energyRestore){state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+Number(it.energyRestore))}else return showToast('Este item não tem efeito de consumível.');if(Number(it.quantity)>1)it.quantity--;else state.inventory.splice(i,1);renderInventory();updateUI();saveGame(false);showToast('Item usado e consumido. Compre outro para usar novamente.')};
@@ -1590,5 +1676,39 @@ renderPet();
  ];let panel=$('worldPowerOptions');if(!panel){panel=document.createElement('section');panel.id='worldPowerOptions';panel.className='panel';grid.parentNode.appendChild(panel);}panel.innerHTML='<h3>🌍 Poderes desbloqueados por mundo</h3><p>Mundo atual: '+world+'</p><div class="grid4">'+extras.map(x=>'<article class="panel item" style="padding:10px"><div class="emoji">'+x.icon+'</div><h3>'+x.name+'</h3><p>'+x.desc+'</p><p>⭐ '+x.cost+' pontos</p>'+(world>=x.w?'<button class="buy" onclick="unlockWorldPower('+x.w+','+x.cost+',\''+x.name.replace(/'/g,'')+'\')">DESBLOQUEAR</button>':'<p>🔒 Desbloqueia no Mundo '+x.w+'</p>')+'</article>').join('')+'</div>';};
  window.unlockWorldPower=function(world,cost,name){if((Number(state.world)||Number(state.currentWorld)||1)<world)return showToast('Avance até o Mundo '+world+' para desbloquear.');state.unlockedWorldPowers=state.unlockedWorldPowers||[];if(state.unlockedWorldPowers.includes(name))return showToast('Esse poder já foi desbloqueado.');if((Number(state.points)||0)<cost)return showToast('Você precisa de '+cost+' pontos.');state.points-=cost;state.unlockedWorldPowers.push(name);updateUI();saveGame(false);renderSkills();showToast(name+' desbloqueado!');};
  if(typeof window.renderPet==='function')window.renderPet();if(typeof window.renderSkills==='function')window.renderSkills();
+})();
+</script>
+
+
+<script>
+/* Migração de campanha v3: cada conta existente é zerada uma única vez ao entrar.
+   O reset é salvo no Firestore pelo fluxo de login já existente. */
+(function(){
+ const worldOf=()=>Math.max(1,Number(state.world)||Number(state.currentWorld)||Math.ceil(Math.max(1,Number(state.unlockedLevel)||1)/10));
+ const itemWorld={
+  'Lâmina Celestial':2,'Espada Infernal':2,'Lâmina Rúnica':3,
+  'Armadura Rei Dragão':2,'Escudo Real':2,'Manto Sombrio':2,
+  'Armadura do Dragão':3,'Cocar de Dragão':4,'Elixir Ancestral':4,'Amuleto do Caos':3,'Botas do Viajante':2
+ };
+ // Equipamentos de mundos anteriores perdem eficiência ao avançar; o mundo atual define o multiplicador.
+ window.getWorldCombatMultiplier=function(itemWorldLevel){const w=worldOf(),iw=Math.max(1,Number(itemWorldLevel)||1);return iw>=w?1:Math.pow(0.35,w-iw);};
+ const originalRenderShop=window.renderShop;
+ if(typeof originalRenderShop==='function')window.renderShop=function(){
+  shop.forEach(it=>{if(itemWorld[it.name])it.unlockWorld=itemWorld[it.name];else if(!it.unlockWorld){
+    if(/Lâmina Inicial|Escudo de Madeira|Ração Mágica|Baú Misterioso|Poção Superior|Poção de Mana|Pergaminho|10 Gemas/.test(it.name))it.unlockWorld=1;
+    else if(/Espada|Armadura|Escudo|Manto|25 Gemas/.test(it.name))it.unlockWorld=2;
+    else if(/Lendária|Dragão|Lâmina Rúnica|60 Gemas/.test(it.name))it.unlockWorld=3;
+    else it.unlockWorld=2;
+  }});
+  return originalRenderShop.apply(this,arguments);
+ };
+ const originalStart=window.startBattle;
+ if(typeof originalStart==='function')window.startBattle=function(i){
+  const w=worldOf();
+  // Fases/inimigos escalam por mundo. As recompensas também crescem, sem alterar o catálogo original.
+  const originals=enemies.map(e=>({hp:e.hp,dmg:e.dmg,reward:e.reward,gems:e.gems,points:e.points}));
+  enemies.forEach((e,j)=>{const scale=Math.pow(3.2,w-1);e.hp=Math.round(originals[j].hp*scale);e.dmg=Math.round(originals[j].dmg*scale);e.reward=Math.round(originals[j].reward*Math.pow(1.8,w-1));e.gems=Math.max(1,Math.round(originals[j].gems*Math.pow(1.35,w-1)));e.points=Math.round(originals[j].points*Math.pow(1.7,w-1));});
+  try{return originalStart.apply(this,arguments);}finally{enemies.forEach((e,j)=>Object.assign(e,originals[j]));}
+ };
 })();
 </script>
