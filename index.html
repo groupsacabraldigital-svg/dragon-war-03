@@ -132,6 +132,39 @@ body.landing-only .title{font-size:clamp(32px,9vw,48px)}
 body.landing-only .landing-profile{bottom:38px;max-height:33%;}
 }
 </style>
+
+/* Final gameplay presentation: keep the cinematic title-screen atmosphere after entering the game. */
+body.game-started .hero-actions{display:none!important}
+body.game-started .main{
+  min-height:calc(100vh - 70px);
+  background:
+    radial-gradient(ellipse at 78% 14%,rgba(142,72,31,.23),transparent 35%),
+    radial-gradient(ellipse at 18% 75%,rgba(22,66,105,.24),transparent 42%),
+    linear-gradient(135deg,#030711 0%,#0a1423 48%,#050912 100%);
+  position:relative;
+}
+body.game-started .main:before{
+  content:"";position:fixed;inset:62px 0 0;pointer-events:none;z-index:0;opacity:.45;
+  background:radial-gradient(circle at 82% 16%,rgba(255,190,105,.15),transparent 18%),
+             linear-gradient(90deg,transparent 0%,rgba(5,10,20,.08) 55%,rgba(0,0,0,.18) 100%);
+}
+body.game-started .main>.screen{position:relative;z-index:1}
+body.game-started .section-title{color:#f2d39a;text-shadow:0 2px 18px #d17a3155;letter-spacing:1.4px}
+body.game-started .panel,body.game-started .tree,body.game-started .arena,
+body.game-started .boss,body.game-started .shop-card{
+  background:linear-gradient(145deg,rgba(16,29,46,.96),rgba(4,10,20,.97));
+  border-color:#655033;box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+body.game-started .sidebar{background:linear-gradient(180deg,#081321,#030711);border-color:#4b3b27}
+body.game-started .nav button.active{border-color:#e0b563;box-shadow:inset 3px 0 #e0b563;background:linear-gradient(90deg,#4b3017,#111a27);color:#ffe3a3}
+body.game-started #home .landing-hero{min-height:220px;height:auto;border:1px solid #73532d;border-radius:10px;background:radial-gradient(ellipse at 78% 30%,#60321d 0%,#1a2638 34%,#070d18 72%,#02050b 100%);overflow:hidden}
+body.game-started #home .hero-center{position:relative;left:auto;top:auto;transform:none;width:auto;padding:34px 28px;text-align:left}
+body.game-started #home .title{font-size:clamp(30px,4vw,52px);color:#fff0ca;text-shadow:0 4px 24px #ff873766}
+body.game-started #home .subtitle{color:#d7b98a}
+body.game-started #home .landing-profile{position:relative;right:auto;bottom:auto;width:auto;margin:14px 0 0;border:1px solid #73532d;border-radius:10px;background:#050a14d9}
+body.game-started #home .landing-profile .card{background:linear-gradient(145deg,#101a29ed,#050a12f5)}
+@media(max-width:760px){body.game-started .main{padding:10px}body.game-started #home .hero-center{padding:25px 16px}body.game-started #home .landing-profile{margin:10px 0 0}body.game-started .main:before{inset:54px 0 0}}
+
 </head>
 <body class="auth-locked">
 <div id="authGate"><div class="authbox"><h1>🐉 DRAGON WAR</h1>
@@ -198,14 +231,27 @@ const skins=[
 {id:"dragao",name:"Dragão Sombrio",emoji:"🐉",price:10,currency:"gem",ability:"+15 dano"},
 {id:"fogo",name:"Guardião de Fogo",emoji:"🔥",price:8,currency:"gem",ability:"+10% moedas"}];
 const skills=[["🔥","Sopro de Fogo",35],["⚡","Golpe de Raio",50],["❄️","Nova de Gelo",60],["🌀","Torrente do Vazio",80],["⚔️","Corte",20],["🗡️","Golpe Duplo",45],["🛡️","Aparar",0],["🐍","Golpe Serpente",70]];
-let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};
+let state={name:"Gabriel Cabral",level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,energyUpdatedAt:Date.now(),points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};
 let battle=null,shopCategory="equipamentos";
+// Regeneração passiva: 1 ponto de energia por minuto, inclusive com o jogo fechado.
+const ENERGY_MAX=100, ENERGY_REGEN_MS=60*1000;
+function regenerateEnergy(){
+ const now=Date.now();
+ let current=Math.max(0,Math.min(ENERGY_MAX,Number(state.energy)||0));
+ let last=Number(state.energyUpdatedAt)||now;
+ if(current>=ENERGY_MAX){state.energy=ENERGY_MAX;state.energyUpdatedAt=now;return false;}
+ const elapsed=Math.max(0,now-last), gained=Math.floor(elapsed/ENERGY_REGEN_MS);
+ if(gained<=0)return false;
+ const before=current; state.energy=Math.min(ENERGY_MAX,current+gained);
+ state.energyUpdatedAt=state.energy>=ENERGY_MAX?now:last+gained*ENERGY_REGEN_MS;
+ return state.energy!==before;
+}
 
 function $(id){return document.getElementById(id)} function fmt(n){return Number(n||0).toLocaleString("pt-BR")}
 function showToast(t){let x=$("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>x.classList.remove("show"),2400)}
 function openScreen(id,btn){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");if(id==="ranking")renderRanking();if(id==="loja")renderShop();if(id==="inventario")renderInventory()}
 function updateRank(){let p=state.points;if(p>=10000)state.rank="Lendário";else if(p>=5000)state.rank="Elite";else if(p>=2500)state.rank="Mestre";else if(p>=1000)state.rank="Profissional";else if(p>=500)state.rank="Avançado";else if(p>=200)state.rank="Intermediário";else state.rank="Iniciante"}
-function updateUI(){updateRank();$("topName").textContent=state.name;$("topLevel").textContent=state.level;$("topRankBadge").textContent="🏅 "+state.rank.toUpperCase();$("coins").textContent=fmt(state.coins);$("gems").textContent=fmt(state.gems);$("energy").textContent=state.energy+"/100";$("homeProfile").textContent=state.name+" • Nível "+state.level;$("myRankBig").textContent="🏅 "+state.rank.toUpperCase();$("myRankPoints").textContent=fmt(state.points)+" pontos";$("nameInput").value=state.name}
+function updateUI(){regenerateEnergy();updateRank();$("topName").textContent=state.name;$("topLevel").textContent=state.level;$("topRankBadge").textContent="🏅 "+state.rank.toUpperCase();$("coins").textContent=fmt(state.coins);$("gems").textContent=fmt(state.gems);$("energy").textContent=state.energy+"/100";$("homeProfile").textContent=state.name+" • Nível "+state.level;$("myRankBig").textContent="🏅 "+state.rank.toUpperCase();$("myRankPoints").textContent=fmt(state.points)+" pontos";$("nameInput").value=state.name}
 function renderBosses(){$("bossGrid").innerHTML=enemies.map((e,i)=>`<article class="boss ${i===1?"fire":i===2?"shadow":""}"><div class="boss-art">${e.emoji}</div><div class="boss-body"><h3>${e.name}</h3><div class="stats">LEVEL ${150-i*5}<br>POWER: ${950000-i*70000}<br>HP: ${fmt(e.hp)}</div><div class="reward">RECOMPENSAS: 💎 ${e.gems} • 🪙 ${fmt(e.reward)}</div><button class="fight" onclick="startBattle(${i})">ENTRAR NA BATALHA</button></div></article>`).join("")}
 function renderShop(){
  let cats=["equipamentos","consumiveis","materiais","gemas"];
@@ -226,12 +272,12 @@ function startBattle(i){let e=enemies[i];battle={index:i,hp:e.hp,max:e.hp,player
 function updateBattle(){if(!battle)return;$("enemyHpText").textContent=Math.max(0,battle.hp);$("enemyHp").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("playerHpText").textContent=battle.playerHp}
 function enemyTurn(){if(!battle)return;battle.playerHp=Math.max(0,battle.playerHp-enemies[battle.index].dmg);updateBattle();if(battle.playerHp<=0){battle=null;showToast("Você foi derrotado.");openScreen("jogar")}}
 function attack(){if(!battle)return;battle.hp-=25+state.level*3;if(battle.hp<=0)return winBattle();enemyTurn()}
-function usePower(){if(!battle)return;if(state.energy<15)return showToast("Energia insuficiente.");state.energy-=15;battle.hp-=50+state.level*5;if(battle.hp<=0)return winBattle();enemyTurn();updateUI()}
-function heal(){if(!battle)return;if(battle.playerHp>=100)return showToast("Vida cheia.");if(state.energy<5)return showToast("Energia insuficiente.");state.energy-=5;let old=battle.playerHp;battle.playerHp=Math.min(100,battle.playerHp+35);updateBattle();updateUI();showToast("💚 +"+(battle.playerHp-old)+" HP")}
+function usePower(){if(!battle)return;if(state.energy<15)return showToast("Energia insuficiente.");state.energy-=15;state.energyUpdatedAt=Date.now();battle.hp-=50+state.level*5;if(battle.hp<=0)return winBattle();enemyTurn();updateUI()}
+function heal(){if(!battle)return;if(battle.playerHp>=100)return showToast("Vida cheia.");if(state.energy<5)return showToast("Energia insuficiente.");state.energy-=5;state.energyUpdatedAt=Date.now();let old=battle.playerHp;battle.playerHp=Math.min(100,battle.playerHp+35);updateBattle();updateUI();showToast("💚 +"+(battle.playerHp-old)+" HP")}
 function winBattle(){let e=enemies[battle.index];state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,Math.floor(state.points/100)+1);state.skillPoints++;let next=battle.index+1;battle=null;updateUI();saveGame(false);if(next<3){showToast("Vitória! Próxima fase.");setTimeout(()=>startBattle(next),600)}else showModal("🏆 VITÓRIA","Você derrotou os 3 inimigos!")}
 function renderRanking(){let demo=[{name:"Kaelen",level:68,points:12850},{name:"ShadowLord",level:55,points:10200},{name:"DragonMaster",level:42,points:8400},{name:state.name,level:state.level,points:state.points}];demo.sort((a,b)=>b.points-a.points);$("rankingList").innerHTML=demo.map((p,i)=>`<div class="rankrow ${p.name===state.name?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${p.name}</div><div class="hide-mobile">Nível ${p.level}</div><div class="rankpoints">${fmt(p.points)}</div></div>`).join("")}
 function saveName(){let n=$("nameInput").value.trim();if(n.length<3)return showToast("Nome muito curto.");state.name=n;updateUI();saveGame(false);showToast("Nome salvo!")}
-window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","level","rank","coins","gems","energy","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();};
+window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","level","rank","coins","gems","energy","energyUpdatedAt","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();};
 window.gameSetCloudData=window.applyCloudPlayer;
 function saveGame(notify=true){
  const key="dragonWarSave_"+(window.dragonUser?.uid||"guest");
@@ -239,8 +285,8 @@ function saveGame(notify=true){
  if(window.dragonCloudSave) window.dragonCloudSave(state).catch(e=>console.error("Falha ao salvar no Firebase",e));
  if(notify)showToast("Jogo salvo!")
 }
-function loadGame(){let key="dragonWarSave_"+(window.dragonUser?.uid||"guest");let r=localStorage.getItem(key)||localStorage.getItem("dragonWarSave");if(!r)return;try{state={...state,...JSON.parse(r)};updateUI();renderInventory();renderShop();renderSkills()}catch(e){}}
-function newGame(){if(!confirm("Reiniciar seu progresso local?"))return;let n=state.name;state={name:n,level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};saveGame(false);updateUI();renderInventory();renderShop();showToast("Novo jogo criado!")}
+function loadGame(){let key="dragonWarSave_"+(window.dragonUser?.uid||"guest");let r=localStorage.getItem(key)||localStorage.getItem("dragonWarSave");if(!r)return;try{state={...state,...JSON.parse(r)};if(!Number(state.energyUpdatedAt))state.energyUpdatedAt=Date.now();regenerateEnergy();updateUI();renderInventory();renderShop();renderSkills()}catch(e){}}
+function newGame(){if(!confirm("Reiniciar seu progresso local?"))return;let n=state.name;state={name:n,level:1,rank:"Iniciante",coins:1000,gems:20,energy:100,energyUpdatedAt:Date.now(),points:0,skillPoints:5,inventory:[],skinsOwned:["guerreiro"],equippedSkin:"guerreiro"};saveGame(false);updateUI();renderInventory();renderShop();showToast("Novo jogo criado!")}
 function dailyReward(){let key="dragonDaily",today=new Date().toDateString();if(localStorage.getItem(key)===today)return showToast("Recompensa já coletada hoje.");localStorage.setItem(key,today);let r=Math.floor(Math.random()*3);if(r===0){state.coins+=500;showToast("🎁 +500 moedas")}else if(r===1){state.gems+=3;showToast("💎 +3 gemas")}else{if(!state.skinsOwned.includes("dragao"))state.skinsOwned.push("dragao");showToast("🐉 Skin Dragão liberada!")}updateUI();renderInventory();renderShop();saveGame(false)}
 function showModal(t,m){$("modalTitle").textContent=t;$("modalText").textContent=m;$("modal").classList.add("show")}function closeModal(){$("modal").classList.remove("show")}
 
@@ -257,8 +303,8 @@ window.startBattle=function(levelArg,phaseArg){const l=Number(levelArg||state.un
 window.updateBattle=function(){if(!battle)return;$('enemyHpText').textContent=fmt(Math.max(0,Math.ceil(battle.hp)));$('enemyHp').style.width=Math.max(0,battle.hp/battle.max*100)+'%';$('playerHpText').textContent=fmt(battle.playerHp)+' / '+fmt(battle.maxPlayerHp);const bar=document.querySelector('.bar.hp i');if(bar)bar.style.width=Math.max(0,battle.playerHp/battle.maxPlayerHp*100)+'%'};
 window.enemyTurn=function(){if(!battle)return;battle.playerHp=Math.max(0,battle.playerHp-battle.enemy.dmg);battle.turn++;updateBattle();if(battle.playerHp<=0){battle=null;saveGame(false);showModal('DERROTA','Você foi derrotado. A fase atual não foi perdida. Melhore seus poderes ou tente novamente.');openScreen('jogar')}};
 window.attack=function(){if(!battle)return;const skin=skins.find(x=>x.id===state.equippedSkin)||skins[0];const dmg=24+(Number(state.level)||1)*3+(Number(state.attackBonus)||0)+(skin.id==='lua'?3:skin.id==='dragao'?5:0);battle.hp=Math.max(0,battle.hp-dmg);if(battle.hp<=0)return winBattle();updateBattle();enemyTurn()};
-window.usePower=function(){if(!battle)return;if(state.energy<15)return showToast('Energia insuficiente: precisa de 15.');state.energy-=15;const selected=Number(state.selectedSkill||0),skill=skills[selected]||skills[0];battle.hp=Math.max(0,battle.hp-skill[2]+0-(Number(state.level)||1)*-5-(Number(state.powerBonus)||0));if(battle.hp<=0)return winBattle();updateUI();updateBattle();enemyTurn();saveGame(false)};
-window.heal=function(){if(!battle)return;if(battle.playerHp>=battle.maxPlayerHp)return showToast('Vida cheia.');if(state.energy<5)return showToast('Energia insuficiente: precisa de 5.');state.energy-=5;const old=battle.playerHp;battle.playerHp=Math.min(battle.maxPlayerHp,battle.playerHp+35);updateBattle();updateUI();saveGame(false);showToast('💚 +'+(battle.playerHp-old)+' HP');enemyTurn()};
+window.usePower=function(){if(!battle)return;if(state.energy<15)return showToast('Energia insuficiente: precisa de 15.');state.energy-=15;state.energyUpdatedAt=Date.now();const selected=Number(state.selectedSkill||0),skill=skills[selected]||skills[0];battle.hp=Math.max(0,battle.hp-skill[2]+0-(Number(state.level)||1)*-5-(Number(state.powerBonus)||0));if(battle.hp<=0)return winBattle();updateUI();updateBattle();enemyTurn();saveGame(false)};
+window.heal=function(){if(!battle)return;if(battle.playerHp>=battle.maxPlayerHp)return showToast('Vida cheia.');if(state.energy<5)return showToast('Energia insuficiente: precisa de 5.');state.energy-=5;state.energyUpdatedAt=Date.now();const old=battle.playerHp;battle.playerHp=Math.min(battle.maxPlayerHp,battle.playerHp+35);updateBattle();updateUI();saveGame(false);showToast('💚 +'+(battle.playerHp-old)+' HP');enemyTurn()};
 window.winBattle=function(){if(!battle)return;const e=battle.enemy;state.lastCompletedLevel=e.level;state.lastCompletedPhase=e.phase;state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,e.level);state.skillPoints+=e.boss?3:1;state.energy=Math.min(100,state.energy+2);if(e.boss&&e.level>=10){state.gameCompleted=true;state.coins+=100000;state.gems+=500;battle=null;updateUI();saveGame(false);renderBosses();showModal('🏆 DRAGON WAR ZERADO!','Você derrotou o chefão final do Mundo 10 e concluiu a campanha! Bônus lendário: 100.000 moedas e 500 gemas.');return}if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1}const nextLevel=state.unlockedLevel,nextPhase=state.unlockedPhase; battle=null;updateUI();saveGame(false);renderBosses();renderRanking();showToast((e.boss?'👑 Chefão derrotado! ':'⚔️ Vitória! ')+'Próxima fase: Mundo '+nextLevel+' • Fase '+nextPhase+'/'+phasesInLevel(nextLevel));setTimeout(()=>{if(!state.gameCompleted)startBattle()},1200)};
 window.repeatLastStage=function(){const l=Number(state.lastCompletedLevel||state.unlockedLevel||1),p=Number(state.lastCompletedPhase||Math.max(1,(state.unlockedPhase||1)-1));startBattle(l,p);showToast('Repetindo Mundo '+l+' • Fase '+p)};
 window.retryCurrentStage=function(){startBattle(Number(state.unlockedLevel||1),Number(state.unlockedPhase||1));};
@@ -337,7 +383,7 @@ async function enter(user){
     }
   })();
 }
-window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,gameCompleted:s.gameCompleted||false,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
+window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,energyUpdatedAt:s.energyUpdatedAt||Date.now(),inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,gameCompleted:s.gameCompleted||false,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{await signOut(auth);window.dragonUser=null;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta.')};
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),12000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O Firebase não respondeu em 12 segundos. Verifique a conexão, se o domínio do jogo está autorizado em Authentication → Settings → Authorized domains, e se a configuração do projeto está correta.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
 document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say('Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
@@ -383,3 +429,7 @@ window.gameSetCloudData=d=>{if(d)window.applyCloudPlayer?.(d)};
 
 </body>
 </html>
+<script>
+// Atualiza a energia automaticamente e salva quando houver regeneração.
+setInterval(()=>{if(regenerateEnergy()){updateUI();saveGame(false);}},5000);
+</script>
