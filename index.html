@@ -303,7 +303,7 @@ function renderShop(){
  if(shopCategory==="skins"){
   $("shopGrid").innerHTML=skins.map(s=>{let owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;let action=owned?"equipSkin":"buySkin";let label=eq?"✓ EQUIPADA":(owned?"EQUIPAR":"COMPRAR");return '<div class="panel item"><div class="emoji">'+s.emoji+'</div><div class="rarity">SKIN</div><h3>'+s.name+'</h3><p>'+s.ability+'</p><div class="price">'+(owned?"✓ POSSUÍDA":((s.currency==="gem"?"💎":"🪙")+" "+fmt(s.price)))+'</div><button class="equip" onclick="'+action+'(\''+s.id+'\')">'+label+'</button></div>';}).join("");
  }else{
-  let items=shop.filter(x=>x.category===shopCategory);
+  let items=shop.filter(x=>x.category===shopCategory && (!x.unlockWorld || Number(state.unlockedLevel||1)>=x.unlockWorld));
   $("shopGrid").innerHTML=items.map(it=>{let i=shop.indexOf(it);return '<div class="panel item"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==="gem"?"💎":"🪙")+' '+fmt(it.price)+'</div><button class="buy" onclick="buyItem('+i+')">COMPRAR</button></div>';}).join("")||'<div class="panel">Nenhum item nesta categoria.</div>';
  }
  const skinHeading=document.querySelector('#loja h2[style*="color:#ffd47b"]');if(skinHeading)skinHeading.style.display='none';const skinGrid=$("skinShopGrid");if(skinGrid)skinGrid.style.display='none';
@@ -744,6 +744,116 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
  const oldCloudSave=window.dragonCloudSave;window.dragonCloudSave=async function(s){s.skillUpgrades=state.skillUpgrades||{};s.ownedSkills=state.ownedSkills||[0];s.petSkillPoints=state.petSkillPoints||0;s.petSkills=state.petSkills||{};s.trainingDoneDate=state.trainingDoneDate||'';return oldCloudSave?oldCloudSave(s):undefined;};
  const baseApply=window.applyCloudPlayer;window.applyCloudPlayer=function(d){if(baseApply)baseApply(d);if(d){for(const k of ['skillUpgrades','ownedSkills','petSkillPoints','petSkills','trainingDoneDate'])if(d[k]!==undefined)state[k]=d[k];}ensure();renderSkills();};
  ensure();renderSkills();
+})();
+</script>
+
+
+<script>
+// Recompensa única ao concluir a Fase 100 do Mundo 1.
+(function(){
+  const previousWin=window.winBattle;
+  if(typeof previousWin==='function'){
+    window.winBattle=function(){
+      const enemy=(typeof battle!=='undefined' && battle) ? battle.enemy : null;
+      const isWorldOneFinal=!!enemy && Number(enemy.level)===1 && Number(enemy.phase)===100;
+      const shouldGrant=isWorldOneFinal && !state.world1FinalRewardClaimed;
+      const result=previousWin.apply(this,arguments);
+      if(shouldGrant){
+        state.world1FinalRewardClaimed=true;
+        state.coins=(Number(state.coins)||0)+1500;
+        state.gems=(Number(state.gems)||0)+20;
+        if(typeof updateUI==='function')updateUI();
+        if(typeof saveGame==='function')saveGame(false);
+        if(typeof showToast==='function')showToast('🏆 MUNDO 1 CONCLUÍDO! +1.500 moedas e +20 diamantes!');
+        if(typeof renderBosses==='function')renderBosses();
+      }
+      return result;
+    };
+  }
+  const previousCloudSave=window.dragonCloudSave;
+  if(typeof previousCloudSave==='function')window.dragonCloudSave=function(data){
+    data.world1FinalRewardClaimed=!!state.world1FinalRewardClaimed;
+    return previousCloudSave.apply(this,arguments);
+  };
+  const previousApply=window.applyCloudPlayer;
+  if(typeof previousApply==='function')window.applyCloudPlayer=function(data){
+    previousApply.apply(this,arguments);
+    if(data && data.world1FinalRewardClaimed!==undefined)state.world1FinalRewardClaimed=!!data.world1FinalRewardClaimed;
+  };
+})();
+</script>
+
+<script>
+// Progressão de campanha: recompensa única ao derrotar o chefão final do Mundo 1.
+(function(){
+  const phase2Items = [
+    {name:"Espada do Guardião",emoji:"⚔️",price:65000,currency:"coin",type:"Arma de Fase 2",category:"equipamentos",attackBonus:120,unlockWorld:2},
+    {name:"Armadura de Mithril",emoji:"🛡️",price:85000,currency:"coin",type:"Armadura de Fase 2",category:"equipamentos",defenseBonus:100,unlockWorld:2},
+    {name:"Machado do Colosso",emoji:"🪓",price:120000,currency:"coin",type:"Arma Rara de Fase 2",category:"equipamentos",attackBonus:200,unlockWorld:2},
+    {name:"Armadura das Chamas",emoji:"🔥",price:1800,currency:"gem",type:"Armadura Épica de Fase 2",category:"equipamentos",defenseBonus:180,unlockWorld:2},
+    {name:"Baú de Equipamentos II",emoji:"🎁",price:100000,currency:"coin",type:"Baú de Fase 2",category:"materiais",mysteryChest:true,unlockWorld:2}
+  ];
+  for(const it of phase2Items) if(!shop.some(x=>x.name===it.name)) shop.push(it);
+
+  const oldRenderShop=window.renderShop;
+  window.renderShop=function(){ if(oldRenderShop)oldRenderShop.apply(this,arguments); };
+
+  const oldWinBattle=window.winBattle;
+  if(typeof oldWinBattle==='function') window.winBattle=function(){
+    const enemy=(typeof battle!=='undefined'&&battle)?battle.enemy:null;
+    const completesWorldOne=!!enemy && Number(enemy.level)===1 && Number(enemy.phase)===100 && !!enemy.boss;
+    const giveWorldOneRewards=completesWorldOne && !state.world1BossRewardsClaimed;
+    const result=oldWinBattle.apply(this,arguments);
+    if(giveWorldOneRewards){
+      state.world1BossRewardsClaimed=true;
+      // Baú de conclusão da primeira etapa do Mundo 1.
+      state.coins=(Number(state.coins)||0)+10000;
+      state.gems=(Number(state.gems)||0)+1000;
+      state.inventory=Array.isArray(state.inventory)?state.inventory:[];
+      state.inventory.push(
+        {name:'Baú de Conclusão — Mundo 1',emoji:'🎁',type:'Baú de Recompensa',opened:true},
+        {name:'Armadura do Campeão',emoji:'🛡️',type:'Armadura Lendária',defenseBonus:100},
+        {name:'Espada do Primeiro Mundo',emoji:'⚔️',type:'Arma Lendária',attackBonus:150},
+        {name:'Caixa de Equipamentos',emoji:'📦',type:'Caixa Especial'}
+      );
+      state.defenseBonus=(Number(state.defenseBonus)||0)+100;
+      state.attackBonus=(Number(state.attackBonus)||0)+150;
+      state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];
+      if(typeof addPetEgg==='function') addPetEgg('chefao_mundo_1','lendario');
+      else state.petEggs.push({id:'egg_world1_legendary_'+Date.now(),tier:'lendario',source:'chefao_mundo_1',createdAt:Date.now()});
+
+      // Prêmio adicional por derrotar o chefão e avançar para o Mundo 2.
+      state.coins+=50000;
+      state.gems+=5000;
+      state.points=(Number(state.points)||0)+50000;
+      state.unlockedLevel=Math.max(2,Number(state.unlockedLevel)||1);
+      state.unlockedPhase=1;
+      state.stageLevel=state.unlockedLevel;
+      state.stagePhase=1;
+      if(typeof updateUI==='function')updateUI();
+      if(typeof renderInventory==='function')renderInventory();
+      if(typeof renderPet==='function')renderPet();
+      if(typeof renderShop==='function')renderShop();
+      if(typeof renderBosses==='function')renderBosses();
+      if(typeof renderRanking==='function')renderRanking();
+      if(typeof saveGame==='function')saveGame(false);
+      if(typeof showModal==='function')showModal('🏆 MUNDO 1 CONCLUÍDO!','Baú recebido: +10.000 moedas, +1.000 diamantes, armadura, arma, caixa de equipamentos e 1 Ovo Lendário. Bônus por derrotar o chefão: +50.000 moedas, +5.000 diamantes e +50.000 pontos! O Mundo 2 foi desbloqueado. A loja agora mostra equipamentos mais fortes e mais caros.');
+    }
+    return result;
+  };
+
+  const oldCloudSave=window.dragonCloudSave;
+  if(typeof oldCloudSave==='function')window.dragonCloudSave=async function(data){
+    data.world1BossRewardsClaimed=!!state.world1BossRewardsClaimed;
+    for(const k of ['petEggs','petCollection','activePetId','attackBonus','defenseBonus','unlockedLevel','unlockedPhase','stageLevel','stagePhase','points','inventory']) data[k]=state[k];
+    return oldCloudSave.apply(this,arguments);
+  };
+  const oldApply=window.applyCloudPlayer;
+  if(typeof oldApply==='function')window.applyCloudPlayer=function(data){
+    oldApply.apply(this,arguments);
+    if(data){if(data.world1BossRewardsClaimed!==undefined)state.world1BossRewardsClaimed=!!data.world1BossRewardsClaimed;for(const k of ['petEggs','petCollection','activePetId','attackBonus','defenseBonus','unlockedLevel','unlockedPhase','stageLevel','stagePhase','points','inventory'])if(data[k]!==undefined)state[k]=data[k];}
+    if(typeof renderShop==='function')renderShop();
+  };
 })();
 </script>
 
