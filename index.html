@@ -3,53 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#080a12">
+<meta name="theme-color" content="#080910">
 <title>Dragon War: Rise of Power</title>
 <style>
-:root{--bg:#080a12;--panel:#111522;--line:#2c3246;--gold:#f2bd55;--cyan:#70e4ef;--muted:#aab2c5;--red:#ff6b6b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#202039 0,#080a12 60%);color:#f6f4ef;font-family:system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
-header{padding:18px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#090b13d9}
-.logo{font-weight:900;letter-spacing:1px;color:var(--gold);font-size:20px}.logo span{display:block;font-size:10px;letter-spacing:3px;color:var(--muted)}
-main{width:min(1050px,100%);margin:auto;padding:22px 14px 40px}.hero{text-align:center;padding:26px 12px 22px}.sigil{font-size:64px;filter:drop-shadow(0 0 20px #d97c3b)}h1{font-size:clamp(27px,6vw,46px);margin:8px 0;color:var(--gold);line-height:1.1}.sub{color:var(--muted);max-width:620px;margin:10px auto;line-height:1.6}
-.layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:linear-gradient(145deg,#151a2a,#0e111b);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 16px 40px #0005}.panel h2{margin:0 0 14px;font-size:20px}.tabs{display:flex;gap:8px;margin-bottom:16px}.tab,button{border:1px solid #3b425b;background:#20263a;color:#fff;border-radius:10px;padding:11px 14px;font-weight:750;cursor:pointer}.tab.active,button.primary{background:linear-gradient(120deg,#f2bd55,#d98139);color:#1a1010;border-color:#f2bd55}.tab{flex:1}.field{margin:12px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}.field input{width:100%;padding:13px;border-radius:10px;border:1px solid #353c53;background:#080b14;color:#fff;font-size:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.actions button{width:100%}button:disabled{opacity:.5;cursor:wait}.message{margin-top:13px;padding:11px;border-radius:9px;background:#090d17;color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere}.message.error{color:#ffb3b3;border:1px solid #743c4a}.message.success{color:#a5f3c2;border:1px solid #2d674b}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.stat{background:#090d17;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}.stat strong{display:block;color:var(--gold);font-size:21px}.stat span{font-size:11px;color:var(--muted)}.world{min-height:100%;display:flex;flex-direction:column;justify-content:space-between}.dragon{font-size:85px;text-align:center;padding:12px 0;filter:drop-shadow(0 0 22px #8c3b48)}.quest{padding:12px;border:1px solid #4b3d2b;border-radius:10px;background:#221a18;color:#e9d2b0;line-height:1.5}.small{font-size:12px;color:var(--muted);line-height:1.6;margin-top:15px}.status{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;background:#e4a84c;border-radius:50%}.footer{text-align:center;color:#727b90;font-size:12px;margin-top:25px}
-@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{padding-top:18px}.panel{padding:15px}.dragon{font-size:65px}}
+:root{--bg:#080910;--panel:#131625;--panel2:#191d30;--line:#30364e;--gold:#f3bd58;--cyan:#74e6ef;--red:#ff6d78;--green:#6ce2a0;--muted:#aeb5c9;--purple:#b49aff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#29213b 0,#0b0c16 48%,#07080e 100%);color:#f6f3ec;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer;border:1px solid #454b65;border-radius:10px;padding:10px 13px;color:#fff;background:#252a40;font-weight:750;transition:.15s}button:hover{filter:brightness(1.12)}button:disabled{opacity:.55;cursor:not-allowed}.primary{background:linear-gradient(120deg,#f4c568,#d77b38);color:#1a1110;border-color:#f4c568}.danger{background:#48212c;border-color:#7e3445}.good{background:#163d35;border-color:#2c7661}.quiet{background:transparent}.hidden{display:none!important}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted);line-height:1.55}.topbar{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:#090a12ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.brand{font-weight:1000;letter-spacing:1px;color:var(--gold);font-size:18px}.brand small{display:block;font-size:9px;letter-spacing:3px;color:var(--muted)}.topstats{display:flex;gap:7px;flex-wrap:wrap}.pill{background:#171b2a;border:1px solid var(--line);border-radius:9px;padding:7px 10px;font-size:12px}.pill b{color:var(--gold)}.shell{max-width:1200px;margin:auto;padding:16px}.auth-wrap{min-height:calc(100vh - 62px);display:grid;place-items:center;padding:18px}.auth-card{width:min(480px,100%);padding:22px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,#171a2a,#0d0f18);box-shadow:0 25px 70px #0008}.dragon-mark{text-align:center;font-size:64px;filter:drop-shadow(0 0 18px #9b4a54)}h1{color:var(--gold);font-size:clamp(25px,5vw,40px);line-height:1.1;text-align:center;margin:8px 0}h2{margin:0 0 12px;font-size:20px}h3{margin:0 0 8px;font-size:16px}.intro{text-align:center;color:var(--muted);line-height:1.55;font-size:14px;margin:10px auto 20px}.tabs{display:flex;gap:8px;margin:14px 0}.tabs button{flex:1}.tabs button.active{background:var(--gold);color:#20140b;border-color:var(--gold)}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;padding:12px;border:1px solid #39405a;background:#090b13;color:white;border-radius:10px;outline:none}.field input:focus{border-color:var(--cyan)}.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.message{background:#090c15;border:1px solid var(--line);padding:11px;border-radius:10px;font-size:13px;line-height:1.5;margin-top:12px;overflow-wrap:anywhere}.message.success{border-color:#2d7659;color:#a8f3c7}.message.error{border-color:#8b3d4b;color:#ffb8c0}.linkbtn{border:0;background:none;padding:8px 0;color:var(--cyan);text-decoration:underline;font-size:13px}.app{display:grid;grid-template-columns:210px minmax(0,1fr);gap:15px}.sidebar{background:#101321;border:1px solid var(--line);border-radius:16px;padding:12px;height:max-content;position:sticky;top:78px}.sidebtn{width:100%;text-align:left;margin:3px 0;background:transparent;border-color:transparent}.sidebtn.active{background:#25263a;border-color:#47415a;color:var(--gold)}.profile-mini{padding:12px;background:#191d2d;border-radius:12px;margin-bottom:10px}.avatar{font-size:30px}.content{min-width:0}.hero{border:1px solid #4b3c43;border-radius:18px;padding:24px;background:linear-gradient(115deg,#241821,#171525 55%,#10202a);display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:12px;overflow:hidden}.hero h1{text-align:left;margin:0 0 10px}.hero-dragon{text-align:center;font-size:clamp(65px,12vw,120px);filter:drop-shadow(0 0 25px #b94d49)}.hero p{color:#c4c5d3;line-height:1.55}.btnrow{display:flex;gap:8px;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.card{background:linear-gradient(145deg,#171b2c,#10121d);border:1px solid var(--line);border-radius:15px;padding:15px;min-width:0}.card-icon{font-size:35px;margin-bottom:8px}.card p{font-size:13px;color:var(--muted);line-height:1.5}.statline{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #282d40;font-size:13px}.statline:last-child{border:0}.bar{height:8px;border-radius:20px;background:#292d40;overflow:hidden;margin:7px 0 12px}.bar span{display:block;height:100%;background:linear-gradient(90deg,#e96b54,#f3c45d);width:50%}.section{display:none}.section.active{display:block}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:2px 0 14px}.enemy{border:1px solid #3a4057;background:#151a29;border-radius:14px;padding:14px;text-align:center}.enemy .emoji{font-size:44px}.enemy strong{display:block;margin:7px 0}.enemy small{color:var(--muted)}.enemy.selected{border-color:var(--gold);box-shadow:0 0 0 1px #f3bd5833}.progress{font-size:12px;color:var(--muted)}.list{display:grid;gap:9px}.item{display:flex;align-items:center;gap:12px;padding:12px;background:#0d101b;border:1px solid var(--line);border-radius:12px}.item .emoji{font-size:30px}.item .grow{flex:1;min-width:0}.item .grow p{margin:3px 0;font-size:12px;color:var(--muted)}.tag{display:inline-block;font-size:10px;border:1px solid #4d536a;border-radius:99px;padding:3px 7px;color:var(--muted)}.arena{background:radial-gradient(ellipse at center,#33202b,#10121d 70%);border:1px solid #5a3a48;border-radius:16px;padding:18px;text-align:center}.arena .boss{font-size:80px}.battle-log{height:100px;overflow:auto;background:#080a11;border-radius:10px;padding:10px;text-align:left;color:#c5ccda;font-size:12px;margin-top:12px}.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;background:#171d2b;border:1px solid #4b536c;padding:12px 16px;border-radius:12px;max-width:90vw;box-shadow:0 10px 30px #0008;font-size:13px}.foot{text-align:center;color:#747c92;font-size:11px;padding:22px}.admin-only{border:1px solid #754a55;background:#26151c;padding:12px;border-radius:10px;color:#ffc4cc;font-size:12px}
+@media(max-width:780px){.app{grid-template-columns:1fr}.sidebar{position:static;display:flex;gap:5px;overflow-x:auto;padding:8px}.profile-mini{display:none}.sidebtn{white-space:nowrap;width:auto;flex-shrink:0;margin:0}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}.hero-dragon{grid-row:1}.hero h1{text-align:center}.hero-copy{text-align:center}.hero-copy .btnrow{justify-content:center}}
+@media(max-width:450px){.shell{padding:10px}.grid{grid-template-columns:1fr 1fr;gap:8px}.card{padding:12px}.topbar{padding:10px}.topstats .pill{padding:6px}.hero{padding:17px}.row2{grid-template-columns:1fr}.auth-card{padding:17px}}
 </style>
 </head>
 <body>
-<header><div class="logo">🐉 DRAGON WAR <span>RISE OF POWER</span></div><div class="status"><span class="dot"></span><span id="firebaseStatus">Preparando conexão segura…</span></div></header>
-<main>
-<section class="hero"><div class="sigil">🐲</div><h1>O reino aguarda seu herói</h1><p class="sub">Crie sua conta ou entre para iniciar sua jornada. Este é o primeiro passo do Dragon War; os sistemas de mundo online, combate e salvamento do personagem serão conectados nas próximas etapas.</p></section>
-<div class="layout">
-<section class="panel">
-<h2 id="authTitle">Entrar no reino</h2>
-<div class="tabs"><button class="tab active" id="loginTab" type="button">Entrar</button><button class="tab" id="registerTab" type="button">Criar conta</button></div>
-<form id="authForm">
-<div class="field" id="nameField" hidden><label for="nickname">Nome de guerreiro</label><input id="nickname" type="text" maxlength="20" autocomplete="nickname" placeholder="Ex.: Cavaleiro da Lua"></div>
-<div class="field"><label for="email">E-mail</label><input id="email" type="email" autocomplete="email" required placeholder="voce@exemplo.com"></div>
-<div class="field"><label for="password">Senha</label><input id="password" type="password" minlength="6" autocomplete="current-password" required placeholder="Mínimo de 6 caracteres"></div>
-<div class="actions"><button class="primary" id="submitButton" type="submit">Entrar</button><button id="resetButton" type="button">Recuperar senha</button></div>
-</form>
-<div id="authMessage" class="message" role="status">Conectando ao Firebase…</div>
-<div id="signedInPanel" hidden>
-<div class="message success" id="welcomeMessage"></div>
-<div class="actions"><button class="primary" id="continueButton" type="button">Continuar</button><button id="logoutButton" type="button">Sair da conta</button></div>
-</div>
-<p class="small">Use um e-mail seu. Nunca compartilhe sua senha. O cadastro cria a conta de autenticação; ainda não cria um personagem completo nem salva progresso do jogo.</p>
+<header class="topbar">
+  <div class="brand">🐉 DRAGON WAR <small>RISE OF POWER</small></div>
+  <div class="topstats" id="topstats"><div class="pill">💰 <b id="coinsTop">0</b></div><div class="pill">💎 <b id="gemsTop">0</b></div><div class="pill">⚡ <b id="energyTop">100</b></div></div>
+</header>
+<section id="authView" class="auth-wrap">
+  <div class="auth-card">
+    <div class="dragon-mark">🐲</div>
+    <h1>O reino aguarda seu herói</h1>
+    <p class="intro">Crie sua conta ou entre para iniciar sua jornada pelo mundo dos dragões.</p>
+    <div class="tabs"><button id="tabLogin" class="active" type="button">Entrar</button><button id="tabRegister" type="button">Criar conta</button></div>
+    <form id="authForm">
+      <div class="field hidden" id="nickField"><label for="nickInput">Nome de guerreiro</label><input id="nickInput" maxlength="20" autocomplete="nickname" placeholder="Seu nome no jogo"></div>
+      <div class="field"><label for="emailInput">E-mail</label><input id="emailInput" type="email" autocomplete="email" required placeholder="voce@exemplo.com"></div>
+      <div class="field"><label for="passInput">Senha (mínimo 6 caracteres)</label><input id="passInput" type="password" minlength="6" autocomplete="current-password" required placeholder="Sua senha"></div>
+      <div class="row2"><button id="authSubmit" class="primary" type="submit">Entrar</button><button id="forgotBtn" type="button">Recuperar senha</button></div>
+    </form>
+    <div id="authMsg" class="message">Conectando ao Firebase…</div>
+    <p class="tiny">A recuperação envia um e-mail oficial do Firebase. Verifique spam/lixo eletrônico. Se o domínio não estiver autorizado no Firebase, o sistema avisará.</p>
+  </div>
 </section>
-<section class="panel world">
-<div><h2>Crônicas do mundo</h2><div class="dragon">🐉</div><div class="quest"><strong>PRÓXIMA MISSÃO</strong><br>As terras antigas despertam. Prepare seu equipamento, reúna aliados e enfrente os dragões ancestrais.</div></div>
-<div class="stats"><div class="stat"><strong>1</strong><span>Reino inicial</span></div><div class="stat"><strong>∞</strong><span>Aventuras futuras</span></div><div class="stat"><strong>⚔</strong><span>Combate</span></div></div>
-<p class="small">Prévia visual: estes indicadores são demonstrativos e não representam dados reais de jogadores.</p>
-</section>
+<div id="gameView" class="shell hidden">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="profile-mini"><div class="avatar">🧙</div><strong id="sideName">Guerreiro</strong><div class="tiny" id="sideLevel">Nível 1</div></div>
+      <button class="sidebtn active" data-page="home">🏰 Início</button>
+      <button class="sidebtn" data-page="play">⚔️ Jogar</button>
+      <button class="sidebtn" data-page="shop">🛒 Loja</button>
+      <button class="sidebtn" data-page="powers">✨ Poderes</button>
+      <button class="sidebtn" data-page="inventory">🎒 Inventário</button>
+      <button class="sidebtn" data-page="ranking">🏆 Ranking</button>
+      <button class="sidebtn" data-page="events">🎉 Eventos</button>
+      <button class="sidebtn" data-page="settings">⚙️ Configurações</button>
+      <button class="sidebtn" data-page="admin">🛡️ Painel ADM</button>
+    </aside>
+    <main class="content">
+      <section id="page-home" class="section active">
+        <div class="hero"><div class="hero-copy"><div class="tag">TEMPORADA I • O DESPERTAR</div><h1>Seu destino começa agora</h1><p>Explore terras esquecidas, aprimore seus poderes e desafie dragões ancestrais. A lenda será escrita por você.</p><div class="btnrow"><button class="primary" data-goto="play">⚔️ Começar aventura</button><button data-goto="shop">Visitar loja</button></div></div><div class="hero-dragon">🐉</div></div>
+        <div class="grid">
+          <div class="card"><div class="card-icon">🎁</div><h3>Recompensa diária</h3><p>Receba moedas para começar sua jornada.</p><button class="primary" id="dailyBtn">Abrir caixa</button></div>
+          <div class="card"><div class="card-icon">📜</div><h3>Missão atual</h3><p>Derrote um inimigo para ganhar experiência e moedas.</p><button data-goto="play">Ver missão</button></div>
+          <div class="card"><div class="card-icon">🧙</div><h3>Seu herói</h3><div class="statline"><span>Nome</span><b id="heroName">Guerreiro</b></div><div class="statline"><span>Nível</span><b id="heroLevel">1</b></div><div class="statline"><span>XP</span><b id="heroXP">0/100</b></div></div>
+        </div>
+      </section>
+      <section id="page-play" class="section">
+        <div class="section-title"><h2>⚔️ Combate e aventura</h2><span class="tag">MODO SOLO LOCAL</span></div>
+        <div class="grid" id="enemyGrid">
+          <div class="enemy selected" data-enemy="Slime Sombrio" data-hp="60" data-reward="40"><div class="emoji">🟢</div><strong>Slime Sombrio</strong><small>Vida: 60 • Fácil</small><p class="tiny">Recompensa: 40 moedas</p><button data-select-enemy="Slime Sombrio">Selecionar</button></div>
+          <div class="enemy" data-enemy="Lobo das Cinzas" data-hp="110" data-reward="80"><div class="emoji">🐺</div><strong>Lobo das Cinzas</strong><small>Vida: 110 • Médio</small><p class="tiny">Recompensa: 80 moedas</p><button data-select-enemy="Lobo das Cinzas">Selecionar</button></div>
+          <div class="enemy" data-enemy="Dragão Ancião" data-hp="300" data-reward="250"><div class="emoji">🐉</div><strong>Dragão Ancião</strong><small>Vida: 300 • Difícil</small><p class="tiny">Recompensa: 250 moedas</p><button data-select-enemy="Dragão Ancião">Selecionar</button></div>
+        </div>
+        <div class="card" style="margin-top:14px"><div class="arena"><div class="tiny" id="battleLabel">INIMIGO SELECIONADO</div><div class="boss" id="bossEmoji">🟢</div><h2 id="bossName">Slime Sombrio</h2><div class="progress" id="bossHpText">Vida: 60/60</div><div class="bar"><span id="bossHpBar" style="width:100%"></span></div><div class="btnrow" style="justify-content:center"><button class="primary" id="attackBtn">⚔️ Atacar</button><button id="skillAttackBtn">🔥 Poder especial (-20 mana)</button><button id="healBtn">💚 Curar (-15 mana)</button></div><div id="battleLog" class="battle-log">A aventura espera por você. Escolha um inimigo e ataque!</div></div></div>
+      </section>
+      <section id="page-shop" class="section">
+        <div class="section-title"><h2>🛒 Loja do reino</h2><span class="tag">MOEDAS E GEMAS</span></div>
+        <div class="grid">
+          <div class="card"><div class="card-icon">🗡️</div><h3>Espada de Ferro</h3><p>+10 de dano permanente nesta sessão.</p><div class="statline"><span>Preço</span><b>100 💰</b></div><button class="primary buy" data-item="sword" data-cost="100">Comprar</button></div>
+          <div class="card"><div class="card-icon">🛡️</div><h3>Armadura de Escamas</h3><p>+30 de vida máxima nesta sessão.</p><div class="statline"><span>Preço</span><b>150 💰</b></div><button class="primary buy" data-item="armor" data-cost="150">Comprar</button></div>
+          <div class="card"><div class="card-icon">🧪</div><h3>Poção de Mana</h3><p>Restaura 40 de mana.</p><div class="statline"><span>Preço</span><b>50 💰</b></div><button class="primary buy" data-item="mana" data-cost="50">Comprar</button></div>
+          <div class="card"><div class="card-icon">💎</div><h3>Baú de Cristais</h3><p>Um baú visual de gemas. Compras reais desativadas.</p><div class="statline"><span>Preço</span><b>—</b></div><button disabled>Em breve</button></div>
+        </div>
+      </section>
+      <section id="page-powers" class="section">
+        <div class="section-title"><h2>✨ Árvore de poderes</h2><span class="tag">MANA: <b id="manaText">100</b></span></div>
+        <div class="grid">
+          <div class="card"><div class="card-icon">🔥</div><h3>Sopro de Fogo</h3><p>Causa dano mágico reforçado ao inimigo.</p><div class="statline"><span>Custo</span><b>20 mana</b></div><button class="primary" id="powerFire">Usar poder</button></div>
+          <div class="card"><div class="card-icon">💚</div><h3>Cura Vital</h3><p>Recupera parte da sua vida.</p><div class="statline"><span>Custo</span><b>15 mana</b></div><button id="powerHeal">Usar poder</button></div>
+          <div class="card"><div class="card-icon">⚡</div><h3>Raio Arcano</h3><p>Golpe poderoso. Custo de 35 mana.</p><div class="statline"><span>Custo</span><b>35 mana</b></div><button id="powerBolt">Usar poder</button></div>
+        </div>
+      </section>
+      <section id="page-inventory" class="section">
+        <div class="section-title"><h2>🎒 Inventário</h2><span class="tag">EQUIPAMENTO</span></div>
+        <div class="grid"><div class="card"><div class="card-icon" id="weaponIcon">🪵</div><h3>Arma equipada</h3><p id="weaponName">Cajado simples</p><div class="statline"><span>Dano extra</span><b id="damageBonus">0</b></div></div><div class="card"><div class="card-icon">🛡️</div><h3>Armadura</h3><p id="armorStatus">Roupa de viajante</p><div class="statline"><span>Vida máxima</span><b id="maxHealthText">100</b></div></div><div class="card"><div class="card-icon">🧪</div><h3>Poções</h3><p>Poções compradas nesta sessão.</p><div class="statline"><span>Poções de mana</span><b id="manaPotions">0</b></div><button id="usePotion">Usar poção</button></div></div>
+      </section>
+      <section id="page-ranking" class="section">
+        <div class="section-title"><h2>🏆 Ranking</h2><span class="tag">RANKING LOCAL</span></div><div class="card"><p>Esta versão mostra apenas seu progresso nesta sessão. Um ranking global seguro será conectado ao banco de dados na próxima etapa.</p><div class="item"><div class="emoji">👑</div><div class="grow"><strong id="rankName">Guerreiro</strong><p>Seu personagem</p></div><b id="rankPoints">0 pts</b></div></div>
+      </section>
+      <section id="page-events" class="section">
+        <div class="section-title"><h2>🎉 Eventos do reino</h2></div><div class="grid"><div class="card"><div class="card-icon">🌑</div><h3>Noite dos Dragões</h3><p>Evento em preparação: criaturas raras vão surgir no reino.</p><span class="tag">EM BREVE</span></div><div class="card"><div class="card-icon">🏰</div><h3>Conquista da Fortaleza</h3><p>Prepare seu herói para futuras batalhas em grupo.</p><span class="tag">EM BREVE</span></div><div class="card"><div class="card-icon">🤝</div><h3>Guildas</h3><p>Reúna amigos quando o multiplayer for implementado.</p><span class="tag">EM BREVE</span></div></div>
+      </section>
+      <section id="page-settings" class="section">
+        <div class="section-title"><h2>⚙️ Configurações</h2></div><div class="card"><h3>Conta</h3><div class="statline"><span>E-mail</span><b id="accountEmail">—</b></div><div class="field"><label for="newNick">Nome do personagem</label><input id="newNick" maxlength="20" placeholder="Nome de guerreiro"></div><div class="btnrow"><button class="primary" id="saveNick">Salvar nome nesta sessão</button><button id="changePass">Enviar recuperação de senha</button><button class="danger" id="logoutBtn">Sair da conta</button></div><p class="tiny">Alterar o nome aqui muda a exibição desta sessão e o nome de exibição da conta. O progresso de jogo ainda não é sincronizado entre aparelhos.</p></div>
+      </section>
+      <section id="page-admin" class="section">
+        <div class="section-title"><h2>🛡️ Painel ADM</h2><span class="tag">ÁREA PROTEGIDA</span></div><div class="admin-only">O painel administrativo não foi ativado nesta versão. Por segurança, não é possível conceder cargos de ADM pelo HTML. Para ativá-lo, é necessário configurar permissões confiáveis no Firebase e validar o cargo no servidor.</div>
+      </section>
+    </main>
+  </div>
+  <div class="foot">Dragon War: Rise of Power • Protótipo jogável local • Desenvolvido por Gabriel Cabral</div>
 </div>
-<div class="footer">Dragon War: Rise of Power • Protótipo inicial • Desenvolvido por Gabriel Cabral</div>
-</main>
+<div id="toast" class="toast hidden"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import {
-  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-  sendPasswordResetEmail, updateProfile, onAuthStateChanged, signOut
-} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyALY21W_Cp_b-flYIm1B4JWqZP47KC4ri0",
@@ -62,107 +118,57 @@ const firebaseConfig = {
 };
 
 const $ = id => document.getElementById(id);
-const authTitle = $("authTitle"), loginTab = $("loginTab"), registerTab = $("registerTab");
-const nameField = $("nameField"), nickname = $("nickname"), email = $("email"), password = $("password");
-const submitButton = $("submitButton"), authMessage = $("authMessage");
-const signedInPanel = $("signedInPanel"), authForm = $("authForm");
-let mode = "login", auth = null;
-
-function message(text, kind="") {
-  authMessage.textContent = text;
-  authMessage.className = "message" + (kind ? " " + kind : "");
-}
-function setMode(next) {
-  mode = next;
-  const registering = mode === "register";
-  authTitle.textContent = registering ? "Criar conta de guerreiro" : "Entrar no reino";
-  submitButton.textContent = registering ? "Criar minha conta" : "Entrar";
-  loginTab.classList.toggle("active", !registering);
-  registerTab.classList.toggle("active", registering);
-  nameField.hidden = !registering;
-  nickname.required = registering;
-  password.autocomplete = registering ? "new-password" : "current-password";
-  message(registering ? "Preencha os campos para criar sua conta." : "Informe seu e-mail e senha para entrar.");
-}
-function friendlyError(error) {
-  const code = error?.code || "";
-  const messages = {
-    "auth/email-already-in-use": "Este e-mail já tem uma conta. Tente entrar.",
-    "auth/invalid-email": "O formato do e-mail não parece válido.",
-    "auth/weak-password": "A senha precisa ter pelo menos 6 caracteres.",
-    "auth/invalid-credential": "E-mail ou senha incorretos.",
-    "auth/user-not-found": "Não encontramos uma conta com esse e-mail.",
-    "auth/wrong-password": "Senha incorreta. Tente novamente.",
-    "auth/too-many-requests": "Muitas tentativas. Aguarde um pouco e tente novamente.",
-    "auth/network-request-failed": "Falha de conexão. Verifique sua internet.",
-    "auth/operation-not-allowed": "O login por e-mail/senha não está ativado no Firebase. Ative em Authentication → Sign-in method.",
-    "auth/configuration-not-found": "A configuração do Firebase Auth não foi encontrada. Confira o projeto e ative E-mail/Senha."
-  };
-  return messages[code] || ("Não foi possível concluir. " + (error?.message || "Confira a configuração do Firebase."));
-}
-try {
-  const app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  $("firebaseStatus").textContent = "Firebase configurado";
-  setMode("login");
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      authForm.hidden = true;
-      signedInPanel.hidden = false;
-      $("welcomeMessage").textContent = `Conta conectada: ${user.displayName || user.email || "guerreiro"}.`;
-      message("Você está conectado.", "success");
-    } else {
-      authForm.hidden = false;
-      signedInPanel.hidden = true;
-    }
-  });
-} catch (error) {
-  $("firebaseStatus").textContent = "Erro de configuração";
-  message("Erro ao iniciar Firebase: " + error.message, "error");
-  submitButton.disabled = true;
-}
-loginTab.addEventListener("click", () => setMode("login"));
-registerTab.addEventListener("click", () => setMode("register"));
-authForm.addEventListener("submit", async event => {
-  event.preventDefault();
-  if (!auth) return;
-  const mail = email.value.trim();
-  const pass = password.value;
-  submitButton.disabled = true;
-  message("Conectando ao reino…");
-  try {
-    if (mode === "register") {
-      const name = nickname.value.trim();
-      if (!name) throw new Error("Digite um nome de guerreiro.");
-      const credential = await createUserWithEmailAndPassword(auth, mail, pass);
-      await updateProfile(credential.user, { displayName: name });
-      message("Conta criada com sucesso! Bem-vindo ao reino.", "success");
-    } else {
-      await signInWithEmailAndPassword(auth, mail, pass);
-      message("Login realizado com sucesso.", "success");
-    }
-  } catch (error) {
-    message(error.code ? friendlyError(error) : error.message, "error");
-  } finally {
-    submitButton.disabled = false;
-  }
-});
-$("resetButton").addEventListener("click", async () => {
-  if (!auth) return;
-  const mail = email.value.trim();
-  if (!mail) { message("Digite seu e-mail no campo acima para recuperar a senha.", "error"); email.focus(); return; }
-  try {
-    await sendPasswordResetEmail(auth, mail);
-    message("Se houver uma conta com esse e-mail, o Firebase enviará as instruções de recuperação.", "success");
-  } catch (error) { message(friendlyError(error), "error"); }
-});
-$("logoutButton").addEventListener("click", async () => {
-  try { await signOut(auth); setMode("login"); message("Você saiu da conta."); }
-  catch (error) { message(friendlyError(error), "error"); }
-});
-$("continueButton").addEventListener("click", () => {
-  message("Sua conta está funcionando. A próxima etapa é criar e salvar o personagem no banco de dados.", "success");
-});
+let app, auth, mode="login", currentUser=null, selectedEnemy={name:"Slime Sombrio",hp:60,max:60,reward:40,emoji:"🟢"};
+const state={name:"Guerreiro",level:1,xp:0,coins:500,gems:20,energy:100,mana:100,maxMana:100,health:100,maxHealth:100,damage:20,damageBonus:0,armor:false,manaPotions:0,points:0,dragons:0,dailyClaimed:false};
+function toast(text){const el=$("toast");el.textContent=text;el.classList.remove("hidden");clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.classList.add("hidden"),3200)}
+function setAuthMessage(text,kind=""){const el=$("authMsg");el.textContent=text;el.className="message"+(kind?" "+kind:"")}
+function setMode(next){mode=next;$("tabLogin").classList.toggle("active",next==="login");$("tabRegister").classList.toggle("active",next==="register");$("nickField").classList.toggle("hidden",next!=="register");$("nickInput").required=next==="register";$("authSubmit").textContent=next==="register"?"Criar conta":"Entrar";$("passInput").autocomplete=next==="register"?"new-password":"current-password";setAuthMessage(next==="register"?"Escolha um nome, informe seu e-mail e crie uma senha com pelo menos 6 caracteres.":"Informe o e-mail e a senha usados no cadastro.")}
+function friendlyError(error){const c=error?.code;const map={
+"auth/email-already-in-use":"Esse e-mail já tem uma conta. Use Entrar ou Recuperar senha.",
+"auth/invalid-email":"O e-mail não parece válido.",
+"auth/weak-password":"A senha precisa ter pelo menos 6 caracteres.",
+"auth/invalid-credential":"E-mail ou senha incorretos. Se esqueceu a senha, use Recuperar senha.",
+"auth/user-not-found":"Não encontramos uma conta com esse e-mail. Confira o endereço ou crie uma conta.",
+"auth/wrong-password":"Senha incorreta. Use Recuperar senha para receber um link.",
+"auth/too-many-requests":"Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+"auth/network-request-failed":"Sem conexão com o Firebase. Verifique sua internet.",
+"auth/operation-not-allowed":"Ative E-mail/Senha em Firebase → Authentication → Sign-in method.",
+"auth/unauthorized-continue-uri":"O domínio do site não está autorizado. No Firebase, Authentication → Settings → Authorized domains, adicione o domínio atual.",
+"auth/invalid-continue-uri":"O endereço de retorno de recuperação é inválido. Confira os domínios autorizados.",
+"auth/missing-email":"Digite o e-mail antes de solicitar recuperação.",
+"auth/user-disabled":"Esta conta foi desativada no Firebase.",
+"auth/expired-action-code":"O link expirou. Solicite outro e-mail de recuperação.",
+"auth/invalid-action-code":"Este link não é válido ou já foi usado. Solicite outro."
+};return map[c]||("Não foi possível concluir: "+(error?.message||"erro desconhecido"))}
+async function sendReset(mail){if(!auth)throw new Error("Firebase ainda não inicializou.");if(!mail)throw new Error("Digite seu e-mail primeiro.");await sendPasswordResetEmail(auth,mail)}
+$("tabLogin").addEventListener("click",()=>setMode("login"));
+$("tabRegister").addEventListener("click",()=>setMode("register"));
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();const mail=$("emailInput").value.trim(),pass=$("passInput").value;$("authSubmit").disabled=true;setAuthMessage("Conectando ao reino…");try{if(mode==="register"){const name=$("nickInput").value.trim();if(!name)throw new Error("Digite um nome de guerreiro.");const cred=await createUserWithEmailAndPassword(auth,mail,pass);await updateProfile(cred.user,{displayName:name});state.name=name;setAuthMessage("Conta criada! Entrando no reino…","success")}else{await signInWithEmailAndPassword(auth,mail,pass);setAuthMessage("Login realizado. Carregando seu reino…","success")}}catch(err){setAuthMessage(friendlyError(err), "error")}finally{$("authSubmit").disabled=false}});
+$("forgotBtn").addEventListener("click",async()=>{const mail=$("emailInput").value.trim();if(!mail){setAuthMessage("Digite seu e-mail no campo E-mail e toque em Recuperar senha novamente.","error");$("emailInput").focus();return}const btn=$("forgotBtn");btn.disabled=true;setAuthMessage("Enviando e-mail de recuperação…");try{await sendReset(mail);setAuthMessage("Solicitação enviada. Confira a caixa de entrada e o spam. Se não chegar em alguns minutos, confirme se o e-mail está correto e se o domínio do site está autorizado no Firebase.","success")}catch(err){setAuthMessage(friendlyError(err),"error")}finally{btn.disabled=false}});
+$("changePass").addEventListener("click",async()=>{try{const mail=currentUser?.email;if(!mail){toast("Não encontramos o e-mail da conta.");return}await sendReset(mail);toast("E-mail de recuperação enviado. Confira também o spam.")}catch(err){toast(friendlyError(err))}});
+$("logoutBtn").addEventListener("click",async()=>{try{await signOut(auth);toast("Você saiu da conta.")}catch(e){toast(friendlyError(e))}});
+onAuthStateChangedSafe();
+function onAuthStateChangedSafe(){try{app=initializeApp(firebaseConfig);auth=getAuth(app);onAuthStateChanged(auth,user=>{currentUser=user;if(user){state.name=user.displayName||user.email?.split("@")[0]||"Guerreiro";$("authView").classList.add("hidden");$("gameView").classList.remove("hidden");$("accountEmail").textContent=user.email||"—";$("newNick").value=state.name;render();setAuthMessage("Conta conectada.","success")}else{$("gameView").classList.add("hidden");$("authView").classList.remove("hidden")}})}catch(err){setAuthMessage("Erro ao iniciar Firebase: "+err.message,"error")}}
+function render(){ $("coinsTop").textContent=state.coins;$("gemsTop").textContent=state.gems;$("energyTop").textContent=state.energy;$("sideName").textContent=state.name;$("sideLevel").textContent="Nível "+state.level;$("heroName").textContent=state.name;$("heroLevel").textContent=state.level;$("heroXP").textContent=state.xp+"/100";$("manaText").textContent=state.mana;$("rankName").textContent=state.name;$("rankPoints").textContent=state.points+" pts";$("damageBonus").textContent=state.damageBonus;$("weaponName").textContent=state.damageBonus?"Espada de Ferro":"Cajado simples";$("weaponIcon").textContent=state.damageBonus?"🗡️":"🪵";$("armorStatus").textContent=state.armor?"Armadura de Escamas":"Roupa de viajante";$("maxHealthText").textContent=state.maxHealth;$("manaPotions").textContent=state.manaPotions}
+function goto(page){document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));$("page-"+page).classList.add("active");document.querySelectorAll(".sidebtn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".sidebtn").forEach(b=>b.addEventListener("click",()=>goto(b.dataset.page)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>goto(b.dataset.goto)));
+$("saveNick").addEventListener("click",async()=>{const name=$("newNick").value.trim();if(!name){toast("Digite um nome.");return}try{if(currentUser)await updateProfile(currentUser,{displayName:name});state.name=name;render();toast("Nome atualizado nesta conta.")}catch(e){toast(friendlyError(e))}});
+$("dailyBtn").addEventListener("click",()=>{if(state.dailyClaimed){toast("Você já abriu a caixa diária nesta sessão.");return}state.dailyClaimed=true;state.coins+=100;state.xp+=10;checkLevel();render();toast("Recompensa recebida: +100 moedas e +10 XP!")});
+function selectEnemy(name){const el=[...document.querySelectorAll("[data-enemy]")].find(x=>x.dataset.enemy===name);if(!el)return;document.querySelectorAll("[data-enemy]").forEach(x=>x.classList.toggle("selected",x===el));const emoji=el.querySelector(".emoji").textContent;selectedEnemy={name,hp:Number(el.dataset.hp),max:Number(el.dataset.hp),reward:Number(el.dataset.reward),emoji};$("bossName").textContent=name;$("bossEmoji").textContent=emoji;$("bossHpText").textContent=`Vida: ${selectedEnemy.hp}/${selectedEnemy.max}`;$("bossHpBar").style.width="100%";$("battleLabel").textContent="INIMIGO SELECIONADO";$("battleLog").textContent="O combate começou! Ataque para derrotar o inimigo."}
+document.querySelectorAll("[data-select-enemy]").forEach(b=>b.addEventListener("click",()=>selectEnemy(b.dataset.selectEnemy)));
+function logBattle(t){const l=$("battleLog");l.textContent=t+"\\n"+l.textContent;l.textContent=l.textContent.slice(0,1200)}
+function checkLevel(){while(state.xp>=100){state.xp-=100;state.level++;state.maxHealth+=10;state.health=state.maxHealth;state.maxMana+=5;state.mana=state.maxMana;toast("Subiu para o nível "+state.level+"! Vida e mana restauradas.")}}
+function playerHit(damage){if(selectedEnemy.hp<=0){toast("Escolha outro inimigo.");return}selectedEnemy.hp=Math.max(0,selectedEnemy.hp-damage);$("bossHpText").textContent=`Vida: ${selectedEnemy.hp}/${selectedEnemy.max}`;$("bossHpBar").style.width=(selectedEnemy.hp/selectedEnemy.max*100)+"%";logBattle("Você causou "+damage+" de dano em "+selectedEnemy.name+".");if(selectedEnemy.hp===0){state.coins+=selectedEnemy.reward;state.xp+=25;state.points+=selectedEnemy.reward;state.energy=Math.max(0,state.energy-5);if(selectedEnemy.name==="Dragão Ancião")state.dragons++;checkLevel();render();logBattle("Vitória! +"+selectedEnemy.reward+" moedas, +25 XP.");toast("Vitória! Recompensas recebidas.");}}
+function attack(mult=1,cost=0){if(state.energy<=0){toast("Sem energia. Tente novamente mais tarde.");return}if(state.mana<cost){toast("Mana insuficiente.");return}state.mana-=cost;playerHit(Math.max(1,Math.round((state.damage+state.damageBonus)*mult)));render()}
+$("attackBtn").addEventListener("click",()=>attack(1,0));
+$("skillAttackBtn").addEventListener("click",()=>attack(2,20));
+$("powerFire").addEventListener("click",()=>{goto("play");attack(2,20)});
+$("powerBolt").addEventListener("click",()=>{goto("play");attack(3,35)});
+function heal(){if(state.mana<15){toast("Mana insuficiente.");return}if(state.health>=state.maxHealth){toast("Sua vida já está cheia.");return}state.mana-=15;state.health=Math.min(state.maxHealth,state.health+35);render();toast("Você recuperou vida!")}
+$("healBtn").addEventListener("click",heal);$("powerHeal").addEventListener("click",heal);
+document.querySelectorAll(".buy").forEach(b=>b.addEventListener("click",()=>{const cost=Number(b.dataset.cost),item=b.dataset.item;if(state.coins<cost){toast("Moedas insuficientes.");return}state.coins-=cost;if(item==="sword"){if(state.damageBonus){state.coins+=cost;toast("Você já possui a Espada de Ferro.");return}state.damageBonus=10;toast("Espada de Ferro equipada!")}if(item==="armor"){if(state.armor){state.coins+=cost;toast("Você já possui a armadura.");return}state.armor=true;state.maxHealth+=30;state.health+=30;toast("Armadura equipada!")}if(item==="mana"){state.manaPotions++;toast("Poção guardada no inventário.")}render()}));
+$("usePotion").addEventListener("click",()=>{if(!state.manaPotions){toast("Você não tem poções de mana.");return}state.manaPotions--;state.mana=Math.min(state.maxMana,state.mana+40);render();toast("Poção usada: +40 mana.")});
 </script>
 </body>
 </html>
