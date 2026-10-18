@@ -405,8 +405,7 @@ function authError(e){
  "auth/invalid-email":"O formato do e-mail é inválido.",
  "auth/user-disabled":"Esta conta foi desativada no Firebase Authentication."
  };
- say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"
-Código: "+(e.code||"sem código"));
+ say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"\nCódigo: "+(e.code||"sem código"));
  console.error("Lendas de Eldoria Firebase Auth:",e.code,e.message);
 }
 async function enter(user){
@@ -485,8 +484,33 @@ window.dragonLoadRanking=async()=>{
 };
 window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={...s,uid:u.uid,progressResetVersion:Number(s.progressResetVersion)||2,achievements:Array.isArray(s.achievements)?s.achievements:[],updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{if(auth.currentUser)await signOut(auth);window.dragonUser=null;window.dragonIsAdmin=false;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta. O progresso de convidado não é salvo.')};
-document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço publicado no GitHub Pages (https://biel16santos10-design.github.io/dragon-war-2/) em vez de abrir o arquivo baixado (content:// ou file://). No Firebase, confira Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.
-Código: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
+let enteringUid=null;
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const btn=document.querySelector('#loginForm button[type=submit]');
+ const email=emailEl.value.trim();
+ const password=passEl.value;
+ if(!email||!password){say('Digite seu e-mail e sua senha.');return;}
+ if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}
+ say('Conectando ao Firebase...');
+ try{
+   const credential=await Promise.race([
+     signInWithEmailAndPassword(auth,email,password),
+     new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))
+   ]);
+   if(!credential || !credential.user) throw new Error('O Firebase não retornou a conta autenticada.');
+   // Abre a sessão diretamente após autenticar; o observador abaixo não repete a abertura.
+   enteringUid=credential.user.uid;
+   await enter(credential.user);
+ }catch(err){
+   if(err.code==='dragon/login-timeout'){
+     say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço HTTPS publicado, não pelo arquivo baixado. Confira também Firebase → Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.\nCódigo: dragon/login-timeout');
+     console.error(err);
+   }else authError(err);
+ }finally{
+   if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}
+ }
+});
 document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const invite=(document.getElementById('registerInviteCode')?.value||'').trim().toUpperCase();if(invite)localStorage.setItem('dragonWarPendingInvite_'+emailEl.value.trim().toLowerCase(),invite);const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say(invite?'Conta criada! O código de convite ficará aguardando você confirmar o e-mail e entrar na conta.':'Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
 document.getElementById('resetBtn').addEventListener('click',async()=>{if(!emailEl.value.trim()){say('Digite seu e-mail primeiro.');return}try{await sendPasswordResetEmail(auth,emailEl.value.trim());say('Se a conta permitir recuperação por e-mail, a mensagem foi enviada. Confira spam/lixo eletrônico.')}catch(e){authError(e)}});
 document.getElementById('guestBtn').addEventListener('click',()=>{
@@ -500,7 +524,7 @@ document.getElementById('guestBtn').addEventListener('click',()=>{
  try{updateUI();renderBosses();renderShop();renderInventory();renderSkills();renderRanking();renderAvatarGallery();updateLandingProfile();openScreen('home')}catch(err){console.warn('Guest screen setup',err)}
  say('');showToast('Você entrou como '+state.name+'. O progresso de convidado não será salvo.');
 });
-onAuthStateChanged(auth,async user=>{if(user){say('Conta autenticada. Abrindo o jogo...');try{await enter(user)}catch(e){authError(e)}}});
+onAuthStateChanged(auth,async user=>{if(user && user.uid!==enteringUid){say('Conta autenticada. Abrindo o jogo...');try{enteringUid=user.uid;await enter(user)}catch(e){authError(e)}}else if(!user){enteringUid=null}});
 window.exploreZone=function(zone){const cfg={forest:{cost:10,min:150,max:450,points:20,chance:.08},desert:{cost:20,min:400,max:1000,points:55,chance:.18},volcano:{cost:30,min:900,max:1800,points:100,chance:.35}}[zone];if(!cfg)return;if(Number(state.energy)<cfg.cost)return showToast('Energia insuficiente para esta expedição.');state.energy-=cfg.cost;state.energyUpdatedAt=Date.now();const coins=cfg.min+Math.floor(Math.random()*(cfg.max-cfg.min+1));state.coins+=coins;state.points+=cfg.points;let extra='+'+fmt(coins)+' moedas e +'+cfg.points+' pontos';if(Math.random()<cfg.chance){const gems=zone==='forest'?2:zone==='desert'?5:10;state.gems+=gems;extra+='; +'+gems+' gemas encontradas';}const out=document.getElementById('explorationResult');if(out)out.innerHTML='<h2>Expedição concluída!</h2><p>'+extra+'</p>';updateUI();renderRanking();saveGame(false);showToast('Exploração concluída!');};
 // Código individual estável por jogador. O código do convidador permanece disponível;
 // cada conta convidada só pode resgatar uma vez e não pode resgatar após alcançar nível 20.
