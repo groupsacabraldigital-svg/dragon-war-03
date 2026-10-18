@@ -923,9 +923,9 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
     {name:'Poção Suprema de Vida',emoji:'🧪',price:5,currency:'gem',type:'Poção Rara',category:'pocoes',heal:100},
     {name:'Ração para Pet',emoji:'🍖',price:100,currency:'coin',type:'Ração',category:'racoes',petFood:true},
     {name:'Ração Dourada',emoji:'🌟',price:3,currency:'gem',type:'Ração Especial',category:'racoes',petFood:true},
-    {name:'Ovo Comum de Pet',emoji:'🥚',price:800,currency:'coin',type:'Ovo de Pet',category:'pets',petEggTier:'comum'},
-    {name:'Ovo Épico de Pet',emoji:'🥚',price:12,currency:'gem',type:'Ovo Épico',category:'pets',petEggTier:'epico'},
-    {name:'Ovo Lendário de Pet',emoji:'🥚',price:40,currency:'gem',type:'Ovo Lendário',category:'pets',petEggTier:'lendario'}
+    {name:'Ovo Comum de Pet',emoji:'🥚',price:5000,currency:'coin',type:'Ovo de Pet',category:'pets',petEggTier:'comum'},
+    {name:'Ovo Épico de Pet',emoji:'🥚',price:100,currency:'gem',type:'Ovo Épico',category:'pets',petEggTier:'epico'},
+    {name:'Ovo Lendário de Pet',emoji:'🥚',price:300,currency:'gem',type:'Ovo Lendário',category:'pets',petEggTier:'lendario'}
   ];
   extraItems.push(
     {name:'Adaga de Aprendiz',emoji:'🗡️',price:100,currency:'coin',type:'Arma comum • +5 dano',category:'armas',attackBonus:5},
@@ -1365,5 +1365,64 @@ renderPet();
   };
   if(typeof window.renderShop==='function')window.renderShop();
   if(typeof window.renderPet==='function')window.renderPet();
+})();
+</script>
+
+<script>
+/* Ajustes solicitados: progressão por nível, kit equipável, treino com boneco, consumíveis e medalhas. */
+(function(){
+  if(!window.state)return;
+  const $=id=>document.getElementById(id);
+  // Ataque cresce de forma clara conforme o nível do jogador, somando equipamentos e pet.
+  const previousAttack=window.attack;
+  window.attack=function(){
+    if(window.trainingMode && window.battle){
+      const level=Math.max(1,Number(state.level)||1), equipment=(state.inventory||[]).filter(i=>i.equipped).reduce((n,i)=>n+(Number(i.attackBonus)||0),0);
+      const dmg=Math.floor((24+level*5+(Number(state.attackBonus)||0)+equipment)*(1+(level-1)*0.04));
+      window.trainingHp=Math.max(0,(Number(window.trainingHp)||200)-dmg);window.trainingHits=(Number(window.trainingHits)||0)+1;window.battle.hp=window.trainingHp;
+      if($('enemyHpText'))$('enemyHpText').textContent=window.trainingHp;if($('enemyHp'))$('enemyHp').style.width=(window.trainingHp/200*100)+'%';
+      if($('trainingStatus'))$('trainingStatus').textContent='Boneco de treino • Golpes: '+window.trainingHits+' • Dano do golpe: '+dmg+' • Dano acumulado: '+(200-window.trainingHp);
+      if(window.trainingHp<=0){window.trainingHp=200;window.trainingHits=0;window.battle.hp=200;if($('enemyHpText'))$('enemyHpText').textContent='200';if($('enemyHp'))$('enemyHp').style.width='100%';if($('trainingStatus'))$('trainingStatus').textContent='Boneco atingido! O alvo foi reiniciado automaticamente. Dano do golpe: '+dmg;}
+      return;
+    }
+    return previousAttack&&previousAttack.apply(this,arguments);
+  };
+  // Treinamento não abre o painel de batalha/campanha: apresenta apenas o boneco de treino.
+  const prevStart=window.startTraining;
+  window.startTraining=function(){
+    if(prevStart)prevStart.apply(this,arguments);
+    const combat=$('combate');if(!combat)return;
+    const fight=combat.querySelector('.combat');if(fight)fight.style.display='none';
+    let dummy=$('trainingDummyOnly');if(!dummy){dummy=document.createElement('div');dummy.id='trainingDummyOnly';dummy.className='panel';dummy.style.cssText='text-align:center;padding:28px;margin-top:12px';dummy.innerHTML='<div id="trainingDummyEmoji" style="font-size:100px">🎯</div><h2>BONECO DE TREINO</h2><div class="hpbig"><i id="trainingDummyBar"></i></div><p>Resistência do alvo: <b id="trainingDummyHp">200</b></p><p class="stats">Treino de dano sem batalha de campanha ou recompensas de inimigos.</p><button class="fight" onclick="attack()">⚔️ TESTAR ATAQUE</button><button class="buy" onclick="usePower()">✨ TESTAR PODER</button><button class="buy" onclick="resetTrainingDummy()">🔄 REINICIAR BONECO</button></div>';combat.appendChild(dummy);}
+    dummy.style.display='block';
+    const oldStatus=$('trainingStatus');if(oldStatus)oldStatus.textContent='Treinamento iniciado. Ataque o boneco para ver o dano conforme seu nível.';
+    const enemy=$('battleEnemy');if(enemy)enemy.textContent='🎯';
+    const obs=new MutationObserver(()=>{const hp=$('trainingHp');if($('trainingDummyHp'))$('trainingDummyHp').textContent=window.trainingHp??200;if($('trainingDummyBar'))$('trainingDummyBar').style.width=((Number(window.trainingHp||200)/200)*100)+'%';});obs.observe(dummy,{childList:true,subtree:true,characterData:true});
+  };
+  const prevReset=window.resetTrainingDummy;
+  window.resetTrainingDummy=function(){if(prevReset)prevReset.apply(this,arguments);window.trainingMode=true;window.trainingHp=200;window.trainingHits=0;window.battle={training:true,hp:200,max:200,playerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};if($('trainingDummyOnly'))$('trainingDummyOnly').style.display='block';if($('trainingDummyHp'))$('trainingDummyHp').textContent='200';if($('trainingDummyBar'))$('trainingDummyBar').style.width='100%';const fight=$('combate')?.querySelector('.combat');if(fight)fight.style.display='none';};
+  // Categorias e equipamento individual dos itens: arma, armadura, escudo, material, consumível e outros.
+  const oldInventory=window.renderInventory;
+  window.renderInventory=function(){
+    if(oldInventory)oldInventory();const grid=$('inventoryGrid');if(!grid)return;
+    const items=Array.isArray(state.inventory)?state.inventory:[];const groups=[['⚔️ Armas','Arma','armas'],['🛡️ Armaduras','Armadura','armaduras'],['🛡️ Escudos','Escudo','escudos'],['🧪 Consumíveis','consumível','consumiveis'],['🔮 Materiais','material','materiais'],['🐾 Pets e rações','pet','pets'],['📦 Outros itens','outro','outros']];
+    const category=i=>{const t=String(i.type||'').toLowerCase(),n=String(i.name||'').toLowerCase();if(t.includes('escudo')||n.includes('escudo'))return 2;if(t.includes('armadura')||n.includes('armadura'))return 1;if(t.includes('arma')||i.attackBonus)return 0;if(i.tempBuff||i.heal||i.energyRestore||i.consumable)return 3;if(t.includes('material')||n.includes('fragmento'))return 4;if(i.petFood||i.petArmor||i.petEggTier||t.includes('ração')||t.includes('pet'))return 5;return 6;};
+    const card=i=>{const idx=items.indexOf(i),canEquip=[0,1,2].includes(category(i));return '<article class="panel item"><div class="emoji">'+(i.emoji||'📦')+'</div><h3>'+i.name+'</h3><p class="stats">'+(i.type||'Item')+(i.equipped?' • EQUIPADO':'')+'</p>'+(canEquip?'<button class="equip" onclick="toggleKitItem('+idx+')">'+(i.equipped?'✓ EQUIPADO — DESEQUIPAR':'EQUIPAR NO KIT')+'</button>':'')+(i.tempBuff||i.heal||i.energyRestore?'<button class="buy" onclick="useInventoryMaterial('+idx+')">USAR NA BATALHA</button>':'')+'<button class="equip" onclick="donateKitItem('+idx+')">DOAR</button></article>';};
+    grid.innerHTML=groups.map((g,gi)=>{const subset=items.filter(i=>category(i)===gi);return '<section style="grid-column:1/-1;margin-top:12px"><h2>'+g[0]+' ('+subset.length+')</h2><div class="grid4">'+(subset.length?subset.map(card).join(''):'<p class="stats">Nenhum item nesta categoria.</p>')+'</div></section>';}).join('');
+  };
+  window.toggleKitItem=function(idx){const item=state.inventory[idx];if(!item)return;const cat=String(item.type||'').toLowerCase().includes('escudo')||String(item.name||'').toLowerCase().includes('escudo')?'Escudo':String(item.type||'').toLowerCase().includes('armadura')||String(item.name||'').toLowerCase().includes('armadura')?'Armadura':'Arma';item.equipped=!item.equipped;if(item.equipped){state.inventory.forEach((x,j)=>{if(j!==idx){const t=String(x.type||'').toLowerCase(),n=String(x.name||'').toLowerCase();const c=t.includes('escudo')||n.includes('escudo')?'Escudo':t.includes('armadura')||n.includes('armadura')?'Armadura':(t.includes('arma')||x.attackBonus)?'Arma':'';if(c===cat)x.equipped=false;}});if(cat==='Arma')state.weaponEquipped=item.name;if(cat==='Armadura')state.armorEquipped=item.name;}renderInventory();updateUI();if(typeof updateLandingProfile==='function')updateLandingProfile();saveGame(false);showToast(item.equipped?item.name+' equipado no kit!':item.name+' removido do kit.');};
+  window.donateKitItem=function(idx){const item=state.inventory[idx];if(!item)return;if(!confirm('Doar '+item.name+'?'))return;state.inventory.splice(idx,1);renderInventory();renderShop();saveGame(false);};
+  // Materiais e consumíveis comprados ficam no inventário; uso consome a unidade e ativa bônus temporário na batalha.
+  window.useInventoryMaterial=function(idx){const it=state.inventory[idx];if(!it)return;state.battleBuffs=state.battleBuffs||{};if(it.tempBuff){state.battleBuffs[it.tempBuff]={amount:Number(it.buffAmount)||0.25,battles:1};}else if(it.heal){state.battleHeal=Number(it.heal)||0;}else if(it.energyRestore){state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+Number(it.energyRestore));}else return showToast('Este item não pode ser usado como consumível.');if(Number(it.quantity)>1)it.quantity--;else state.inventory.splice(idx,1);renderInventory();updateUI();saveGame(false);showToast(it.name+' usado. A carga foi consumida; compre outro para usar novamente.');};
+  const prevBuy=window.buyItem;
+  window.buyItem=function(i){const it=window.shop&&shop[i];if(it&&it.petEggTier){it.price=Math.max(Number(it.price)||0,it.petEggTier==='comum'?5000:it.petEggTier==='epico'?100:300);}return prevBuy?prevBuy.apply(this,arguments):undefined;};
+  // Medalha escolhida no perfil e progressão bronze -> prata -> ouro ao avançar na mesma conquista.
+  window.selectProfileMedal=function(id){const defs=window.achievementDefs||[];const a=defs.find(x=>x.id===id);if(!a||!(state.achievements||[]).includes(id))return showToast('Desbloqueie a conquista antes de selecionar a medalha.');state.selectedProfileMedal=id;renderAchievements();saveGame(false);if(typeof updateLandingProfile==='function')updateLandingProfile();showToast('Medalha do perfil atualizada!');};
+  const prevAchievements=window.renderAchievements;
+  window.renderAchievements=function(){if(prevAchievements)prevAchievements();const grid=$('achievementGrid');if(!grid)return;const defs=window.achievementDefs||[];grid.querySelectorAll('.panel.item').forEach((card,index)=>{const a=defs[index];if(!a)return;const got=(state.achievements||[]).includes(a.id);if(!got)return;let btn=card.querySelector('[data-medal-select]');if(!btn){btn=document.createElement('button');btn.className='equip';btn.dataset.medalSelect='1';btn.textContent=state.selectedProfileMedal===a.id?'✓ MEDALHA NO PERFIL':'USAR NO PERFIL';btn.onclick=()=>selectProfileMedal(a.id);card.appendChild(btn);}btn.textContent=state.selectedProfileMedal===a.id?'✓ MEDALHA NO PERFIL':'USAR NO PERFIL';});};
+  const oldLanding=window.updateLandingProfile;window.updateLandingProfile=function(){if(oldLanding)oldLanding();const el=$('homeAchievementBadge');if(!el)return;const defs=window.achievementDefs||[];const id=state.selectedProfileMedal;const a=defs.find(x=>x.id===id&&((state.achievements||[]).includes(id)));if(a){el.textContent=a.icon+' '+a.name+' • '+(a.tier||'Medalha');return;} };
+  // Mantém o nome da conquista e faz a patente visual avançar conforme o progresso, sem remover conquistas já obtidas.
+  const tiers=['Bronze','Prata','Ouro'];window.getAchievementTier=function(id){const defs=window.achievementDefs||[];const a=defs.find(x=>x.id===id);if(!a)return 'Bronze';const s=state.achievementStats||{};const progress=Math.max(Number(state.level)||1,Number(s.wins)||0,Number(s.pointsEarned)||0);return tiers[progress>=50?2:progress>=10?1:0];};
+  if(window.renderInventory)window.renderInventory();if(window.renderAchievements)window.renderAchievements();
 })();
 </script>
