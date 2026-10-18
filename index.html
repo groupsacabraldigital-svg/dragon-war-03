@@ -136,7 +136,13 @@ function openScreen(id,btn){if(id==="admin"&&!adminLogged)return openAdminLogin(
 function updateRank(){let p=state.points;if(p>=10000)state.rank="Lendário";else if(p>=5000)state.rank="Elite";else if(p>=2500)state.rank="Mestre";else if(p>=1000)state.rank="Profissional";else if(p>=500)state.rank="Avançado";else if(p>=200)state.rank="Intermediário";else state.rank="Iniciante"}
 function updateUI(){updateRank();$("topName").textContent=state.name;$("topLevel").textContent=state.level;$("topRankBadge").textContent="🏅 "+state.rank.toUpperCase();$("coins").textContent=fmt(state.coins);$("gems").textContent=fmt(state.gems);$("energy").textContent=state.energy+"/100";$("homeProfile").textContent=state.name+" • Nível "+state.level;$("myRankBig").textContent="🏅 "+state.rank.toUpperCase();$("myRankPoints").textContent=fmt(state.points)+" pontos";$("nameInput").value=state.name}
 function renderBosses(){$("bossGrid").innerHTML=enemies.map((e,i)=>`<article class="boss ${i===1?"fire":i===2?"shadow":""}"><div class="boss-art">${e.emoji}</div><div class="boss-body"><h3>${e.name}</h3><div class="stats">LEVEL ${150-i*5}<br>POWER: ${950000-i*70000}<br>HP: ${fmt(e.hp)}</div><div class="reward">RECOMPENSAS: 💎 ${e.gems} • 🪙 ${fmt(e.reward)}</div><button class="fight" onclick="startBattle(${i})">ENTRAR NA BATALHA</button></div></article>`).join("")}
-function renderShop(){let cats=["equipamentos","consumiveis","materiais","gemas"];$("shopTabs").innerHTML=cats.map(c=>`<button class="tab ${c===shopCategory?"active":""}" onclick="setShopCategory('${c}')">${c.toUpperCase()}</button>`).join("");let items=shop.filter(x=>x.category===shopCategory);$("shopGrid").innerHTML=items.map(it=>{let i=shop.indexOf(it);return `<div class="panel item"><div class="emoji">${it.emoji}</div><div class="rarity">${it.type}</div><h3>${it.name}</h3><div class="price">${it.currency==="gem"?"💎":"🪙"} ${fmt(it.price)}</div><button class="buy" onclick="buyItem(${i})">COMPRAR</button></div>`}).join("");$("skinShopGrid").innerHTML=skins.map(s=>{let owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;return `<div class="panel item"><div class="emoji">${s.emoji}</div><div class="rarity">SKIN</div><h3>${s.name}</h3><p>${s.ability}</p><div class="price">${owned?"✓ POSSUÍDA":(s.currency==="gem"?"💎":"🪙")+" "+fmt(s.price)}</div><button class="equip" onclick="${owned?`equipSkin('${s.id}')`:`buySkin('${s.id}')`}">${eq?"EQUIPADA":owned?"EQUIPAR":"COMPRAR"}</button></div>`}).join("")}
+function renderShop(){
+ let cats=["equipamentos","consumiveis","materiais","gemas"];
+ $("shopTabs").innerHTML=cats.map(c=>'<button class="tab '+(c===shopCategory?'active':'')+'" onclick="setShopCategory(\''+c+'\')">'+c.toUpperCase()+'</button>').join("");
+ let items=shop.filter(x=>x.category===shopCategory);
+ $("shopGrid").innerHTML=items.map(it=>{let i=shop.indexOf(it);return '<div class="panel item"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==="gem"?"💎":"🪙")+' '+fmt(it.price)+'</div><button class="buy" onclick="buyItem('+i+')">COMPRAR</button></div>';}).join("");
+ $("skinShopGrid").innerHTML=skins.map(s=>{let owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;let action=owned?"equipSkin":"buySkin";let label=eq?"EQUIPADA":(owned?"EQUIPAR":"COMPRAR");return '<div class="panel item"><div class="emoji">'+s.emoji+'</div><div class="rarity">SKIN</div><h3>'+s.name+'</h3><p>'+s.ability+'</p><div class="price">'+(owned?"✓ POSSUÍDA":((s.currency==="gem"?"💎":"🪙")+" "+fmt(s.price)))+'</div><button class="equip" onclick="'+action+'(\''+s.id+'\')">'+label+'</button></div>';}).join("");
+}
 function setShopCategory(c){shopCategory=c;renderShop()}
 function buyItem(i){let it=shop[i],key=it.currency==="gem"?"gems":"coins";if(state[key]<it.price)return showToast("Recursos insuficientes.");state[key]-=it.price;if(it.gemReward)state.gems+=it.gemReward;else state.inventory.push({name:it.name,emoji:it.emoji});updateUI();renderInventory();renderShop();saveGame(false);showToast("Compra realizada!")}
 function buySkin(id){let s=skins.find(x=>x.id===id);if(state[s.currency==="gem"?"gems":"coins"]<s.price)return showToast("Recursos insuficientes.");if(s.currency==="gem")state.gems-=s.price;else state.coins-=s.price;state.skinsOwned.push(id);state.equippedSkin=id;updateUI();renderShop();renderInventory();saveGame(false);showToast("Skin adquirida!")}
@@ -145,7 +151,7 @@ function renderInventory(){let s=skins.find(x=>x.id===state.equippedSkin)||skins
 function renderSkills(){$("skillNodes").innerHTML=skills.map((s,i)=>`<div class="node ${i>4?"lock":""}" onclick="selectSkill(${i})">${s[0]}<small>${s[1]}</small></div>`).join("");$("skillPoints").textContent=state.skillPoints}
 function selectSkill(i){$("skillName").textContent=skills[i][0]+" "+skills[i][1];$("skillDamage").textContent=skills[i][2]}
 function upgradeSkill(){if(state.skillPoints<2)return showToast("Você precisa de 2 pontos.");state.skillPoints-=2;renderSkills();saveGame(false);showToast("Poder melhorado!")}
-function startBattle(i){let e=enemies[i];battle={index:i,hp:e.hp,max:e.hp,playerHp:100};$("battleEnemy").textContent=e.emoji;$("battleName").textContent=e.name;$("battlePhase").textContent="FASE "+(i+1)+"/3;$("battleReward").textContent=`RECOMPENSA: 🪙 ${fmt(e.reward)} • 💎 ${e.gems}`;updateBattle();openScreen("combate")}
+function startBattle(i){let e=enemies[i];battle={index:i,hp:e.hp,max:e.hp,playerHp:100};$("battleEnemy").textContent=e.emoji;$("battleName").textContent=e.name;$("battlePhase").textContent="FASE "+(i+1)+"/3";$("battleReward").textContent="RECOMPENSA: 🪙 "+fmt(e.reward)+" • 💎 "+e.gems;updateBattle();openScreen("combate")}
 function updateBattle(){if(!battle)return;$("enemyHpText").textContent=Math.max(0,battle.hp);$("enemyHp").style.width=Math.max(0,battle.hp/battle.max*100)+"%";$("playerHpText").textContent=battle.playerHp}
 function enemyTurn(){if(!battle)return;battle.playerHp=Math.max(0,battle.playerHp-enemies[battle.index].dmg);updateBattle();if(battle.playerHp<=0){battle=null;showToast("Você foi derrotado.");openScreen("jogar")}}
 function attack(){if(!battle)return;battle.hp-=25+state.level*3;if(battle.hp<=0)return winBattle();enemyTurn()}
@@ -154,7 +160,8 @@ function heal(){if(!battle)return;if(battle.playerHp>=100)return showToast("Vida
 function winBattle(){let e=enemies[battle.index];state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,Math.floor(state.points/100)+1);state.skillPoints++;let next=battle.index+1;battle=null;updateUI();saveGame(false);if(next<3){showToast("Vitória! Próxima fase.");setTimeout(()=>startBattle(next),600)}else showModal("🏆 VITÓRIA","Você derrotou os 3 inimigos!")}
 function renderRanking(){let demo=[{name:"Kaelen",level:68,points:12850},{name:"ShadowLord",level:55,points:10200},{name:"DragonMaster",level:42,points:8400},{name:state.name,level:state.level,points:state.points}];demo.sort((a,b)=>b.points-a.points);$("rankingList").innerHTML=demo.map((p,i)=>`<div class="rankrow ${p.name===state.name?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${p.name}</div><div class="hide-mobile">Nível ${p.level}</div><div class="rankpoints">${fmt(p.points)}</div></div>`).join("")}
 function saveName(){let n=$("nameInput").value.trim();if(n.length<3)return showToast("Nome muito curto.");state.name=n;updateUI();saveGame(false);showToast("Nome salvo!")}
-window.gameSetCloudData=function(d){if(!d)return;const fields=["name","level","rank","coins","gems","energy","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();};
+window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","level","rank","coins","gems","energy","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();};
+window.gameSetCloudData=window.applyCloudPlayer;
 function saveGame(notify=true){
  const key="dragonWarSave_"+(window.dragonUser?.uid||"guest");
  localStorage.setItem(key,JSON.stringify(state));
@@ -172,7 +179,7 @@ function showModal(t,m){$("modalTitle").textContent=t;$("modalText").textContent
 */
 function openAdminLogin(){
  if(!window.dragonUser){showToast("Entre na sua conta primeiro.");return}
- if(window.dragonUser.email!=="groupsacabraldigital@gmail.com" || !window.dragonUser.emailVerified){showToast("Acesso restrito ao e-mail ADM verificado.");return}
+ if(window.dragonUser.uid!=="xO3nKT5oE0MIHkzhWUqa1h0ILYw1" && (window.dragonUser.email!=="groupsacabraldigital@gmail.com" || !window.dragonUser.emailVerified)){showToast("Acesso restrito à conta ADM autorizada.");return}
  adminLogged=true;openScreen("admin");showToast("🛡️ Acesso ADM autenticado")
 }
 function renderAdmin(){$("admPlayers").textContent="1";$("admOnline").textContent="1";$("admPoints").textContent=fmt(state.points);$("admName").value=state.name;$("admLevel").value=state.level;$("admPointsInput").value=state.points;$("admCoins").value=state.coins;$("admGems").value=state.gems;$("admEnergy").value=state.energy}
@@ -222,11 +229,11 @@ async function enter(user){
     if(typeof loadGame==='function') loadGame();
     if(window.restoreLocalBeforeCloud && typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(window.restoreLocalBeforeCloud);
   } catch(e) { console.warn('Falha aplicando save local',e); }
-  if(user.email==='groupsacabraldigital@gmail.com' && !user.emailVerified){
+  if(user.uid!=='xO3nKT5oE0MIHkzhWUqa1h0ILYw1' && user.email==='groupsacabraldigital@gmail.com' && !user.emailVerified){
     say('A conta ADM entrou, mas o e-mail precisa estar verificado.');
     gate.style.display='grid'; document.body.classList.add('auth-locked'); return;
   }
-  window.dragonIsAdmin=(user.email==='groupsacabraldigital@gmail.com' && user.emailVerified===true);
+  window.dragonIsAdmin=(user.uid==='xO3nKT5oE0MIHkzhWUqa1h0ILYw1' || (user.email==='groupsacabraldigital@gmail.com' && user.emailVerified===true));
   say(window.dragonIsAdmin?'Conta ADM reconhecida.':'Login realizado.');
 
   // Sincronização de nuvem sem bloquear a tela do jogo.
