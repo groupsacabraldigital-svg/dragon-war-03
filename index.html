@@ -467,6 +467,33 @@ window.gameSetCloudData=d=>{if(d)window.applyCloudPlayer?.(d)};
 })();
 </script>
 
+
+<style>
+/* Depois de iniciar, a tela promocional não deve reaparecer no menu. */
+body.game-started #home{display:none!important}
+body.game-started .nav button[onclick*="openScreen('home'"]{display:none!important}
+</style>
+<script>
+(function(){
+  const originalOpenScreen = window.openScreen;
+  if(typeof originalOpenScreen === 'function'){
+    window.openScreen = function(id, btn){
+      if(document.body.classList.contains('game-started') && id === 'home') id = 'jogar';
+      return originalOpenScreen.call(this, id, btn);
+    };
+  }
+  const originalEnterGame = window.enterGame;
+  window.enterGame = function(){
+    document.body.classList.remove('landing-only');
+    document.body.classList.add('game-started');
+    if(typeof originalEnterGame === 'function') originalEnterGame();
+    if(typeof originalOpenScreen === 'function') originalOpenScreen('jogar');
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    const play=document.querySelector('.nav button.gold');
+    if(play) play.classList.add('active');
+  };
+})();
+</script>
 </body>
 </html>
 <script>
