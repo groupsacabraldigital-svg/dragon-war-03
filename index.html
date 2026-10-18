@@ -314,7 +314,7 @@ function buyItem(i){let it=shop[i],key=it.currency==="gem"?"gems":"coins";if(sta
 function buySkin(id){let s=skins.find(x=>x.id===id);if(state[s.currency==="gem"?"gems":"coins"]<s.price)return showToast("Recursos insuficientes.");if(s.currency==="gem")state.gems-=s.price;else state.coins-=s.price;state.skinsOwned.push(id);state.equippedSkin=id;updateUI();renderShop();renderInventory();saveGame(false);showToast("Skin adquirida!")}
 function equipSkin(id){if(!state.skinsOwned.includes(id))return;state.equippedSkin=id;renderShop();renderInventory();saveGame(false);showToast("Skin equipada!")}
 function renderInventory(){renderPet();let s=skins.find(x=>x.id===state.equippedSkin)||skins[0];$("equippedSkin").textContent=s.emoji;$("equippedSkinName").textContent=s.name;$("equippedSkinAbility").textContent="Habilidade: "+s.ability;let cards=state.inventory.map(x=>`<div class="panel item"><div class="emoji">${x.emoji}</div><h3>${x.name}</h3></div>`).join("");let sc=skins.filter(x=>state.skinsOwned.includes(x.id)).map(x=>`<div class="panel item"><div class="emoji">${x.emoji}</div><h3>${x.name}</h3><button class="equip" onclick="equipSkin('${x.id}')">${state.equippedSkin===x.id?"✓ EQUIPADA":"EQUIPAR"}</button></div>`).join("");$("inventoryGrid").innerHTML=sc+cards}
-function renderPet(){const box=$("petDetails");if(!box)return;const pet=state.pet;if(!pet){box.innerHTML="<div style=\"font-size:52px\">🥚</div><h3>Nenhum pet resgatado</h3><p>Continue avançando na campanha. Há resgates especiais nas fases 5 e nos chefões.</p>";return;}const lvl=Math.max(1,Number(pet.level)||1);const forms=["🐣","🐤","🐲","🐉"];const emoji=forms[Math.min(forms.length-1,Math.floor((lvl-1)/3))];box.innerHTML="<div style=\"font-size:60px\">"+emoji+"</div><h3>"+(pet.name||"Dracozinho")+" • Nível "+lvl+"/10</h3><p>❤️ Vínculo: "+(pet.xp||0)+" carinho</p><p>⚔️ Bônus de dano: +"+(lvl*3)+"% • 🛡️ Defesa: -"+(lvl)+"% de dano recebido</p><p class=\"stats\">Quanto mais você alimenta o pet, maior e mais forte ele fica.</p>";}
+function renderPet(){const box=$("petDetails");if(!box)return;const pet=state.pet;if(!pet){box.innerHTML="<div style=\"font-size:52px\">🥚</div><h3>Nenhum pet resgatado</h3><p>Continue avançando na campanha. Há resgates especiais nas fases 5 e nos chefões.</p>";return;}const lvl=Math.max(1,Number(pet.level)||1);const forms=["🐣","🐤","🐲","🐉"];const emoji=forms[Math.min(forms.length-1,Math.floor((lvl-1)/3))];box.innerHTML="<div style=\"font-size:60px\">"+emoji+"</div><h3>"+(pet.name||"Dracozinho")+" • Nível "+lvl+"/100</h3><p>❤️ Vínculo: "+(pet.xp||0)+" carinho</p><p>⚔️ Bônus de dano: +"+(lvl*3)+"% • 🛡️ Defesa: -"+(lvl)+"% de dano recebido</p><p class=\"stats\">Quanto mais você alimenta o pet, maior e mais forte ele fica.</p>";}
 window.feedPet=function(){if(!state.pet)return showToast("Ainda não há pet. Resgate um em uma fase especial!");if(state.coins<250)return showToast("Você precisa de 250 moedas para alimentar o pet.");if((state.pet.level||1)>=10)return showToast("Seu pet já atingiu o nível máximo!");state.coins-=250;state.pet.xp=(state.pet.xp||0)+1;state.pet.level=Math.min(10,(state.pet.level||1)+1);renderPet();updateUI();saveGame(false);showToast("🍖 Seu pet cresceu! Agora está no nível "+state.pet.level+".")};
 function maybeRescuePet(e){if(state.pet)return false;if(e.phase!==5&&!e.boss)return false;state.pet={name:"Dracozinho",level:1,xp:0,rescuedAt:""+e.level+"-"+e.phase};renderPet();saveGame(false);showModal("🐾 PET RESGATADO!","Você encontrou um Dracozinho na fase especial! Ele vai ajudar nas batalhas. Visite a Loja para alimentá-lo e fazê-lo crescer.");return true;}
 function renderSkills(){$("skillNodes").innerHTML=skills.map((s,i)=>`<div class="node ${i>4?"lock":""}" onclick="selectSkill(${i})">${s[0]}<small>${s[1]}</small></div>`).join("");$("skillPoints").textContent=state.skillPoints}
@@ -1135,7 +1135,7 @@ function petCount(name,form){return state.petCollection.filter(p=>p.name===name&
 function petActionDialog(petId){const pet=state.petCollection.find(p=>p.id===petId);if(!pet)return;const form=petForm(pet),need=form==='normal'?'super':form==='super'?'mega':null,required=need?3:0,count=petCount(pet.name,form);let old=document.getElementById('petDuplicateDialog');if(old)old.remove();const overlay=document.createElement('div');overlay.id='petDuplicateDialog';overlay.style.cssText='position:fixed;inset:0;z-index:99999;background:#020617dd;display:flex;align-items:center;justify-content:center;padding:18px';const panel=document.createElement('div');panel.style.cssText='width:min(440px,100%);background:#111827;border:1px solid #d6a653;border-radius:16px;padding:22px;color:#f8fafc;text-align:center;box-shadow:0 20px 60px #000';const title=document.createElement('h2');title.textContent='🐾 PET REPETIDO!';const desc=document.createElement('p');desc.style.cssText='margin:12px 0 18px;line-height:1.5';desc.textContent=pet.emoji+' '+pet.name+' já faz parte da sua coleção. Você tem '+count+' cópia(s) deste estágio. '+(need?'Junte 3 '+(form==='normal'?'pets normais':'Super Pets')+' iguais para criar '+(need==='super'?'um SUPER PET':'um MEGA PET')+'.':'Este já é um MEGA PET; você pode doar a cópia extra.');panel.append(title,desc);const btn=(label,fn,color)=>{const b=document.createElement('button');b.textContent=label;b.style.cssText='display:block;width:100%;margin:8px 0;padding:12px;border:0;border-radius:9px;font-weight:800;cursor:pointer;background:'+color+';color:#fff';b.onclick=()=>{overlay.remove();fn();};panel.appendChild(b)};btn('🎁 DOAR ESTE PET',()=>{state.petCollection=state.petCollection.filter(p=>p.id!==petId);syncActivePet();renderPet();renderInventory();saveGame(false);showToast('Pet doado. Obrigado por ajudar!');},'#64748b');btn(need?(count>=3?'✨ CRIAR '+(need==='super'?'SUPER PET':'MEGA PET'):'🔒 CRIAR '+(need==='super'?'SUPER PET':'MEGA PET')+' ('+count+'/3)'):'✨ MANTER MEGA PET',()=>{if(!need){showToast('Você já tem um Mega Pet. A cópia pode ser doada.');return;}const matching=state.petCollection.filter(p=>p.name===pet.name&&petForm(p)===form);if(matching.length<3){showToast('Você precisa de 3 cópias iguais. A cópia foi guardada na coleção.');return;}const consume=matching.slice(0,3),ids=new Set(consume.map(p=>p.id));state.petCollection=state.petCollection.filter(p=>!ids.has(p.id));const merged={...consume[0],id:'pet_'+Date.now()+'_'+Math.floor(Math.random()*999999),form:need,level:1,xp:0,mergedAt:Date.now()};state.petCollection.push(merged);state.activePetId=merged.id;syncActivePet();renderPet();renderInventory();saveGame(false);showModal(need==='super'?'✨ SUPER PET CRIADO!':'🌟 MEGA PET CRIADO!',merged.emoji+' '+merged.name+' evoluiu para '+petFormLabel(merged)+'! Foram unidos 3 pets iguais.');},count>=3?'#7c3aed':'#334155');btn('CANCELAR',()=>{},'#1f2937');overlay.appendChild(panel);document.body.appendChild(overlay);}
 window.hatchPetEgg=function(id){const i=state.petEggs.findIndex(e=>e.id===id);if(i<0)return showToast('Esse ovo não está mais no inventário.');const egg=state.petEggs[i],type=eggTypes[egg.tier]||eggTypes.comum,pick=type.pets[Math.floor(Math.random()*type.pets.length)];state.petEggs.splice(i,1);const pet={id:'pet_'+Date.now()+'_'+Math.floor(Math.random()*999999),name:pick.name,emoji:pick.emoji,tier:egg.tier,form:'normal',level:1,xp:0,rescuedAt:egg.source,hatchedAt:Date.now()};const duplicate=state.petCollection.find(p=>petSameGroup(p,pet));state.petCollection.push(pet);if(!duplicate){state.activePetId=pet.id;syncActivePet();renderPet();renderInventory();saveGame(false);showModal('🥚 NOVO PET DESCOBERTO!',pick.emoji+' '+pick.name+' é novo na sua coleção! Categoria '+type.label+'.');return;}syncActivePet();renderPet();renderInventory();saveGame(false);petActionDialog(pet.id);};
 window.setActivePet=function(id){if(!state.petCollection.some(p=>p.id===id))return;state.activePetId=id;syncActivePet();renderPet();saveGame(false);showToast('Pet escolhido para a batalha!');};
-renderPet=function(){const box=$('petDetails');if(!box)return;syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos para chocar ('+state.petEggs.length+')</h3>';if(!state.petEggs.length)html+='<p>Nenhum ovo ainda. Explore fases especiais e participe da Roleta da Sorte.</p>';else html+='<div class="grid4">'+state.petEggs.map(e=>{const t=eggTypes[e.tier]||eggTypes.comum;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">🥚</div><h3 style="color:'+t.color+'">Ovo '+t.label+'</h3><p>Origem: '+(e.source==='roleta'?'Roleta da Sorte':e.source==='baú diário'?'Baú diário':'Jornada')+'</p><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">CHOCAR OVO</button></div>';}).join('')+'</div>';html+='</div><hr style="margin:14px 0;border-color:#334155"><h3>🐾 Coleção de pets ('+state.petCollection.length+')</h3>';if(!state.petCollection.length)html+='<div style="font-size:48px">🥚</div><p>Você ainda não tem pets. Encontre ovos durante sua jornada!</p>';else{html+='<div class="grid4">'+state.petCollection.map(p=>{const t=eggTypes[p.tier]||eggTypes.comum,lvl=Math.max(1,Number(p.level)||1);return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">'+(p.emoji||'🐲')+'</div><h3>'+p.name+'</h3><p style="color:'+t.color+'">'+t.label+' • Nível '+lvl+'/10</p><p>⚔️ +'+(lvl*3)+'% ataque<br>🛡️ -'+lvl+'% dano recebido</p><button class="equip" onclick="setActivePet(\''+p.id+'\')">'+(state.activePetId===p.id?'✓ ATIVO':'USAR NA BATALHA')+'</button></div>';}).join('')+'</div>';if(active){const lvl=Math.max(1,Number(active.level)||1);html+='<div class="panel" style="margin-top:12px;text-align:center"><h3>Pet ativo: '+(active.emoji||'🐲')+' '+active.name+'</h3><p>Nível '+lvl+'/10 • '+(active.xp||0)+' carinho</p><p>Alimente-o para melhorar os bônus de batalha.</p><button class="buy" onclick="feedPet()">🍖 ALIMENTAR PET — 250 MOEDAS</button></div>';}}
+renderPet=function(){const box=$('petDetails');if(!box)return;syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos para chocar ('+state.petEggs.length+')</h3>';if(!state.petEggs.length)html+='<p>Nenhum ovo ainda. Explore fases especiais e participe da Roleta da Sorte.</p>';else html+='<div class="grid4">'+state.petEggs.map(e=>{const t=eggTypes[e.tier]||eggTypes.comum;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">🥚</div><h3 style="color:'+t.color+'">Ovo '+t.label+'</h3><p>Origem: '+(e.source==='roleta'?'Roleta da Sorte':e.source==='baú diário'?'Baú diário':'Jornada')+'</p><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">CHOCAR OVO</button></div>';}).join('')+'</div>';html+='</div><hr style="margin:14px 0;border-color:#334155"><h3>🐾 Coleção de pets ('+state.petCollection.length+')</h3>';if(!state.petCollection.length)html+='<div style="font-size:48px">🥚</div><p>Você ainda não tem pets. Encontre ovos durante sua jornada!</p>';else{html+='<div class="grid4">'+state.petCollection.map(p=>{const t=eggTypes[p.tier]||eggTypes.comum,lvl=Math.max(1,Number(p.level)||1);return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">'+(p.emoji||'🐲')+'</div><h3>'+p.name+'</h3><p style="color:'+t.color+'">'+t.label+' • Nível '+lvl+'/100</p><p>⚔️ +'+(lvl*3)+'% ataque<br>🛡️ -'+lvl+'% dano recebido</p><button class="equip" onclick="setActivePet(\''+p.id+'\')">'+(state.activePetId===p.id?'✓ ATIVO':'USAR NA BATALHA')+'</button></div>';}).join('')+'</div>';if(active){const lvl=Math.max(1,Number(active.level)||1);html+='<div class="panel" style="margin-top:12px;text-align:center"><h3>Pet ativo: '+(active.emoji||'🐲')+' '+active.name+'</h3><p>Nível '+lvl+'/10 • '+(active.xp||0)+' carinho</p><p>Alimente-o para melhorar os bônus de batalha.</p><button class="buy" onclick="feedPet()">🍖 ALIMENTAR PET — 250 MOEDAS</button></div>';}}
 box.innerHTML=html;};
 window.feedPet=function(){syncActivePet();const p=state.pet;if(!p)return showToast('Choque um ovo e escolha um pet primeiro.');if(state.coins<250)return showToast('Você precisa de 250 moedas para alimentar o pet.');if((p.level||1)>=10)return showToast('Esse pet já atingiu o nível máximo!');state.coins-=250;p.xp=(p.xp||0)+1;p.level=Math.min(10,(p.level||1)+1);syncActivePet();renderPet();updateUI();saveGame(false);showToast('🍖 '+p.name+' cresceu para o nível '+p.level+'!');};
 maybeRescuePet=function(e){if(!e||((e.phase!==5)&&!e.boss))return false;const egg=addPetEgg('jornada');renderPet();renderInventory();saveGame(false);const tier=eggTypes[egg.tier].label;showModal('🥚 OVO ENCONTRADO!', 'Você encontrou um Ovo '+tier+' durante a jornada! Vá à Loja, abra o painel de pets e choque o ovo para descobrir qual companheiro nasceu.');return true;};
@@ -1233,5 +1233,137 @@ renderPet();
   };
   const oldSave=window.dragonCloudSave;
   if(typeof oldSave==='function')window.dragonCloudSave=function(data){data.xp=Math.max(0,Number(state.xp)||0);data.level=Math.max(1,Number(state.level)||1);return oldSave.apply(this,arguments)};
+})();
+</script>
+
+<script id="eldoria-balance-fix">
+/* Ajustes solicitados: raridade dos pets, ração obrigatória, recompensas e loja organizada. */
+(function(){
+  const rarityStats = {
+    comum: {label:'Comum', attack:100, defense:10},
+    epico: {label:'Épico', attack:1000, defense:100},
+    lendario: {label:'Lendário', attack:30000, defense:200}
+  };
+  function petTier(p){
+    const raw=String((p&& (p.tier||p.rarity||p.raridade))||'comum').toLowerCase();
+    if(raw.includes('lend')) return 'lendario';
+    if(raw.includes('epic')||raw.includes('ép')) return 'epico';
+    return 'comum';
+  }
+  function activePet(){ if(typeof syncActivePet==='function')syncActivePet(); return (typeof state!=='undefined'&&state.activePetId&&Array.isArray(state.petCollection)) ? state.petCollection.find(p=>p.id===state.activePetId)||state.pet : state.pet; }
+  function petBonuses(p){
+    if(!p)return {attack:0,defense:0};
+    const r=rarityStats[petTier(p)]||rarityStats.comum;
+    return {attack:r.attack,defense:r.defense};
+  }
+  function updatePetText(){
+    if(typeof state==='undefined')return;
+    const p=activePet(), box=document.getElementById('petDetails');
+    if(box&&p){
+      const tier=petTier(p), stats=rarityStats[tier], lvl=Math.max(1,Number(p.level)||1);
+      const old=box.querySelector('[data-pet-rarity-stats]');
+      if(old)old.remove();
+      box.querySelectorAll('p').forEach(el=>{if(/Bônus de dano|ataque.*dano recebido/i.test(el.textContent))el.remove();});
+      const info=document.createElement('div'); info.dataset.petRarityStats='1';
+      info.style.cssText='margin:12px auto;padding:12px;border:1px solid '+(tier==='lendario'?'#fbbf24':tier==='epico'?'#c084fc':'#cbd5e1')+';border-radius:10px;max-width:380px';
+      info.innerHTML='<strong>'+stats.label+' • Nível '+lvl+'/100</strong><p>⚔️ +'+stats.attack+'% ataque</p><p>🛡️ -'+stats.defense+'% dano recebido</p>';
+      box.appendChild(info);
+    }
+    const btn=document.querySelector('#petPanel button[onclick*="feedPet"]');
+    if(btn)btn.textContent='🍖 ALIMENTAR PET — USAR RAÇÃO';
+  }
+  const prevRenderPet=window.renderPet;
+  if(typeof prevRenderPet==='function')window.renderPet=function(){const r=prevRenderPet.apply(this,arguments);updatePetText();return r;};
+
+  window.feedPet=function(){
+    if(!state.pet)return showToast('Choque um ovo e equipe um pet primeiro.');
+    const p=activePet(); if(!p)return showToast('Equipe um pet primeiro.');
+    const lvl=Math.max(1,Number(p.level)||1);
+    if(lvl>=100)return showToast('Seu pet já atingiu o nível máximo 100!');
+    state.inventory=Array.isArray(state.inventory)?state.inventory:[];
+    const ration=state.inventory.find(x=>x.petFood&&Number(x.quantity||1)>0);
+    if(!ration)return showToast('Você precisa comprar ração na Loja. Moedas não aumentam o nível do pet.');
+    if(Number(ration.quantity||1)>1)ration.quantity=Number(ration.quantity)-1;
+    else state.inventory.splice(state.inventory.indexOf(ration),1);
+    p.xp=(Number(p.xp)||0)+1;
+    p.level=Math.min(100,lvl+1);
+    if(Array.isArray(state.petCollection)){const idx=state.petCollection.findIndex(x=>x.id===p.id);if(idx>=0)state.petCollection[idx]=p;}
+    state.pet=p;
+    updateUI();renderPet();renderInventory();saveGame(false);
+    showToast('🍖 Ração usada! '+p.name+' subiu para o nível '+p.level+'/100.');
+  };
+
+  // Pets acompanham o nível até 100; a raridade define os bônus indicados.
+  const oldHatch=window.hatchPetEgg;
+  if(typeof oldHatch==='function')window.hatchPetEgg=function(){const r=oldHatch.apply(this,arguments);if(state.petCollection)state.petCollection.forEach(p=>{p.level=Math.min(100,Math.max(1,Number(p.level)||1));});return r;};
+
+  // Bônus ofensivo do pet equipado e redução defensiva durante a batalha.
+  const oldAttack=window.attack;
+  if(typeof oldAttack==='function')window.attack=function(){
+    if(!battle)return;
+    const p=activePet(), b=petBonuses(p), base=25+(Number(state.level)||1)*3;
+    const extra=Math.floor(base*b.attack/100);
+    if(extra>0){battle.hp-=extra;if(battle.hp<=0)return winBattle();}
+    return oldAttack.apply(this,arguments);
+  };
+  const oldUsePower=window.usePower;
+  if(typeof oldUsePower==='function')window.usePower=function(){
+    if(!battle)return;
+    const p=activePet(), b=petBonuses(p), base=50+(Number(state.level)||1)*5;
+    const extra=Math.floor(base*b.attack/100);
+    if(extra>0){battle.hp-=extra;if(battle.hp<=0)return winBattle();}
+    return oldUsePower.apply(this,arguments);
+  };
+  const oldEnemyTurn=window.enemyTurn;
+  if(typeof oldEnemyTurn==='function')window.enemyTurn=function(){
+    if(!battle)return;
+    const p=activePet(), b=petBonuses(p);
+    if(!p||!b.defense)return oldEnemyTurn.apply(this,arguments);
+    const enemy=(typeof enemies!=='undefined'&&battle)?enemies[battle.index]:null;
+    const incoming=Math.max(0,Number(enemy&&enemy.dmg)||0);
+    const reduction=Math.min(100,b.defense);
+    const reduced=Math.max(0,Math.floor(incoming*(1-reduction/100)));
+    if(enemy){const original=enemy.dmg;enemy.dmg=reduced;try{return oldEnemyTurn.apply(this,arguments)}finally{enemy.dmg=original;}}
+    return oldEnemyTurn.apply(this,arguments);
+  };
+
+  // Recompensas de vitória: diamantes escalonados pelo nível e pontos para o pet ativo.
+  const oldWin=window.winBattle;
+  if(typeof oldWin==='function')window.winBattle=function(){
+    const p=activePet();
+    const level=Math.max(1,Number(state.level)||1);
+    const gemsReward=Math.max(5,Math.min(50,5+Math.floor((level-1)*45/99)));
+    const result=oldWin.apply(this,arguments);
+    state.gems=(Number(state.gems)||0)+gemsReward;
+    if(p){
+      state.petPoints=(Number(state.petPoints)||0)+1;
+      state.petSkillPoints=(Number(state.petSkillPoints)||0)+1;
+      p.petPoints=(Number(p.petPoints)||0)+1;
+      showToast('💎 +'+gemsReward+' diamantes • 🐾 +1 ponto de pet');
+    }else showToast('💎 +'+gemsReward+' diamantes conquistados!');
+    updateUI();renderPet();saveGame(false);
+    return result;
+  };
+
+  // Loja: ordenar por moeda e, dentro de cada moeda, do menor para o maior preço.
+  const previousRenderShop=window.renderShop;
+  if(typeof previousRenderShop==='function')window.renderShop=function(){
+    if(Array.isArray(shop)){
+      shop.sort((a,b)=>{
+        const ca=a.currency==='gem'?1:0, cb=b.currency==='gem'?1:0;
+        return ca-cb || (Number(a.price)||0)-(Number(b.price)||0) || String(a.name).localeCompare(String(b.name),'pt-BR');
+      });
+    }
+    const result=previousRenderShop.apply(this,arguments);
+    const tabs=document.getElementById('shopTabs');
+    if(tabs&&!document.getElementById('shopSortNote')){
+      const note=document.createElement('div');note.id='shopSortNote';note.style.cssText='flex-basis:100%;width:100%;color:#9aaac2;font-size:12px;padding:2px 4px';
+      note.textContent='Produtos organizados por categoria e preço crescente (moedas primeiro, depois diamantes).';
+      tabs.appendChild(note);
+    }
+    return result;
+  };
+  if(typeof window.renderShop==='function')window.renderShop();
+  if(typeof window.renderPet==='function')window.renderPet();
 })();
 </script>
