@@ -131,7 +131,6 @@ body.landing-only .hero-center{left:7%;top:30%;width:86%;transform:none;text-ali
 body.landing-only .title{font-size:clamp(32px,9vw,48px)}
 body.landing-only .landing-profile{bottom:38px;max-height:33%;}
 }
- document.body.classList.add('game-started');
 </style>
 
 /* Final gameplay presentation: keep the cinematic title-screen atmosphere after entering the game. */
@@ -305,7 +304,19 @@ function attack(){if(!battle)return;battle.hp-=25+state.level*3;if(battle.hp<=0)
 function usePower(){if(!battle)return;if(state.energy<15)return showToast("Energia insuficiente.");state.energy-=15;state.energyUpdatedAt=Date.now();battle.hp-=50+state.level*5;if(battle.hp<=0)return winBattle();enemyTurn();updateUI()}
 function heal(){if(!battle)return;if(battle.playerHp>=100)return showToast("Vida cheia.");if(state.energy<5)return showToast("Energia insuficiente.");state.energy-=5;state.energyUpdatedAt=Date.now();let old=battle.playerHp;battle.playerHp=Math.min(100,battle.playerHp+35);updateBattle();updateUI();showToast("💚 +"+(battle.playerHp-old)+" HP")}
 function winBattle(){let e=enemies[battle.index];state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,Math.floor(state.points/100)+1);state.skillPoints++;let next=battle.index+1;battle=null;updateUI();saveGame(false);if(next<3){showToast("Vitória! Próxima fase.");setTimeout(()=>startBattle(next),600)}else showModal("🏆 VITÓRIA","Você derrotou os 3 inimigos!")}
-function renderRanking(){let demo=[{name:"Kaelen",level:68,points:12850},{name:"ShadowLord",level:55,points:10200},{name:"DragonMaster",level:42,points:8400},{name:state.name,level:state.level,points:state.points}];demo.sort((a,b)=>b.points-a.points);$("rankingList").innerHTML=demo.map((p,i)=>`<div class="rankrow ${p.name===state.name?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${p.name}</div><div class="hide-mobile">Nível ${p.level}</div><div class="rankpoints">${fmt(p.points)}</div></div>`).join("")}
+function renderRanking(){
+ const list=$("rankingList");
+ list.innerHTML='<div class="rankrow"><span>…</span><span>Carregando jogadores reais…</span><span></span><span></span></div>';
+ if(typeof window.dragonLoadRanking==='function'){
+   window.dragonLoadRanking().then(players=>{
+     const clean=(Array.isArray(players)?players:[]).filter(p=>p&&typeof p.name==='string'&&p.name.trim()&&Number.isFinite(Number(p.points))&&Number.isFinite(Number(p.level)));
+     clean.sort((a,b)=>Number(b.points)-Number(a.points));
+     if(!clean.length){list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Nenhum jogador real no ranking ainda.</div>';return;}
+     list.innerHTML=clean.slice(0,100).map((p,i)=>`<div class="rankrow ${p.uid&&p.uid===window.dragonUser?.uid?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${escapeRankingText(p.name)}</div><div class="hide-mobile">Nível ${Math.max(1,Number(p.level)||1)}</div><div class="rankpoints">${fmt(Math.max(0,Number(p.points)||0))}</div></div>`).join('');
+   }).catch(err=>{console.warn('Falha ao carregar ranking real:',err);list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Não foi possível carregar o ranking. Verifique a conexão e as regras de leitura do Firestore.</div>';});
+ } else list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Ranking global indisponível: conecte-se ao Firebase.</div>';
+}
+function escapeRankingText(value){const el=document.createElement('span');el.textContent=String(value??'');return el.innerHTML;}
 function saveName(){let n=$("nameInput").value.trim();if(n.length<3)return showToast("Nome muito curto.");state.name=n;updateUI();saveGame(false);showToast("Nome salvo!")}
 window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","level","rank","coins","gems","energy","energyUpdatedAt","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();};
 window.gameSetCloudData=window.applyCloudPlayer;
@@ -351,7 +362,7 @@ renderBosses();renderShop();renderInventory();renderSkills();renderRanking();upd
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyDgooL-9qYUyUaa7u0BvXg9i9gvXoZMOYc",authDomain:"dragon-war-rise-of-power-2a9f1.firebaseapp.com",projectId:"dragon-war-rise-of-power-2a9f1",storageBucket:"dragon-war-rise-of-power-2a9f1.firebasestorage.app",messagingSenderId:"115455691167",appId:"1:115455691167:web:ff3638f67b66c17c5515aa",measurementId:"G-S7XE2EN9CL"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const gate=document.getElementById('authGate'),msg=document.getElementById('authMessage'),emailEl=document.getElementById('authEmail'),passEl=document.getElementById('authPassword');
@@ -413,6 +424,14 @@ async function enter(user){
     }
   })();
 }
+window.dragonLoadRanking=async()=>{
+ const current=auth.currentUser;
+ if(!current) throw new Error('É necessário entrar na conta para carregar o ranking.');
+ // A lista vem exclusivamente da coleção players do Firestore; nenhum jogador demonstrativo é adicionado.
+ const snapshot=await getDocs(collection(db,'players'));
+ return snapshot.docs.map(d=>{const p=d.data()||{};return {uid:d.id,name:typeof p.name==='string'?p.name:'',level:Number(p.level)||1,points:Number(p.points)||0};})
+   .filter(p=>p.uid && p.name.trim().length>=3);
+};
 window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,energyUpdatedAt:s.energyUpdatedAt||Date.now(),inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,gameCompleted:s.gameCompleted||false,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',characterClass:s.characterClass||'Guerreiro',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{await signOut(auth);window.dragonUser=null;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta.')};
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),12000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O Firebase não respondeu em 12 segundos. Verifique a conexão, se o domínio do jogo está autorizado em Authentication → Settings → Authorized domains, e se a configuração do projeto está correta.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
@@ -558,6 +577,10 @@ body.game-started .sidebar .side-title{color:#f0ce8a}
     if(play) play.classList.add('active');
   };
 })();
+</script>
+<script>
+// Atualiza a energia automaticamente e salva quando houver regeneração.
+setInterval(()=>{if(typeof regenerateEnergy==='function' && regenerateEnergy()){if(typeof updateUI==='function')updateUI();if(typeof saveGame==='function')saveGame(false);}},5000);
 </script>
 </body>
 </html>
