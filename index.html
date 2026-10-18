@@ -211,14 +211,14 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 <aside class="sidebar">
 <div class="side-title">JOGAR</div>
 <div class="nav">
-<button class="active" onclick="openScreen('home',this)">🏠 INÍCIO</button><button class="gold" onclick="openScreen('jogar',this)">⚔️ JOGAR</button><button onclick="openScreen('loja',this)">🛒 LOJA</button><button onclick="openScreen('pets',this)">🐾 PETS</button><button class="purple" onclick="openScreen('poderes',this)">✨ PODERES</button><button class="red" onclick="openScreen('combate',this)">🎯 TREINAMENTO</button><button onclick="openScreen('exploracao',this)">🧭 EXPLORAÇÃO</button><button onclick="openScreen('inventario',this)">🎒 INVENTÁRIO</button><button class="green" onclick="openScreen('ranking',this)">🏆 RANKING</button><button onclick="openScreen('eventos',this)">🎁 EVENTOS</button><button onclick="openScreen('config',this)">⚙️ CONFIGURAÇÕES</button>
+<button class="active" onclick="openScreen('home',this)">🏠 INÍCIO</button><button class="gold" onclick="openScreen('jogar',this)">⚔️ JOGAR</button><button onclick="openScreen('loja',this)">🛒 LOJA</button><button onclick="openScreen('pets',this)">🐾 PETS</button><button class="purple" onclick="openScreen('poderes',this)">✨ PODERES</button><button class="red" onclick="openScreen('combate',this)">🎯 TREINAMENTO</button><button onclick="openScreen('exploracao',this)">🧭 EXPLORAÇÃO</button><button onclick="openScreen('inventario',this)">🎒 INVENTÁRIO</button><button class="green" onclick="openScreen('ranking',this)">🏆 RANKING</button><button onclick="openScreen('conquistas',this)">🏅 CONQUISTAS</button><button onclick="openScreen('eventos',this)">🎁 EVENTOS</button><button onclick="openScreen('config',this)">⚙️ CONFIGURAÇÕES</button>
 
 </div>
 <div class="side-info"><b>Dragon War</b><br>Rise of Power<br><br>Aventure-se, evolua e conquiste o ranking.</div>
 </aside>
 <main class="main">
 
-<section id="home" class="screen active"><div class="hero landing-hero"><div class="moon"></div><div class="dragon">🐉</div><div class="hero-center"><div class="warrior"><div class="head"></div><div class="hair"></div><div class="body"></div><div class="cape"></div><div class="dw">DW</div><div class="sword"></div></div><div class="title">DRAGON WAR</div><div class="subtitle">RISE OF POWER</div><div class="hero-actions"><button class="bigbtn start-campaign" onclick="enterGame()">▶ INICIAR AVENTURA</button></div></div><div class="quick landing-profile"><div class="card profile-card"><b>🛡️ SEU PERSONAGEM</b><div class="landing-avatar" id="homeAvatar">⚔️</div><strong id="homeProfile">Jogador • Nível 1</strong><div class="player-stat-grid"><span>🏅 NÍVEL<strong id="homeLevel">1</strong></span><span>⚡ FORÇA<strong id="homePower">100</strong></span><span>🗡️ ARMA<strong id="homeWeapon">Punhos de Ferro</strong></span><span>🛡️ ARMADURA<strong id="homeArmor">Armadura Inicial</strong></span></div><p class="stats">Seu progresso e equipamentos estarão aqui antes de entrar na aventura.</p></div></div></div></section>
+<section id="home" class="screen active"><div class="hero landing-hero"><div class="moon"></div><div class="dragon">🐉</div><div class="hero-center"><div class="warrior"><div class="head"></div><div class="hair"></div><div class="body"></div><div class="cape"></div><div class="dw">DW</div><div class="sword"></div></div><div class="title">DRAGON WAR</div><div class="subtitle">RISE OF POWER</div><div class="hero-actions"><button class="bigbtn start-campaign" onclick="enterGame()">▶ INICIAR AVENTURA</button></div></div><div class="quick landing-profile"><div class="card profile-card"><b>🛡️ SEU PERSONAGEM</b><div class="landing-avatar" id="homeAvatar">⚔️</div><strong id="homeProfile">Jogador • Nível 1</strong><div id="homeAchievementBadge" style="margin:8px 0;padding:8px;border:1px solid #b88746;border-radius:9px;color:#ffe0a2">🥉 Primeiro Login</div><div class="player-stat-grid"><span>🏅 NÍVEL<strong id="homeLevel">1</strong></span><span>⚡ FORÇA<strong id="homePower">100</strong></span><span>🗡️ ARMA<strong id="homeWeapon">Punhos de Ferro</strong></span><span>🛡️ ARMADURA<strong id="homeArmor">Armadura Inicial</strong></span></div><p class="stats">Seu progresso e equipamentos estarão aqui antes de entrar na aventura.</p></div></div></div></section>
 
 <section id="jogar" class="screen"><h1 class="section-title">⚔️ BATALHAS DE NÍVEL</h1><p class="stats" style="margin-bottom:14px">Avance pelas fases, derrote inimigos e chefões para desbloquear o próximo nível. Sua campanha fica salva no progresso.</p><div class="grid3" id="bossGrid"></div></section>
 <section id="loja" class="screen"><h1 class="section-title">🛒 LOJA DE ITENS</h1><div class="tabs" id="shopTabs"></div><div class="shop-layout"><div class="merchant"><div class="shop-person">🧝‍♀️</div><h2>Mercadora</h2><p>Equipamentos, armas, poderes e skins.</p></div><div class="grid4" id="shopGrid"></div></div><h2 style="color:#ffd47b;text-align:center">🎭 SKINS</h2><div class="grid4" id="skinShopGrid"></div></section>
@@ -228,6 +228,7 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 <section id="exploracao" class="screen"><h1 class="section-title">🧭 EXPLORAÇÃO</h1><p class="stats" style="margin-bottom:14px">Escolha uma expedição. Cada viagem consome energia e pode render moedas, pontos ou gemas.</p><div class="grid3"><article class="panel"><div class="emoji">🌲</div><h3>Floresta Antiga</h3><p>Risco baixo • recompensa modesta</p><button class="fight" onclick="window.exploreZone('forest')">EXPLORAR — 10 ENERGIA</button></article><article class="panel"><div class="emoji">🏜️</div><h3>Deserto das Cinzas</h3><p>Risco médio • recompensa maior</p><button class="fight" onclick="window.exploreZone('desert')">EXPLORAR — 20 ENERGIA</button></article><article class="panel"><div class="emoji">🌋</div><h3>Vulcão do Dragão</h3><p>Risco alto • chance de gemas</p><button class="fight" onclick="window.exploreZone('volcano')">EXPLORAR — 30 ENERGIA</button></article></div><div class="panel" id="explorationResult" style="margin-top:16px;text-align:center">Suas descobertas aparecerão aqui.</div></section>
 <section id="inventario" class="screen"><h1 class="section-title">🎒 INVENTÁRIO</h1><div class="panel" style="text-align:center"><h2>🎭 SKIN EQUIPADA</h2><div id="equippedSkin" style="font-size:60px">⚔️</div><div id="equippedSkinName">Guerreiro</div><div id="equippedSkinAbility"></div></div><div class="grid4" id="inventoryGrid"></div></section>
 <section id="ranking" class="screen"><h1 class="section-title">🏆 RANKING</h1><div class="panel" style="margin-bottom:15px;text-align:center"><b>SEU RANK</b><div id="myRankBig" style="font-size:28px;color:#72eaff">🏅 INICIANTE</div><small id="myRankPoints">0 pontos</small></div><div class="panel ranking"><div class="rankrow"><b>#</b><b>JOGADOR</b><b class="hide-mobile">NÍVEL</b><b>PONTOS</b></div><div id="rankingList"></div></div></section>
+<section id="conquistas" class="screen"><h1 class="section-title">🏅 CONQUISTAS E MEDALHAS</h1><div class="panel" style="text-align:center;margin-bottom:14px"><div style="font-size:54px" id="featuredAchievementEmblem">🥉</div><h2 id="featuredAchievementName">Primeiro Login</h2><p id="featuredAchievementDesc" class="stats">Entre no jogo e desbloqueie sua primeira medalha.</p><b id="achievementCount">1 conquista desbloqueada</b></div><div id="achievementGrid" class="grid3"></div></section>
 <section id="eventos" class="screen"><h1 class="section-title">🎁 EVENTOS</h1><div class="grid3"><div class="panel"><h2>🎁 Baú diário</h2><p>Abra uma vez por dia para ganhar moedas, gemas ou itens.</p><button class="fight" onclick="dailyReward()">ABRIR BAÚ</button></div><div class="panel"><h2>🎡 Roleta da Sorte</h2><p>Seu primeiro giro do dia é grátis. Você pode ganhar moedas, gemas, itens ou até resgatar um pet!</p><div id="rouletteResult" style="text-align:center;min-height:34px;margin:10px 0;font-weight:bold;color:#ffd47b">A sorte está esperando!</div><button class="fight" onclick="spinRoulette('free')">🎁 GIRO GRÁTIS</button><button class="buy" style="margin-top:8px" onclick="spinRoulette('single')">💎 1 GIRO — 10 GEMAS</button><button class="buy" style="margin-top:8px" onclick="spinRoulette('ten')">💎 10 GIROS — 90 GEMAS</button></div><div class="panel"><h2>✨ Habilidade: Reserva de Energia</h2><p>Melhore esta habilidade na aba Poderes para aumentar sua energia máxima em +25 por nível.</p><button class="fight" onclick="openScreen('poderes')">MELHORAR HABILIDADE</button></div></div><div class="panel" style="margin-top:16px"><h2>🤝 Código de Amizade</h2><p>Convide amigos para o Dragon War! Somente contas autenticadas com Gmail podem participar. Contas de convidado não são válidas.</p><div id="friendCodeStatus">Entre com sua conta Gmail para carregar seu código individual.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><input id="friendCodeInput" placeholder="Digite o código de quem convidou" maxlength="24" style="flex:1;min-width:180px;padding:12px;border-radius:8px"><button class="buy" onclick="redeemFriendCode()">RESGATAR CÓDIGO</button></div><button class="fight" onclick="copyFriendCode()">COPIAR MEU CÓDIGO</button><div id="friendCodeVisible" style="margin-top:10px;padding:14px;border:1px solid #d6a653;border-radius:10px;background:#101827;color:#ffda8a;font-size:20px;font-weight:900;letter-spacing:2px;text-align:center;overflow-wrap:anywhere">Seu código aparecerá aqui após carregar.</div><p style="margin-top:10px;font-size:13px">🎁 Quem convida: 100 diamantes + Ovo Épico garantido. Quem resgata: 50 diamantes + Ovo Comum. Cada conta só pode resgatar um convite.</p></div></section>
 <section id="config" class="screen"><h1 class="section-title">⚙️ CONFIGURAÇÕES</h1><button class="bigbtn" type="button" onclick="window.backFromSettings()">↩️ VOLTAR AO JOGO</button><div class="panel"><h2>👤 Perfil</h2><div class="field"><label>Nome do jogador</label><input id="nameInput" maxlength="18"><button class="fight" onclick="saveName()">SALVAR NOME</button></div><h2>🖼️ Foto de perfil</h2><p class="stats">Escolha uma foto do seu celular ou selecione um avatar de fantasia. A imagem será reduzida para salvar com segurança.</p><div class="profile-photo-tools"><label class="fight upload-photo" for="profilePhotoInput">📷 ESCOLHER FOTO DO CELULAR</label><input id="profilePhotoInput" type="file" accept="image/*" onchange="uploadProfilePhoto(this)" hidden><button class="fight secondary" type="button" onclick="removeProfilePhoto()">REMOVER FOTO</button></div><div class="avatar-gallery" id="avatarGallery"></div><h2>🧬 Personalização do personagem</h2><div class="field"><label for="characterClass">Classe do personagem</label><select id="characterClass" onchange="setCharacterClass(this.value)"><option value="Guerreiro">⚔️ Guerreiro</option><option value="Mago">🔮 Mago</option><option value="Assassino">🗡️ Assassino</option><option value="Guardião">🛡️ Guardião</option></select></div><div class="field"><label for="weaponSelect">Arma equipada</label><select id="weaponSelect" onchange="equipCharacterItem('Arma',this.value)"></select></div><div class="field"><label for="armorSelect">Armadura equipada</label><select id="armorSelect" onchange="equipCharacterItem('Armadura',this.value)"></select></div><div class="field"><label for="skinSelect">Visual / skin</label><select id="skinSelect" onchange="equipCharacterSkin(this.value)"></select></div><p class="stats">As opções de equipamento mostram os itens que você possui. Alterações de classe, arma, armadura e skin são salvas no progresso.</p><h2>🎮 Preferências reais</h2><div class="toggle"><label for="settingSfx">Efeitos sonoros</label><input id="settingSfx" type="checkbox" checked onchange="changeSetting('sfx',this.checked)"></div><div class="toggle"><label for="settingAnimations">Animações e efeitos</label><input id="settingAnimations" type="checkbox" checked onchange="changeSetting('animations',this.checked)"></div><div class="toggle"><label for="settingMusic">Música de fundo</label><input id="settingMusic" type="checkbox" onchange="changeSetting('music',this.checked)"></div><p class="stats">Preferências salvas no progresso e sincronizadas com o Firebase quando conectado.</p><button class="bigbtn" onclick="saveGame()">💾 SALVAR AGORA</button> <button class="bigbtn secondary" onclick="loadGame()">📂 RECARREGAR</button><button class="fight danger" onclick="newGame()">🆕 NOVA CAMPANHA</button><hr style="margin:18px 0;border-color:#5b4935"><h2>🔐 Conta</h2><p class="stats">Sair encerra sua sessão nesta conta. O progresso salvo na nuvem permanece vinculado ao seu login.</p><button class="fight danger" type="button" onclick="window.dragonSignOut&&window.dragonSignOut()">↪️ SAIR DA CONTA</button></div></section>
 
@@ -370,7 +371,7 @@ window.enemyTurn=function(){if(!battle)return;const petDefense=state.pet?Math.mi
 window.attack=function(){if(!battle)return;const skin=skins.find(x=>x.id===state.equippedSkin)||skins[0];const petBonus=state.pet?Math.floor((state.pet.level||1)*3):0;const dmg=24+(Number(state.level)||1)*3+(Number(state.attackBonus)||0)+petBonus+(skin.id==='lua'?3:skin.id==='dragao'?5:0);battle.hp=Math.max(0,battle.hp-dmg);if(battle.hp<=0)return winBattle();updateBattle();enemyTurn()};
 window.usePower=function(){if(!battle)return;if(state.energy<15)return showToast('Energia insuficiente: precisa de 15.');state.energy-=15;state.energyUpdatedAt=Date.now();const selected=Number(state.selectedSkill||0),skill=skills[selected]||skills[0];battle.hp=Math.max(0,battle.hp-skill[2]+0-(Number(state.level)||1)*-5-(Number(state.powerBonus)||0));if(battle.hp<=0)return winBattle();updateUI();updateBattle();enemyTurn();saveGame(false)};
 window.heal=function(){if(!battle)return;if(battle.playerHp>=battle.maxPlayerHp)return showToast('Vida cheia.');if(state.energy<5)return showToast('Energia insuficiente: precisa de 5.');state.energy-=5;state.energyUpdatedAt=Date.now();const old=battle.playerHp;battle.playerHp=Math.min(battle.maxPlayerHp,battle.playerHp+35);updateBattle();updateUI();saveGame(false);showToast('💚 +'+(battle.playerHp-old)+' HP');enemyTurn()};
-window.winBattle=function(){if(!battle)return;const e=battle.enemy;state.lastCompletedLevel=e.level;state.lastCompletedPhase=e.phase;state.coins+=e.reward;state.gems+=e.gems;state.points+=e.points;state.level=Math.max(state.level,e.level);state.skillPoints+=e.boss?3:1;state.energy=Math.min(100,state.energy+2);if(e.boss&&e.level>=10){state.gameCompleted=true;state.coins+=100000;state.gems+=500;battle=null;updateUI();saveGame(false);renderBosses();showModal('🏆 DRAGON WAR ZERADO!','Você derrotou o chefão final do Mundo 10 e concluiu a campanha! Bônus lendário: 100.000 moedas e 500 gemas.');return}if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1}const rescued=maybeRescuePet(e);const nextLevel=state.unlockedLevel,nextPhase=state.unlockedPhase; battle=null;updateUI();saveGame(false);renderBosses();renderRanking();showToast((e.boss?'👑 Chefão derrotado! ':'⚔️ Vitória! ')+'Próxima fase: Mundo '+nextLevel+' • Fase '+nextPhase+'/'+phasesInLevel(nextLevel));if(!rescued)setTimeout(()=>{if(!state.gameCompleted)startBattle()},1200)};
+window.winBattle=function(){if(!battle)return;const e=battle.enemy;state.lastCompletedLevel=e.level;state.lastCompletedPhase=e.phase;const replaying=Number(e.level)<Number(state.unlockedLevel||1)||(Number(e.level)===Number(state.unlockedLevel||1)&&Number(e.phase)<Number(state.unlockedPhase||1));state.coins+=e.reward;if(!replaying){state.gems+=e.gems;state.points+=e.points;state.level=Math.max(1,Number(state.level)||1);state.skillPoints+=e.boss?3:1;}state.energy=Math.min(100,state.energy+2);if(e.boss&&e.level>=10){state.gameCompleted=true;state.coins+=100000;state.gems+=500;battle=null;updateUI();saveGame(false);renderBosses();showModal('🏆 DRAGON WAR ZERADO!','Você derrotou o chefão final do Mundo 10 e concluiu a campanha! Bônus lendário: 100.000 moedas e 500 gemas.');return}if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1}const rescued=maybeRescuePet(e);const nextLevel=state.unlockedLevel,nextPhase=state.unlockedPhase; battle=null;updateUI();saveGame(false);renderBosses();renderRanking();showToast((e.boss?'👑 Chefão derrotado! ':'⚔️ Vitória! ')+'Próxima fase: Mundo '+nextLevel+' • Fase '+nextPhase+'/'+phasesInLevel(nextLevel));if(!rescued)setTimeout(()=>{if(!state.gameCompleted)startBattle()},1200)};
 window.repeatLastStage=function(){const l=Number(state.lastCompletedLevel||state.unlockedLevel||1),p=Number(state.lastCompletedPhase||Math.max(1,(state.unlockedPhase||1)-1));startBattle(l,p);showToast('Repetindo Mundo '+l+' • Fase '+p)};
 window.retryCurrentStage=function(){startBattle(Number(state.unlockedLevel||1),Number(state.unlockedPhase||1));};
 window.newGame=function(){if(!confirm('Reiniciar todo o progresso da campanha neste dispositivo? Esta ação não pode ser desfeita.'))return;const n=state.name;state={name:n,level:1,rank:'Iniciante',coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,powerBonus:0,settings:{sfx:true,animations:true,music:false},selectedSkill:0,pet:null,attackBonus:0,defenseBonus:0};battle=null;updateUI();renderBosses();renderShop();renderInventory();renderSkills();renderRanking();saveGame(false);showToast('Nova campanha iniciada!')};
@@ -411,7 +412,7 @@ async function enter(user){
   // Abre o jogo imediatamente após o Firebase autenticar; a nuvem carrega em segundo plano.
   window.dragonUser=user;
   const localKey='dragonWarSave_'+user.uid;
-  const defaultState={uid:user.uid,name:(user.displayName||user.email.split('@')[0]).slice(0,24),level:1,rank:'Iniciante',coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro'};
+  const defaultState={uid:user.uid,name:(user.displayName||user.email.split('@')[0]).slice(0,24),level:1,rank:'Iniciante',coins:5000,gems:50,energy:100,energyMax:100,energyUpdatedAt:Date.now(),points:0,xp:0,skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:2,achievements:['login_bronze'],achievementStats:{wins:0,levelReached:1,pointsEarned:0,petsHatched:0},settings:{sfx:true,animations:true,music:false},selectedSkill:0,profileAvatar:'knight',profileAvatarEmoji:'🛡️',characterClass:'Guerreiro',weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial'};
   let localData=null;
   try { const raw=localStorage.getItem(localKey); if(raw) localData=JSON.parse(raw); } catch(e) { console.warn('Save local inválido',e); }
   window.restoreLocalBeforeCloud=localData||defaultState;
@@ -436,10 +437,32 @@ async function enter(user){
       const snap=await Promise.race([getDoc(doc(db,'players',user.uid)),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
       if(snap.exists()){
         const cloud=snap.data();
-        const merged={...defaultState,...(localData||{}),...cloud};
-        window.restoreLocalBeforeCloud=merged;
-        localStorage.setItem(localKey,JSON.stringify(merged));
-        try { if(typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(merged); } catch(e) { console.warn('Falha aplicando dados da nuvem',e); }
+        // Migração única: todas as contas existentes começam a campanha novamente, sem apagar a conta.
+        // O marcador no Firestore impede que o reinício aconteça em todo login.
+        if(Number(cloud.progressResetVersion||0)<2){
+          const fresh={
+            uid:user.uid,name:(cloud.name||defaultState.name),level:1,rank:'Iniciante',coins:5000,gems:50,energy:100,energyMax:100,energyUpdatedAt:Date.now(),points:0,xp:0,
+            skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],
+            stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,
+            wins:0,losses:0,rouletteDate:new Date().toDateString(),rouletteFreeUsed:false,roulettePetClaimed:false,firstLoginBonusClaimed:true,progressResetVersion:2,
+            achievements:['login_bronze'],achievementStats:{wins:0,levelReached:1,pointsEarned:0,petsHatched:0},settings:{sfx:true,animations:true,music:false},selectedSkill:0,
+            profileAvatar:'knight',profileAvatarEmoji:'🛡️',profilePhoto:null,characterClass:'Guerreiro',weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial',friendCode:cloud.friendCode||null,
+            friendInviteUsed:!!cloud.friendInviteUsed,friendInvitedBy:cloud.friendInvitedBy||null,createdAt:cloud.createdAt||serverTimestamp(),updatedAt:serverTimestamp()
+          };
+          await setDoc(doc(db,'players',user.uid),fresh);
+          state={...fresh};
+          window.restoreLocalBeforeCloud=fresh;
+          localStorage.setItem(localKey,JSON.stringify(fresh));
+          if(typeof window.applyCloudPlayer==='function')window.applyCloudPlayer(fresh);
+          state={...fresh};
+          if(typeof updateUI==='function')updateUI();if(typeof renderBosses==='function')renderBosses();if(typeof renderSkills==='function')renderSkills();if(typeof renderPet==='function')renderPet();if(typeof renderInventory==='function')renderInventory();if(typeof renderShop==='function')renderShop();if(typeof renderAchievements==='function')renderAchievements();
+          say('Progressão reiniciada para Iniciante. Bônus de primeiro login: 5.000 moedas, 50 diamantes e giro grátis.');
+        } else {
+          const merged={...defaultState,...(localData||{}),...cloud};
+          window.restoreLocalBeforeCloud=merged;
+          localStorage.setItem(localKey,JSON.stringify(merged));
+          try { if(typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(merged); } catch(e) { console.warn('Falha aplicando dados da nuvem',e); }
+        }
       } else {
         await Promise.race([setDoc(doc(db,'players',user.uid),{...defaultState,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
         localStorage.setItem(localKey,JSON.stringify(defaultState));
@@ -459,7 +482,7 @@ window.dragonLoadRanking=async()=>{
  return snapshot.docs.map(d=>{const p=d.data()||{};return {uid:d.id,name:typeof p.name==='string'?p.name:'',level:Number(p.level)||1,points:Number(p.points)||0};})
    .filter(p=>p.uid && p.name.trim().length>=3);
 };
-window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,profilePhoto:s.profilePhoto||null,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,energyUpdatedAt:s.energyUpdatedAt||Date.now(),inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,pet:s.pet||null,petEggs:s.petEggs||[],petCollection:s.petCollection||[],activePetId:s.activePetId||null,attackBonus:s.attackBonus||0,defenseBonus:s.defenseBonus||0,gameCompleted:s.gameCompleted||false,lastCompletedLevel:s.lastCompletedLevel||1,lastCompletedPhase:s.lastCompletedPhase||1,friendCode:s.friendCode||null,friendInviteUsed:!!s.friendInviteUsed,friendInvitedBy:s.friendInvitedBy||null,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',characterClass:s.characterClass||'Guerreiro',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
+window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={...s,uid:u.uid,progressResetVersion:Number(s.progressResetVersion)||2,achievements:Array.isArray(s.achievements)?s.achievements:[],updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{if(auth.currentUser)await signOut(auth);window.dragonUser=null;window.dragonIsAdmin=false;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta. O progresso de convidado não é salvo.')};
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço publicado no GitHub Pages (https://biel16santos10-design.github.io/dragon-war-2/) em vez de abrir o arquivo baixado (content:// ou file://). No Firebase, confira Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
 document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const invite=(document.getElementById('registerInviteCode')?.value||'').trim().toUpperCase();if(invite)localStorage.setItem('dragonWarPendingInvite_'+emailEl.value.trim().toLowerCase(),invite);const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say(invite?'Conta criada! O código de convite ficará aguardando você confirmar o e-mail e entrar na conta.':'Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
@@ -857,6 +880,34 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 })();
 </script>
 
+
+<script>
+// Sistema de conquistas persistentes e emblema visível no perfil.
+(function(){
+ const achievementDefs=[
+  {id:'login_bronze',name:'Primeiro Login',tier:'Bronze',icon:'🥉',desc:'Entrou no Dragon War pela primeira vez.',test:s=>true},
+  {id:'first_win',name:'Primeira Vitória',tier:'Bronze',icon:'🥉',desc:'Vença sua primeira batalha.',test:s=>(s.achievementStats?.wins||0)>=1},
+  {id:'level5',name:'Aventureiro em Ascensão',tier:'Bronze',icon:'🛡️',desc:'Alcance o nível 5.',test:s=>(s.level||1)>=5},
+  {id:'level10',name:'Guerreiro de Ouro',tier:'Ouro',icon:'🥇',desc:'Alcance o nível 10.',test:s=>(s.level||1)>=10},
+  {id:'wins10',name:'Caçador de Dragões',tier:'Ouro',icon:'🐉',desc:'Vença 10 batalhas.',test:s=>(s.achievementStats?.wins||0)>=10},
+  {id:'points1000',name:'Lenda do Reino',tier:'Diamante',icon:'💎',desc:'Acumule 1.000 pontos.',test:s=>(s.points||0)>=1000},
+  {id:'pet_hatched',name:'Laço Dracônico',tier:'Diamante',icon:'🐲',desc:'Choque seu primeiro ovo de pet.',test:s=>(s.achievementStats?.petsHatched||0)>=1},
+  {id:'level25',name:'Ascensão Suprema',tier:'Cristal Negro',icon:'🔮',desc:'Alcance o nível 25.',test:s=>(s.level||1)>=25},
+  {id:'wins100',name:'Soberano da Guerra',tier:'Cristal Negro',icon:'👑',desc:'Vença 100 batalhas.',test:s=>(s.achievementStats?.wins||0)>=100},
+  {id:'points10000',name:'Imortal',tier:'Cristal Negro',icon:'⬛',desc:'Acumule 10.000 pontos.',test:s=>(s.points||0)>=10000}
+ ];
+ const tierColor={'Bronze':'#b87942','Ouro':'#f2c94c','Diamante':'#4ed8ff','Cristal Negro':'#b9a2ff'};
+ function ensure(){state.achievements=Array.isArray(state.achievements)?state.achievements:['login_bronze'];state.achievementStats=state.achievementStats||{wins:0,levelReached:Number(state.level)||1,pointsEarned:Number(state.points)||0,petsHatched:0};if(!state.achievements.includes('login_bronze'))state.achievements.push('login_bronze')}
+ window.checkAchievements=function(){ensure();for(const a of achievementDefs){if(!state.achievements.includes(a.id)&&a.test(state)){state.achievements.push(a.id);if(typeof showToast==='function')showToast('Conquista desbloqueada: '+a.name+' ('+a.tier+')')}}renderAchievements();};
+ window.renderAchievements=function(){ensure();const unlocked=achievementDefs.filter(a=>state.achievements.includes(a.id));const featured=unlocked[unlocked.length-1]||achievementDefs[0];const e=document.getElementById('featuredAchievementEmblem'),n=document.getElementById('featuredAchievementName'),d=document.getElementById('featuredAchievementDesc'),c=document.getElementById('achievementCount'),grid=document.getElementById('achievementGrid'),home=document.getElementById('homeAchievementBadge');if(e)e.textContent=featured.icon;if(n)n.textContent=featured.name+' • '+featured.tier;if(d)d.textContent=featured.desc;if(c)c.textContent=unlocked.length+' de '+achievementDefs.length+' conquistas desbloqueadas';if(home){home.textContent=featured.icon+' '+featured.name+' • '+featured.tier;home.style.borderColor=tierColor[featured.tier]||'#b88746'}if(grid)grid.innerHTML=achievementDefs.map(a=>{const got=state.achievements.includes(a.id);return '<article class="panel item" style="border:1px solid '+(got?(tierColor[a.tier]||'#b88746'):'#344155')+';opacity:'+(got?'1':'.62')+'"><div class="emoji">'+(got?a.icon:'🔒')+'</div><h3>'+a.name+'</h3><p style="color:'+(tierColor[a.tier]||'#b88746')+';font-weight:800">'+a.tier+'</p><p class="stats">'+a.desc+'</p><b>'+(got?'DESBLOQUEADA':'BLOQUEADA')+'</b></article>'}).join('');};
+ const oldWin=window.winBattle;if(typeof oldWin==='function')window.winBattle=function(){const before=Number(state.wins)||0;const r=oldWin.apply(this,arguments);state.wins=before+1;ensure();state.achievementStats.wins=(Number(state.achievementStats.wins)||0)+1;state.achievementStats.levelReached=Math.max(Number(state.achievementStats.levelReached)||1,Number(state.level)||1);state.achievementStats.pointsEarned=Math.max(Number(state.achievementStats.pointsEarned)||0,Number(state.points)||0);checkAchievements();saveGame(false);return r};
+ const oldHatch=window.hatchPetEgg;if(typeof oldHatch==='function')window.hatchPetEgg=function(){const had=state.petCollection?.length||0;const r=oldHatch.apply(this,arguments);if((state.petCollection?.length||0)>had){ensure();state.achievementStats.petsHatched=(Number(state.achievementStats.petsHatched)||0)+1;checkAchievements();saveGame(false)}return r};
+ const oldUpdate=window.updateUI;if(typeof oldUpdate==='function')window.updateUI=function(){const r=oldUpdate.apply(this,arguments);if(typeof checkAchievements==='function'&&state&&Number(state.progressResetVersion)>=2){ensure();checkAchievements()}return r};
+ const oldOpen=window.openScreen;if(typeof oldOpen==='function')window.openScreen=function(id,btn){const r=oldOpen.apply(this,arguments);if(id==='conquistas')renderAchievements();return r};
+ if(!Array.isArray(state.achievements))state.achievements=['login_bronze'];if(!state.achievementStats)state.achievementStats={wins:Number(state.wins)||0,levelReached:Number(state.level)||1,pointsEarned:Number(state.points)||0,petsHatched:0};renderAchievements();
+})();
+</script>
+
 </body>
 </html>
 <script>
@@ -1057,61 +1108,5 @@ renderPet();
   };
   const oldSave=window.dragonCloudSave;
   if(typeof oldSave==='function')window.dragonCloudSave=function(data){data.xp=Math.max(0,Number(state.xp)||0);data.level=Math.max(1,Number(state.level)||1);return oldSave.apply(this,arguments)};
-})();
-</script>
-
-
-<script>
-// Migração única: reinicia somente nível/XP e fase da campanha para contas existentes.
-// Moedas, gemas, pontos, inventário, pets, equipamentos, habilidades e demais dados permanecem intactos.
-(function(){
-  const RESET_VERSION = 1;
-  function resetProgressOnly(){
-    state.level = 1;
-    state.rank = 'Iniciante';
-    state.xp = 0;
-    state.stageLevel = 1;
-    state.stagePhase = 1;
-    state.unlockedLevel = 1;
-    state.unlockedPhase = 1;
-    state.lastCompletedLevel = 0;
-    state.lastCompletedPhase = 0;
-    state.gameCompleted = false;
-    state.progressResetVersion = RESET_VERSION;
-    if (typeof updateUI === 'function') updateUI();
-    if (typeof renderBosses === 'function') renderBosses();
-    if (typeof renderRanking === 'function') renderRanking();
-    if (typeof saveGame === 'function') saveGame(false);
-  }
-  const applyBeforeReset = window.applyCloudPlayer;
-  if (typeof applyBeforeReset === 'function') {
-    window.applyCloudPlayer = function(data){
-      applyBeforeReset.apply(this, arguments);
-      if (data && Number(data.progressResetVersion || 0) < RESET_VERSION) {
-        resetProgressOnly();
-      }
-    };
-  }
-  const saveBeforeReset = window.dragonCloudSave;
-  if (typeof saveBeforeReset === 'function') {
-    window.dragonCloudSave = function(data){
-      data.progressResetVersion = RESET_VERSION;
-      data.level = Math.max(1, Number(state.level) || 1);
-      data.xp = Math.max(0, Number(state.xp) || 0);
-      data.rank = state.rank || 'Iniciante';
-      data.stageLevel = Math.max(1, Number(state.stageLevel) || 1);
-      data.stagePhase = Math.max(1, Number(state.stagePhase) || 1);
-      data.unlockedLevel = Math.max(1, Number(state.unlockedLevel) || 1);
-      data.unlockedPhase = Math.max(1, Number(state.unlockedPhase) || 1);
-      data.lastCompletedLevel = Math.max(0, Number(state.lastCompletedLevel) || 0);
-      data.lastCompletedPhase = Math.max(0, Number(state.lastCompletedPhase) || 0);
-      data.gameCompleted = !!state.gameCompleted;
-      return saveBeforeReset.apply(this, arguments);
-    };
-  }
-  // Aplique também a migração ao save local, sem apagar os demais dados.
-  if (typeof state !== 'undefined' && Number(state.progressResetVersion || 0) < RESET_VERSION) {
-    resetProgressOnly();
-  }
 })();
 </script>
