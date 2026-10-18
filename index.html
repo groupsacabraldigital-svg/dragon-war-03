@@ -405,7 +405,8 @@ function authError(e){
  "auth/invalid-email":"O formato do e-mail é inválido.",
  "auth/user-disabled":"Esta conta foi desativada no Firebase Authentication."
  };
- say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"\nCódigo: "+(e.code||"sem código"));
+ say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"
+Código: "+(e.code||"sem código"));
  console.error("Lendas de Eldoria Firebase Auth:",e.code,e.message);
 }
 async function enter(user){
@@ -484,7 +485,8 @@ window.dragonLoadRanking=async()=>{
 };
 window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={...s,uid:u.uid,progressResetVersion:Number(s.progressResetVersion)||2,achievements:Array.isArray(s.achievements)?s.achievements:[],updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{if(auth.currentUser)await signOut(auth);window.dragonUser=null;window.dragonIsAdmin=false;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta. O progresso de convidado não é salvo.')};
-document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço publicado no GitHub Pages (https://biel16santos10-design.github.io/dragon-war-2/) em vez de abrir o arquivo baixado (content:// ou file://). No Firebase, confira Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço publicado no GitHub Pages (https://biel16santos10-design.github.io/dragon-war-2/) em vez de abrir o arquivo baixado (content:// ou file://). No Firebase, confira Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.
+Código: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
 document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const invite=(document.getElementById('registerInviteCode')?.value||'').trim().toUpperCase();if(invite)localStorage.setItem('dragonWarPendingInvite_'+emailEl.value.trim().toLowerCase(),invite);const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say(invite?'Conta criada! O código de convite ficará aguardando você confirmar o e-mail e entrar na conta.':'Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
 document.getElementById('resetBtn').addEventListener('click',async()=>{if(!emailEl.value.trim()){say('Digite seu e-mail primeiro.');return}try{await sendPasswordResetEmail(auth,emailEl.value.trim());say('Se a conta permitir recuperação por e-mail, a mensagem foi enviada. Confira spam/lixo eletrônico.')}catch(e){authError(e)}});
 document.getElementById('guestBtn').addEventListener('click',()=>{
@@ -1714,11 +1716,11 @@ renderPet();
 </script>
 <script id="eldoria-fix-shop-purchase-final">
 (function(){
-  if(typeof window==='undefined'||typeof state==='undefined'||!Array.isArray(window.shop))return;
+  if(typeof window==='undefined'||typeof state==='undefined'||typeof shop==='undefined'||!Array.isArray(shop))return;
   window.buyItem=function(index){
-    const it=window.shop[Number(index)];
+    const it=shop[Number(index)];
     if(!it){if(typeof showToast==='function')showToast('Item não encontrado. Atualize a Loja e tente novamente.');return false;}
-    const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||Math.ceil(Math.max(1,Number(state.unlockedLevel)||1)/10));
+    const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||Number(state.stageLevel)||Number(state.unlockedLevel)||1);
     if(Number(it.unlockWorld||1)>world){if(typeof showModal==='function')showModal('🔒 ITEM BLOQUEADO','Este item estará disponível no Mundo '+it.unlockWorld+'.');else showToast('Disponível no Mundo '+it.unlockWorld+'.');return false;}
     const currency=it.currency==='gem'?'gems':'coins',price=Math.max(0,Number(it.price)||0);
     if((Number(state[currency])||0)<price){if(typeof showToast==='function')showToast('Recursos insuficientes. Você precisa de '+price.toLocaleString('pt-BR')+(currency==='gems'?' gemas.':' moedas.'));return false;}
@@ -1738,5 +1740,37 @@ renderPet();
     return true;
   };
   if(typeof window.renderShop==='function')window.renderShop();
+})();
+</script>
+
+
+<script id="eldoria-admin-access-panel">
+(function(){
+ const ADMIN='groupsacabraldigital@gmail.com';
+ function addAdmin(){
+  if(document.getElementById('eldoriaAdminButton'))return;
+  const nav=document.querySelector('.nav'); if(!nav)return;
+  const b=document.createElement('button');b.id='eldoriaAdminButton';b.className='red';b.textContent='👑 PAINEL ADM';b.style.display='none';
+  b.onclick=openAdmin;nav.appendChild(b);
+  const observer=new MutationObserver(()=>{b.style.display=(window.dragonIsAdmin===true && String(window.dragonUser?.email||'').toLowerCase()===ADMIN)?'block':'none'});
+  observer.observe(document.body,{attributes:true,childList:true,subtree:true});
+  setInterval(()=>{b.style.display=(window.dragonIsAdmin===true && String(window.dragonUser?.email||'').toLowerCase()===ADMIN)?'block':'none'},1000);
+ }
+ function openAdmin(){
+  if(window.dragonIsAdmin!==true||String(window.dragonUser?.email||'').toLowerCase()!==ADMIN){alert('Acesso negado. Entre com o Gmail administrativo verificado.');return;}
+  let ov=document.getElementById('eldoriaAdminOverlay');if(ov)ov.remove();
+  ov=document.createElement('div');ov.id='eldoriaAdminOverlay';ov.style.cssText='position:fixed;inset:0;z-index:999999;background:#020617ed;overflow:auto;padding:18px;color:#fff;font-family:inherit';
+  ov.innerHTML='<div style="max-width:900px;margin:20px auto;background:#111827;border:1px solid #f59e0b;border-radius:16px;padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h2 style="color:#fbbf24">👑 LENDAS DE ELDORIA — PAINEL ADM</h2><button id="eldoriaAdminClose" class="buy">FECHAR</button></div><p>Administrador: '+ADMIN+'</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:15px 0"><button class="buy" id="admRefresh">🔄 Atualizar meus dados</button><button class="buy" id="admCoins">+10.000 moedas (conta atual)</button><button class="buy" id="admGems">+1.000 gemas (conta atual)</button><button class="buy" id="admReset">Zerar progresso da conta atual</button></div><div id="eldoriaAdminStatus" style="padding:12px;background:#0b1220;border-radius:8px">Painel aberto. Os comandos locais afetam somente a conta conectada. Para editar com segurança todas as contas do Firebase, é necessário configurar regras administrativas no Firestore; não é seguro liberar escrita geral pelo HTML.</div><h3 style="margin-top:18px">Estado da conta atual</h3><pre id="eldoriaAdminState" style="white-space:pre-wrap;overflow-wrap:anywhere;background:#020617;padding:12px;border-radius:8px;max-height:300px;overflow:auto"></pre></div>';
+  document.body.appendChild(ov);
+  const status=ov.querySelector('#eldoriaAdminStatus'),out=ov.querySelector('#eldoriaAdminState');
+  const refresh=()=>{out.textContent=JSON.stringify({uid:window.dragonUser?.uid,email:window.dragonUser?.email,name:state.name,level:state.level,rank:state.rank,coins:state.coins,gems:state.gems,points:state.points,energy:state.energy,skinsOwned:state.skinsOwned,pet:state.pet,petCollection:state.petCollection,petSkills:state.petSkills,inventory:state.inventory,world:state.world,unlockedLevel:state.unlockedLevel},null,2)};
+  ov.querySelector('#eldoriaAdminClose').onclick=()=>ov.remove();
+  ov.querySelector('#admRefresh').onclick=refresh;
+  ov.querySelector('#admCoins').onclick=()=>{state.coins=(Number(state.coins)||0)+10000;updateUI();saveGame(false);refresh();status.textContent='Adicionadas 10.000 moedas à conta administrativa.'};
+  ov.querySelector('#admGems').onclick=()=>{state.gems=(Number(state.gems)||0)+1000;updateUI();saveGame(false);refresh();status.textContent='Adicionadas 1.000 gemas à conta administrativa.'};
+  ov.querySelector('#admReset').onclick=()=>{if(!confirm('Zerar nível, força, skins, pets, poderes, energia, inventário e progresso desta conta?'))return;Object.assign(state,{level:1,rank:'Iniciante',coins:500,gems:20,energy:100,points:0,xp:0,skillPoints:0,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',pet:null,petEggs:[],petCollection:[],activePetId:null,petSkillPoints:0,petSkills:{},skillUpgrades:{},ownedSkills:[0],stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,lastCompletedLevel:0,lastCompletedPhase:0,gameCompleted:false,powerBonus:0,attackBonus:0,defenseBonus:0,world:1,currentWorld:1,weaponEquipped:'Lâmina Inicial',armorEquipped:'Armadura Inicial'});updateUI();renderShop();renderInventory();renderPet();saveGame(false);refresh();status.textContent='Progresso da conta atual reiniciado.'};
+  refresh();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addAdmin);else addAdmin();
 })();
 </script>
