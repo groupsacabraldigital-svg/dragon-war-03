@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="theme-color" content="#07111f">
-<title>Dragon War: Rise of Power</title>
+<title>Lendas de Eldoria</title>
 <style>
 *{box-sizing:border-box} :root{--bg:#050914;--panel:#0b1627ee;--cyan:#20d9ff;--gold:#ffbd45;--red:#ff4e5b;--green:#38e58a;--purple:#b75cff;--text:#eef7ff;--muted:#91a4bd}
 html,body{margin:0;min-height:100%;background:#03060d;color:var(--text);font-family:Arial,Helvetica,sans-serif}body{overflow-x:hidden}
@@ -71,7 +71,7 @@ body.landing-only .layout{min-height:calc(100vh - 62px)}
 body.landing-only .main{padding:0;max-width:none}
 body.landing-only .landing-hero{border:0;border-radius:0;min-height:calc(100vh - 62px);background:radial-gradient(ellipse at 70% 44%,#54291c 0,#182238 30%,#070d1a 65%,#02050b 100%);}
 body.landing-only .landing-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#030711 0%,#030711d9 33%,#03071138 68%,#030711a8 100%),linear-gradient(0deg,#030711 0%,transparent 30%,#03071155 100%);z-index:1;pointer-events:none}
-body.landing-only .landing-hero:after{content:"DRAGON WAR  •  ASCENDA AO PODER";position:absolute;left:5%;bottom:22px;color:#8a9bb1;font-size:10px;letter-spacing:4px;z-index:2}
+body.landing-only .landing-hero:after{content:"LENDAS DE ELDORIA  •  DESPERTE SEU PODER";position:absolute;left:5%;bottom:22px;color:#8a9bb1;font-size:10px;letter-spacing:4px;z-index:2}
 body.landing-only .moon{right:19%;top:10%;width:clamp(110px,17vw,210px);height:clamp(110px,17vw,210px);background:radial-gradient(circle at 35% 30%,#fff4d4,#c69a72 60%,#633e35);box-shadow:0 0 70px #ffb86b55;opacity:.82}
 body.landing-only .dragon{right:14%;top:14%;font-size:clamp(100px,16vw,200px);filter:drop-shadow(0 0 28px #f18b3d);opacity:.7}
 body.landing-only .hero-center{left:10%;top:48%;transform:translateY(-50%);width:min(52%,650px);text-align:left}
@@ -197,13 +197,13 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 </style>
 </head>
 <body class="auth-locked">
-<div id="authGate"><div class="authbox"><h1>🐉 DRAGON WAR</h1>
+<div id="authGate"><div class="authbox"><h1>🐉 LENDAS DE ELDORIA</h1>
 <form id="loginForm"><input id="authEmail" type="email" autocomplete="username" placeholder="Seu e-mail" required><input id="authPassword" type="password" autocomplete="current-password" placeholder="Senha da conta do jogo" minlength="6" required><input id="registerInviteCode" type="text" autocomplete="off" placeholder="Código de convite (opcional ao criar conta)" maxlength="24" style="width:100%;margin-top:8px;padding:12px;border-radius:8px"><button type="submit">ENTRAR NO JOGO</button></form>
 <button class="secondary" id="registerBtn">CRIAR CONTA</button><button class="secondary" id="resetBtn">ENVIAR RECUPERAÇÃO DE SENHA</button><button class="secondary" id="guestBtn">ENTRAR COMO CONVIDADO</button><div id="authMessage" role="status"></div></div></div>
 <div class="app">
 <header class="topbar">
   <div class="profile"><div class="avatar">⚔️</div><div><b id="topName">Gabriel Cabral</b><small>⚔️ Nível <span id="topLevel">1</span></small><div id="topRankBadge">🏅 INICIANTE</div></div><div class="bars"><div class="bar hp"><i></i></div><div class="bar mp"><i></i></div></div></div>
-  <div class="logo">DRAGON WAR <small>RISE OF POWER</small></div>
+  <div class="logo">LENDAS DE ELDORIA <small>RPG FANTÁSTICO</small></div>
   <div class="currencies"><div class="currency coin">🪙 <b id="coins">1.000</b></div><div class="currency gem">💎 <b id="gems">20</b></div><div class="currency energy">⚡ <b id="energy">100/100</b></div></div>
   <div class="top-icons"><button class="iconbtn" onclick="openScreen('config')">⚙️</button><button class="iconbtn" onclick="openScreen('ranking')">🏆</button><button class="iconbtn" onclick="window.dragonSignOut&&window.dragonSignOut()">↪️</button></div>
 </header>
@@ -214,11 +214,11 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 <button class="active" onclick="openScreen('home',this)">🏠 INÍCIO</button><button class="gold" onclick="openScreen('jogar',this)">⚔️ JOGAR</button><button onclick="openScreen('loja',this)">🛒 LOJA</button><button onclick="openScreen('pets',this)">🐾 PETS</button><button class="purple" onclick="openScreen('poderes',this)">✨ PODERES</button><button class="red" onclick="openScreen('combate',this)">🎯 TREINAMENTO</button><button onclick="openScreen('exploracao',this)">🧭 EXPLORAÇÃO</button><button onclick="openScreen('inventario',this)">🎒 INVENTÁRIO</button><button class="green" onclick="openScreen('ranking',this)">🏆 RANKING</button><button onclick="openScreen('conquistas',this)">🏅 CONQUISTAS</button><button onclick="openScreen('eventos',this)">🎁 EVENTOS</button><button onclick="openScreen('config',this)">⚙️ CONFIGURAÇÕES</button>
 
 </div>
-<div class="side-info"><b>Dragon War</b><br>Rise of Power<br><br>Aventure-se, evolua e conquiste o ranking.</div>
+<div class="side-info"><b>Lendas de Eldoria</b><br>RPG de Fantasia<br><br>Aventure-se, evolua e conquiste o ranking.</div>
 </aside>
 <main class="main">
 
-<section id="home" class="screen active"><div class="hero landing-hero"><div class="moon"></div><div class="dragon">🐉</div><div class="hero-center"><div class="warrior"><div class="head"></div><div class="hair"></div><div class="body"></div><div class="cape"></div><div class="dw">DW</div><div class="sword"></div></div><div class="title">DRAGON WAR</div><div class="subtitle">RISE OF POWER</div><div class="hero-actions"><button class="bigbtn start-campaign" onclick="enterGame()">▶ INICIAR AVENTURA</button></div></div><div class="quick landing-profile"><div class="card profile-card"><b>🛡️ SEU PERSONAGEM</b><div class="landing-avatar" id="homeAvatar">⚔️</div><strong id="homeProfile">Jogador • Nível 1</strong><div id="homeAchievementBadge" style="margin:8px 0;padding:8px;border:1px solid #b88746;border-radius:9px;color:#ffe0a2">🥉 Primeiro Login</div><div class="player-stat-grid"><span>🏅 NÍVEL<strong id="homeLevel">1</strong></span><span>⚡ FORÇA<strong id="homePower">100</strong></span><span>🗡️ ARMA<strong id="homeWeapon">Punhos de Ferro</strong></span><span>🛡️ ARMADURA<strong id="homeArmor">Armadura Inicial</strong></span></div><p class="stats">Seu progresso e equipamentos estarão aqui antes de entrar na aventura.</p></div></div></div></section>
+<section id="home" class="screen active"><div class="hero landing-hero"><div class="moon"></div><div class="dragon">🐉</div><div class="hero-center"><div class="warrior"><div class="head"></div><div class="hair"></div><div class="body"></div><div class="cape"></div><div class="dw">DW</div><div class="sword"></div></div><div class="title">LENDAS DE ELDORIA</div><div class="subtitle">DESPERTE SEU PODER</div><div class="hero-actions"><button class="bigbtn start-campaign" onclick="enterGame()">▶ INICIAR AVENTURA</button></div></div><div class="quick landing-profile"><div class="card profile-card"><b>🛡️ SEU PERSONAGEM</b><div class="landing-avatar" id="homeAvatar">⚔️</div><strong id="homeProfile">Jogador • Nível 1</strong><div id="homeAchievementBadge" style="margin:8px 0;padding:8px;border:1px solid #b88746;border-radius:9px;color:#ffe0a2">🥉 Primeiro Login</div><div class="player-stat-grid"><span>🏅 NÍVEL<strong id="homeLevel">1</strong></span><span>⚡ FORÇA<strong id="homePower">100</strong></span><span>🗡️ ARMA<strong id="homeWeapon">Punhos de Ferro</strong></span><span>🛡️ ARMADURA<strong id="homeArmor">Armadura Inicial</strong></span></div><p class="stats">Seu progresso e equipamentos estarão aqui antes de entrar na aventura.</p></div></div></div></section>
 
 <section id="jogar" class="screen"><h1 class="section-title">⚔️ BATALHAS DE NÍVEL</h1><p class="stats" style="margin-bottom:14px">Avance pelas fases, derrote inimigos e chefões para desbloquear o próximo nível. Sua campanha fica salva no progresso.</p><div class="grid3" id="bossGrid"></div></section>
 <section id="loja" class="screen"><h1 class="section-title">🛒 LOJA DE ITENS</h1><div class="tabs" id="shopTabs"></div><div class="shop-layout"><div class="merchant"><div class="shop-person">🧝‍♀️</div><h2>Mercadora</h2><p>Equipamentos, armas, poderes e skins.</p></div><div class="grid4" id="shopGrid"></div></div><h2 style="color:#ffd47b;text-align:center">🎭 SKINS</h2><div class="grid4" id="skinShopGrid"></div></section>
@@ -236,7 +236,7 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 </main></div></div>
 
 <div class="toast" id="toast"></div>
-<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Dragon War</h2><p id="modalText"></p><div class="actions"><button class="fight" onclick="closeModal()">FECHAR</button><button class="fight" onclick="closeModal();retryCurrentStage()">↻ TENTAR NOVAMENTE</button></div></div></div>
+<div class="modal" id="modal"><div class="modalbox"><h2 id="modalTitle">Lendas de Eldoria</h2><p id="modalText"></p><div class="actions"><button class="fight" onclick="closeModal()">FECHAR</button><button class="fight" onclick="closeModal();retryCurrentStage()">↻ TENTAR NOVAMENTE</button></div></div></div>
 <script>
 const enemies=[
 {name:"KHALDRON, O DRAGÃO DO PESADELO",emoji:"🐲",hp:100,dmg:8,reward:80,gems:1,points:50},
@@ -371,7 +371,7 @@ window.enemyTurn=function(){if(!battle)return;const petDefense=state.pet?Math.mi
 window.attack=function(){if(!battle)return;const skin=skins.find(x=>x.id===state.equippedSkin)||skins[0];const petBonus=state.pet?Math.floor((state.pet.level||1)*3):0;const dmg=24+(Number(state.level)||1)*3+(Number(state.attackBonus)||0)+petBonus+(skin.id==='lua'?3:skin.id==='dragao'?5:0);battle.hp=Math.max(0,battle.hp-dmg);if(battle.hp<=0)return winBattle();updateBattle();enemyTurn()};
 window.usePower=function(){if(!battle)return;if(state.energy<15)return showToast('Energia insuficiente: precisa de 15.');state.energy-=15;state.energyUpdatedAt=Date.now();const selected=Number(state.selectedSkill||0),skill=skills[selected]||skills[0];battle.hp=Math.max(0,battle.hp-skill[2]+0-(Number(state.level)||1)*-5-(Number(state.powerBonus)||0));if(battle.hp<=0)return winBattle();updateUI();updateBattle();enemyTurn();saveGame(false)};
 window.heal=function(){if(!battle)return;if(battle.playerHp>=battle.maxPlayerHp)return showToast('Vida cheia.');if(state.energy<5)return showToast('Energia insuficiente: precisa de 5.');state.energy-=5;state.energyUpdatedAt=Date.now();const old=battle.playerHp;battle.playerHp=Math.min(battle.maxPlayerHp,battle.playerHp+35);updateBattle();updateUI();saveGame(false);showToast('💚 +'+(battle.playerHp-old)+' HP');enemyTurn()};
-window.winBattle=function(){if(!battle)return;const e=battle.enemy;state.lastCompletedLevel=e.level;state.lastCompletedPhase=e.phase;const replaying=Number(e.level)<Number(state.unlockedLevel||1)||(Number(e.level)===Number(state.unlockedLevel||1)&&Number(e.phase)<Number(state.unlockedPhase||1));state.coins+=e.reward;if(!replaying){state.gems+=e.gems;state.points+=e.points;state.level=Math.max(1,Number(state.level)||1);state.skillPoints+=e.boss?3:1;}state.energy=Math.min(100,state.energy+2);if(e.boss&&e.level>=10){state.gameCompleted=true;state.coins+=100000;state.gems+=500;battle=null;updateUI();saveGame(false);renderBosses();showModal('🏆 DRAGON WAR ZERADO!','Você derrotou o chefão final do Mundo 10 e concluiu a campanha! Bônus lendário: 100.000 moedas e 500 gemas.');return}if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1}const rescued=maybeRescuePet(e);const nextLevel=state.unlockedLevel,nextPhase=state.unlockedPhase; battle=null;updateUI();saveGame(false);renderBosses();renderRanking();showToast((e.boss?'👑 Chefão derrotado! ':'⚔️ Vitória! ')+'Próxima fase: Mundo '+nextLevel+' • Fase '+nextPhase+'/'+phasesInLevel(nextLevel));if(!rescued)setTimeout(()=>{if(!state.gameCompleted)startBattle()},1200)};
+window.winBattle=function(){if(!battle)return;const e=battle.enemy;state.lastCompletedLevel=e.level;state.lastCompletedPhase=e.phase;const replaying=Number(e.level)<Number(state.unlockedLevel||1)||(Number(e.level)===Number(state.unlockedLevel||1)&&Number(e.phase)<Number(state.unlockedPhase||1));state.coins+=e.reward;if(!replaying){state.gems+=e.gems;state.points+=e.points;state.level=Math.max(1,Number(state.level)||1);state.skillPoints+=e.boss?3:1;}state.energy=Math.min(100,state.energy+2);if(e.boss&&e.level>=10){state.gameCompleted=true;state.coins+=100000;state.gems+=500;battle=null;updateUI();saveGame(false);renderBosses();showModal('🏆 DRAGON WAR ZERADO!','Você derrotou o chefão final do Mundo 10 e concluiu a campanha de Lendas de Eldoria! Bônus lendário: 100.000 moedas e 500 gemas.');return}if(e.boss){state.unlockedLevel=e.level+1;state.unlockedPhase=1}else if(e.phase<phasesInLevel(e.level)){state.unlockedLevel=e.level;state.unlockedPhase=e.phase+1}else{state.unlockedLevel=e.level+1;state.unlockedPhase=1}const rescued=maybeRescuePet(e);const nextLevel=state.unlockedLevel,nextPhase=state.unlockedPhase; battle=null;updateUI();saveGame(false);renderBosses();renderRanking();showToast((e.boss?'👑 Chefão derrotado! ':'⚔️ Vitória! ')+'Próxima fase: Mundo '+nextLevel+' • Fase '+nextPhase+'/'+phasesInLevel(nextLevel));if(!rescued)setTimeout(()=>{if(!state.gameCompleted)startBattle()},1200)};
 window.repeatLastStage=function(){const l=Number(state.lastCompletedLevel||state.unlockedLevel||1),p=Number(state.lastCompletedPhase||Math.max(1,(state.unlockedPhase||1)-1));startBattle(l,p);showToast('Repetindo Mundo '+l+' • Fase '+p)};
 window.retryCurrentStage=function(){startBattle(Number(state.unlockedLevel||1),Number(state.unlockedPhase||1));};
 window.newGame=function(){if(!confirm('Reiniciar todo o progresso da campanha neste dispositivo? Esta ação não pode ser desfeita.'))return;const n=state.name;state={name:n,level:1,rank:'Iniciante',coins:1000,gems:20,energy:100,points:0,skillPoints:5,inventory:[],skinsOwned:['guerreiro'],equippedSkin:'guerreiro',stageLevel:1,stagePhase:1,unlockedLevel:1,unlockedPhase:1,powerBonus:0,settings:{sfx:true,animations:true,music:false},selectedSkill:0,pet:null,attackBonus:0,defenseBonus:0};battle=null;updateUI();renderBosses();renderShop();renderInventory();renderSkills();renderRanking();saveGame(false);showToast('Nova campanha iniciada!')};
@@ -406,7 +406,7 @@ function authError(e){
  "auth/user-disabled":"Esta conta foi desativada no Firebase Authentication."
  };
  say((map[e.code]||"Falha no Firebase: "+(e.code||"erro desconhecido"))+"\nCódigo: "+(e.code||"sem código"));
- console.error("Dragon War Firebase Auth:",e.code,e.message);
+ console.error("Lendas de Eldoria Firebase Auth:",e.code,e.message);
 }
 async function enter(user){
   // Abre o jogo imediatamente após o Firebase autenticar; a nuvem carrega em segundo plano.
@@ -570,7 +570,7 @@ window.redeemFriendCode=async()=>{
   status.textContent='Convite resgatado! Você ganhou 50 gemas e um Ovo Comum. Seu código pessoal continua disponível; você não pode resgatar outro convite.';
  }catch(e){status.textContent=e.message||'Falha ao validar o convite. Confira as regras do Firestore.';}
 };
-window.addEventListener('unhandledrejection',e=>{console.error('Erro assíncrono Dragon War:',e.reason);if(document.body.classList.contains('auth-locked') && e.reason?.code){authError(e.reason)}});
+window.addEventListener('unhandledrejection',e=>{console.error('Erro assíncrono Lendas de Eldoria:',e.reason);if(document.body.classList.contains('auth-locked') && e.reason?.code){authError(e.reason)}});
 // Integra estado do arquivo existente com o documento Firestore.
 window.gameSetCloudData=d=>{if(d)window.applyCloudPlayer?.(d)};
 </script>
@@ -885,7 +885,7 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 // Sistema de conquistas persistentes e emblema visível no perfil.
 (function(){
  const achievementDefs=[
-  {id:'login_bronze',name:'Primeiro Login',tier:'Bronze',icon:'🥉',desc:'Entrou no Dragon War pela primeira vez.',test:s=>true},
+  {id:'login_bronze',name:'Primeiro Login',tier:'Bronze',icon:'🥉',desc:'Entrou em Lendas de Eldoria pela primeira vez.',test:s=>true},
   {id:'first_win',name:'Primeira Vitória',tier:'Bronze',icon:'🥉',desc:'Vença sua primeira batalha.',test:s=>(s.achievementStats?.wins||0)>=1},
   {id:'level5',name:'Aventureiro em Ascensão',tier:'Bronze',icon:'🛡️',desc:'Alcance o nível 5.',test:s=>(s.level||1)>=5},
   {id:'level10',name:'Guerreiro de Ouro',tier:'Ouro',icon:'🥇',desc:'Alcance o nível 10.',test:s=>(s.level||1)>=10},
@@ -909,7 +909,7 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 </script>
 
 <script>
-/* Dragon War: loja organizada, pets até nível 100 e decisões de recompensa */
+/* Lendas de Eldoria: loja organizada, pets até nível 100 e decisões de recompensa */
 (function(){
   const extraItems=[
     {name:'Espada do Eclipse',emoji:'🌑',price:250000,currency:'coin',type:'Arma Mítica',category:'armas',attackBonus:900,unlockWorld:8},
@@ -927,26 +927,66 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
     {name:'Ovo Épico de Pet',emoji:'🥚',price:12,currency:'gem',type:'Ovo Épico',category:'pets',petEggTier:'epico'},
     {name:'Ovo Lendário de Pet',emoji:'🥚',price:40,currency:'gem',type:'Ovo Lendário',category:'pets',petEggTier:'lendario'}
   ];
+  extraItems.push(
+    {name:'Adaga de Aprendiz',emoji:'🗡️',price:100,currency:'coin',type:'Arma comum • +5 dano',category:'armas',attackBonus:5},
+    {name:'Espada de Aço',emoji:'⚔️',price:1800,currency:'coin',type:'Arma incomum • +35 dano',category:'armas',attackBonus:35},
+    {name:'Machado de Guerra',emoji:'🪓',price:8500,currency:'coin',type:'Arma rara • +100 dano',category:'armas',attackBonus:100},
+    {name:'Lança do Trovão',emoji:'🌩️',price:45000,currency:'coin',type:'Arma épica • +300 dano',category:'armas',attackBonus:300},
+    {name:'Espada do Fênix',emoji:'🔥',price:180000,currency:'coin',type:'Arma lendária • +750 dano',category:'armas',attackBonus:750,unlockWorld:5},
+    {name:'Excalibur Celestial',emoji:'✨',price:3500,currency:'gem',type:'Arma lendária • +1800 dano',category:'armas',attackBonus:1800,unlockWorld:7},
+    {name:'Foice do Fim',emoji:'☠️',price:7500,currency:'gem',type:'Arma mítica • +3500 dano',category:'armas',attackBonus:3500,unlockWorld:9},
+    {name:'Armadura de Couro',emoji:'🥋',price:150,currency:'coin',type:'Armadura comum • +5 defesa',category:'armaduras',defenseBonus:5},
+    {name:'Cota de Malha',emoji:'🛡️',price:2200,currency:'coin',type:'Armadura incomum • +30 defesa',category:'armaduras',defenseBonus:30},
+    {name:'Armadura de Titânio',emoji:'⚙️',price:12000,currency:'coin',type:'Armadura rara • +100 defesa',category:'armaduras',defenseBonus:100},
+    {name:'Couraça do Vulcão',emoji:'🌋',price:65000,currency:'coin',type:'Armadura épica • +280 defesa',category:'armaduras',defenseBonus:280},
+    {name:'Armadura Imortal',emoji:'👑',price:2500,currency:'gem',type:'Armadura lendária • +700 defesa',category:'armaduras',defenseBonus:700,unlockWorld:7},
+    {name:'Poção Pequena de Vida',emoji:'❤️',price:80,currency:'coin',type:'Recupera 15 vida',category:'pocoes',heal:15},
+    {name:'Poção Grande de Vida',emoji:'💖',price:450,currency:'coin',type:'Recupera 60 vida',category:'pocoes',heal:60},
+    {name:'Poção de Energia',emoji:'⚡',price:220,currency:'coin',type:'Recupera 30 energia',category:'pocoes',energyRestore:30},
+    {name:'Pacote de 1 Ração',emoji:'🍖',price:100,currency:'coin',type:'1 ração para pets',category:'racoes',petFood:true,rationQty:1},
+    {name:'Pacote de 10 Rações',emoji:'🍖',price:850,currency:'coin',type:'10 rações • economize 15%',category:'racoes',petFood:true,rationQty:10},
+    {name:'Pacote de 50 Rações',emoji:'🥩',price:3750,currency:'coin',type:'50 rações • economize 25%',category:'racoes',petFood:true,rationQty:50},
+    {name:'Ração Dourada • 10 unidades',emoji:'🌟',price:25,currency:'gem',type:'10 rações especiais',category:'racoes',petFood:true,rationQty:10},
+    {name:'Armadura de Pet de Couro',emoji:'🐾',price:900,currency:'coin',type:'Armadura de pet • +5 defesa',category:'petarmaduras',petArmor:true,defenseBonus:5},
+    {name:'Armadura de Pet de Aço',emoji:'🐺',price:7500,currency:'coin',type:'Armadura de pet • +25 defesa',category:'petarmaduras',petArmor:true,defenseBonus:25},
+    {name:'Armadura Dracônica para Pet',emoji:'🐲',price:900,currency:'gem',type:'Armadura lendária de pet • +100 defesa',category:'petarmaduras',petArmor:true,defenseBonus:100},
+    {name:'Escudo de Madeira',emoji:'🛡️',price:300,currency:'coin',type:'Escudo • +10 defesa',category:'equipamentos',defenseBonus:10},
+    {name:'Escudo do Guardião',emoji:'🛡️',price:18000,currency:'coin',type:'Escudo raro • +120 defesa',category:'equipamentos',defenseBonus:120},
+    {name:'Tônico de Força',emoji:'💪',price:500,currency:'coin',type:'+25% força por 3 batalhas',category:'consumiveis',tempBuff:'strength',buffAmount:0.25,buffBattles:3},
+    {name:'Elixir de Fúria',emoji:'🔥',price:12,currency:'gem',type:'+100% força por 3 batalhas',category:'consumiveis',tempBuff:'strength',buffAmount:1,buffBattles:3},
+    {name:'Elixir de Energia',emoji:'🔋',price:650,currency:'coin',type:'+50 energia',category:'consumiveis',energyRestore:50},
+    {name:'Caixa Comum Aleatória',emoji:'📦',price:100,currency:'gem',type:'Caixa comum • prêmio aleatório',category:'caixas',randomBox:'comum'},
+    {name:'Caixa Rara Aleatória',emoji:'🎁',price:450,currency:'gem',type:'Caixa rara • prêmio melhor',category:'caixas',randomBox:'rara'},
+    {name:'Caixa Lendária Aleatória',emoji:'💎',price:1000,currency:'gem',type:'Caixa lendária • prêmio superior',category:'caixas',randomBox:'lendaria'},
+    {name:'Fragmentos de Cristal',emoji:'🔮',price:1200,currency:'coin',type:'Material de melhoria',category:'materiais'},
+    {name:'Bolsa de Gemas • 10',emoji:'💎',price:1500,currency:'coin',type:'Receba 10 diamantes',category:'gemas',gemReward:10}
+  );
   extraItems.forEach(x=>{if(!shop.some(y=>y.name===x.name))shop.push(x)});
   const oldRenderShop=renderShop;
   window.renderShop=function(){
     renderPet();
-    const cats=['armas','armaduras','pocoes','racoes','pets','equipamentos','consumiveis','materiais','gemas','skins'];
-    const labels={armas:'⚔️ Armas',armaduras:'🛡️ Armaduras',pocoes:'❤️ Poções e vidas',racoes:'🍖 Rações',pets:'🥚 Pets e ovos',equipamentos:'🎒 Equipamentos',consumiveis:'🧪 Consumíveis',materiais:'📦 Materiais',gemas:'💎 Gemas',skins:'🎭 Skins'};
+    const cats=['armas','armaduras','pocoes','racoes','pets','petarmaduras','equipamentos','consumiveis','caixas','materiais','gemas','skins'];
+    const labels={armas:'⚔️ Armas',armaduras:'🛡️ Armaduras',pocoes:'❤️ Poções e vidas',racoes:'🍖 Rações',pets:'🥚 Pets e ovos',petarmaduras:'🐾 Armaduras para pets',equipamentos:'🎒 Escudos e equipamentos',consumiveis:'🧪 Consumíveis de batalha',caixas:'📦 Caixas aleatórias',materiais:'🧱 Materiais',gemas:'💎 Gemas',skins:'🎭 Skins'};
     $('shopTabs').innerHTML=cats.map(c=>'<button class="tab '+(c===shopCategory?'active':'')+'" onclick="setShopCategory(\''+c+'\')">'+labels[c]+'</button>').join('');
     if(shopCategory==='skins'){
       $('shopGrid').innerHTML=skins.map(s=>{const owned=state.skinsOwned.includes(s.id),eq=state.equippedSkin===s.id;return '<div class="panel item"><div class="emoji">'+s.emoji+'</div><h3>'+s.name+'</h3><p>'+s.ability+'</p><div class="price">'+(owned?'POSSUÍDA':(s.currency==='gem'?'💎 ':'🪙 ')+fmt(s.price))+'</div><button class="equip" onclick="'+(owned?'equipSkin':'buySkin')+'(\''+s.id+'\')">'+(eq?'EQUIPADA':owned?'EQUIPAR':'COMPRAR')+'</button></div>'}).join('');
     }else{
-      const items=shop.filter(x=>x.category===shopCategory&&(!x.unlockWorld||Number(state.unlockedLevel||1)>=x.unlockWorld));
-      $('shopGrid').innerHTML=items.map(it=>{const i=shop.indexOf(it);return '<div class="panel item"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==='gem'?'💎 ':'🪙 ')+fmt(it.price)+'</div><button class="buy" onclick="buyItem('+i+')">COMPRAR</button></div>'}).join('')||'<div class="panel">Nenhum item disponível nesta categoria.</div>';
+      const items=shop.filter(x=>x.category===shopCategory);
+      $('shopGrid').innerHTML=items.map(it=>{const i=shop.indexOf(it),locked=!!(it.unlockWorld&&Number(state.unlockedLevel||1)<it.unlockWorld);return '<div class="panel item" style="'+(locked?'opacity:.72;border:1px solid #64748b':'')+'"><div class="emoji">'+it.emoji+'</div><div class="rarity">'+it.type+'</div><h3>'+it.name+'</h3><div class="price">'+(it.currency==='gem'?'💎 ':'🪙 ')+fmt(it.price)+'</div>'+(locked?'<p>🔒 Desbloqueia no mundo '+it.unlockWorld+'</p><button class="buy" onclick="showLockedShopItem('+it.unlockWorld+')">BLOQUEADO</button>':'<button class="buy" onclick="buyItem('+i+')">COMPRAR</button>')+'</div>'}).join('')||'<div class="panel">Nenhum item disponível nesta categoria.</div>';
     }
     const sh=document.querySelector('#loja h2[style*="color:#ffd47b"]');if(sh)sh.style.display='none';if($('skinShopGrid'))$('skinShopGrid').style.display='none';
   };
+  window.showLockedShopItem=function(world){showModal('🔒 ITEM BLOQUEADO','Avance até o mundo '+world+' para comprar este item.');};
   window.setShopCategory=function(c){shopCategory=c;renderShop()};
   const oldBuyItem=window.buyItem||buyItem;
   window.buyItem=function(i){const it=shop[i];if(!it)return;const key=it.currency==='gem'?'gems':'coins';if((Number(state[key])||0)<it.price)return showToast('Recursos insuficientes.');
+    if(it.unlockWorld&&Number(state.unlockedLevel||1)<it.unlockWorld)return showModal('🔒 ITEM BLOQUEADO','Avance até o mundo '+it.unlockWorld+' para comprar este item.');
     if(it.petEggTier){state[key]-=it.price;const egg=addPetEgg('loja',it.petEggTier);updateUI();renderPet();saveGame(false);showEggDecision(egg);return;}
-    if(it.heal){state[key]-=it.price;state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+it.heal);updateUI();saveGame(false);renderShop();return showToast('Poção usada: +'+it.heal+' de vida/energia.');}
+    if(it.petFood){state[key]-=it.price;state.inventory=Array.isArray(state.inventory)?state.inventory:[];let stack=state.inventory.find(x=>x.petFood&&x.name===it.name);if(stack)stack.quantity=(Number(stack.quantity)||1)+(Number(it.rationQty)||1);else state.inventory.push({name:it.name,emoji:it.emoji,type:it.type,petFood:true,quantity:Number(it.rationQty)||1,purchased:true});updateUI();renderInventory();renderPet();saveGame(false);renderShop();return showToast('Comprou '+(Number(it.rationQty)||1)+' ração(ões). Só rações do inventário permitem upar pets.');}
+    if(it.heal||it.energyRestore){state[key]-=it.price;state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+(Number(it.heal)||Number(it.energyRestore)));updateUI();saveGame(false);renderShop();return showToast('Consumível aplicado: +'+(Number(it.heal)||Number(it.energyRestore))+' vida/energia.');}
+    if(it.tempBuff){state[key]-=it.price;state.battleBuffs=state.battleBuffs||{};state.battleBuffs[it.tempBuff]={amount:it.buffAmount,battles:it.buffBattles};state.inventory=state.inventory||[];state.inventory.push({name:it.name,emoji:it.emoji,type:it.type,tempBuff:it.tempBuff,buffAmount:it.buffAmount,buffBattles:it.buffBattles,consumable:true});updateUI();renderInventory();saveGame(false);renderShop();return showToast('Consumível comprado. Bônus preparado para '+it.buffBattles+' batalhas.');}
+    if(it.randomBox){state[key]-=it.price;const roll=Math.random();if(it.randomBox==='comum'){if(roll<.65)state.coins+=1000;else if(roll<.9)state.inventory.push({name:'Pacote de 10 Rações',emoji:'🍖',type:'Ração',petFood:true,quantity:10,purchased:true});else state.gems+=5;}else if(it.randomBox==='rara'){if(roll<.5)state.gems+=25;else if(roll<.8){state.attackBonus=(Number(state.attackBonus)||0)+100;}else state.inventory.push({name:'Pacote de 50 Rações',emoji:'🥩',type:'Ração',petFood:true,quantity:50,purchased:true});}else{if(roll<.45)state.attackBonus=(Number(state.attackBonus)||0)+1000;else if(roll<.75)state.defenseBonus=(Number(state.defenseBonus)||0)+500;else state.gems+=250;}updateUI();renderInventory();renderShop();saveGame(false);return showToast('Caixa '+it.randomBox+' aberta! Recompensa recebida.');}
+    if(it.petArmor){state[key]-=it.price;state.inventory=state.inventory||[];state.inventory.push({name:it.name,emoji:it.emoji,type:it.type,petArmor:true,defenseBonus:it.defenseBonus||0,purchased:true});updateUI();renderInventory();saveGame(false);renderShop();return showToast('Armadura para pet adicionada ao inventário.');}
     oldBuyItem(i);
   };
   function showEggDecision(egg){
@@ -966,8 +1006,8 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
   window.spinRoulette=function(mode){const before=new Set((state.petEggs||[]).map(e=>e.id));originalSpin.apply(this,arguments);const egg=(state.petEggs||[]).find(e=>!before.has(e.id));if(egg)showEggDecision(egg)};
   const originalDaily=window.dailyReward||dailyReward;
   window.dailyReward=function(){const before=new Set((state.petEggs||[]).map(e=>e.id));originalDaily.apply(this,arguments);const egg=(state.petEggs||[]).find(e=>!before.has(e.id));if(egg)showEggDecision(egg)};
-  function rationCount(){return (state.inventory||[]).reduce((n,it)=>n+(it.petFood?Math.max(1,Number(it.quantity)||1):0),0)}
-  function consumeRation(amount){let left=amount;for(let i=(state.inventory||[]).length-1;i>=0&&left>0;i--){const it=state.inventory[i];if(!it.petFood)continue;const q=Math.max(1,Number(it.quantity)||1);if(q>left){it.quantity=q-left;left=0}else{left-=q;state.inventory.splice(i,1)}}return left===0}
+  function rationCount(){return (state.inventory||[]).reduce((n,it)=>n+(it.petFood&&it.purchased!==false?Math.max(1,Number(it.quantity)||1):0),0)}
+  function consumeRation(amount){let left=amount;for(let i=(state.inventory||[]).length-1;i>=0&&left>0;i--){const it=state.inventory[i];if(!it.petFood||it.purchased===false)continue;const q=Math.max(1,Number(it.quantity)||1);if(q>left){it.quantity=q-left;left=0}else{left-=q;state.inventory.splice(i,1)}}return left===0}
   window.renderPet=function(){const box=$('petDetails');if(!box)return;state.petCollection=Array.isArray(state.petCollection)?state.petCollection:[];state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos recebidos ('+state.petEggs.length+')</h3>';
     if(!state.petEggs.length)html+='<p>Nenhum ovo no momento.</p>';else html+='<div class="grid4">'+state.petEggs.map(e=>{const t=eggTypes[e.tier]||eggTypes.comum;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">🥚</div><h3>Ovo '+t.label+'</h3><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">ACEITAR / CHOCAR</button><button class="equip" onclick="donatePetEgg(\''+e.id+'\')">DOAR</button></div>'}).join('')+'</div>';
     html+='</div><hr style="margin:14px 0;border-color:#334155"><h3>🐾 Coleção ('+state.petCollection.length+')</h3>';
