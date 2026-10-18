@@ -1,208 +1,466 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080b12">
 <title>Dragon War: Rise of Power</title>
 <style>
-:root{--bg:#080b12;--panel:#111725;--panel2:#171f30;--line:#2a354a;--gold:#f4c35b;--cyan:#55d9f4;--red:#ff667b;--green:#61e5a4;--muted:#9eabc1;--text:#f5f7ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#17243b 0,#080b12 55%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}button,input,textarea,select{font:inherit}button{border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:#202b40;color:var(--text);font-weight:750;cursor:pointer}button:active{transform:scale(.98)}button.primary{background:linear-gradient(135deg,#f4c35b,#ff9d49);color:#241605;border:0}button.danger{background:#4a202d;border-color:#793347}button.good{background:#163e37;border-color:#286b58}button.small{padding:7px 10px;font-size:12px;border-radius:9px}button:disabled{opacity:.45;cursor:not-allowed}input,textarea,select{width:100%;background:#090f1a;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;outline:none}textarea{min-height:80px;resize:vertical}label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px}.hidden{display:none!important}.muted{color:var(--muted)}.gold{color:var(--gold)}.green{color:var(--green)}.red{color:var(--red)}.cyan{color:var(--cyan)}h1,h2,h3,p{margin-top:0}h2{font-size:20px;margin-bottom:12px}h3{font-size:15px}.wrap{max-width:1200px;margin:auto;padding:14px}.auth{max-width:440px;margin:5vh auto;padding:22px;background:linear-gradient(160deg,#18253b,#101521);border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 80px #0008}.logo{font-size:28px;font-weight:1000;letter-spacing:1px}.logo span{color:var(--gold)}.auth .mark{font-size:50px;text-align:center;margin-bottom:4px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#0c111deF;border:1px solid var(--line);border-radius:16px;position:sticky;top:6px;z-index:5;backdrop-filter:blur(12px)}.brand{font-weight:950}.stats{display:flex;gap:7px;flex-wrap:wrap}.pill{border:1px solid var(--line);background:#151e2e;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800}.layout{display:grid;grid-template-columns:205px 1fr;gap:14px;margin-top:14px}.nav{background:#0d1320;border:1px solid var(--line);border-radius:16px;padding:10px;height:max-content;position:sticky;top:80px}.nav button{display:block;width:100%;text-align:left;background:transparent;border:0;margin:2px 0;padding:11px}.nav button.active,.nav button:hover{background:#1a2940;color:var(--gold)}.main{min-width:0}.page{display:none}.page.active{display:block}.panel{background:linear-gradient(160deg,#151e2d,#101521);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}.hero{min-height:230px;background:linear-gradient(100deg,#101521 15%,#101521aa),radial-gradient(ellipse at 80% 20%,#70452c,#192b43 50%,#101521);display:flex;align-items:center;justify-content:space-between;gap:16px;overflow:hidden}.hero h1{font-size:clamp(27px,5vw,48px);line-height:1.02;margin:7px 0 12px}.dragon-art{font-size:clamp(75px,15vw,155px);filter:drop-shadow(0 0 22px #f4a64d88)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.card{background:#0e1522;border:1px solid var(--line);border-radius:14px;padding:13px;min-width:0}.card .emoji{font-size:30px}.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.between{display:flex;align-items:center;justify-content:space-between;gap:10px}.bar{height:9px;background:#273247;border-radius:99px;overflow:hidden;margin:7px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,#4fe3e8,#67e6a0);width:50%}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1;min-width:110px}.list{display:grid;gap:8px}.listitem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px;background:#0b111d;border:1px solid var(--line);border-radius:12px}.listitem .info{min-width:0}.listitem .info strong{display:block}.listitem .info small{color:var(--muted)}.badge{display:inline-block;font-size:10px;font-weight:900;border-radius:7px;padding:4px 6px;background:#253149;color:var(--cyan)}.badge.admin{background:#5b4318;color:#ffe19a}.badge.banned{background:#542334;color:#ff9aad}.notice{padding:11px;border-radius:11px;background:#142b34;border:1px solid #245463;color:#c7f5ff;font-size:13px;margin:8px 0}.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:20;background:#f4c35b;color:#211707;font-weight:850;border-radius:12px;padding:12px 18px;box-shadow:0 10px 30px #0008;max-width:92%;text-align:center}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.tabs button{font-size:12px;padding:8px 11px}.tabs button.active{border-color:var(--gold);color:var(--gold)}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.smalltext{font-size:12px}.footer{text-align:center;color:#75829a;padding:18px;font-size:11px}.empty{padding:25px;text-align:center;color:var(--muted)}.meter{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.divider{height:1px;background:var(--line);margin:13px 0}
-@media(max-width:760px){.layout{grid-template-columns:1fr}.nav{position:static;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.nav button{font-size:11px;text-align:center;padding:9px 3px}.top{position:static;align-items:flex-start;flex-direction:column}.stats{width:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{min-height:200px}.dragon-art{font-size:78px}.wrap{padding:9px}.panel{padding:12px}}
-@media(max-width:390px){.grid,.grid.two{grid-template-columns:1fr}.hero{align-items:flex-start}.dragon-art{display:none}}
+:root{--bg:#080b12;--panel:#121a29;--gold:#f4bd50;--orange:#f97316;--muted:#a5b1c5;--line:#303d54}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#202b42,#080b12 70%);color:#f5f7fb;font-family:Arial,sans-serif;min-height:100vh}
+header{text-align:center;padding:22px 12px;background:#080b12;border-bottom:1px solid var(--line)}
+header h1{color:var(--gold);font-size:clamp(25px,5vw,38px);margin:0;text-shadow:0 0 20px #f59e0b44}
+header p{color:var(--muted);margin:8px 0 0}
+main{max-width:1100px;margin:auto;padding:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.stat,.panel{background:linear-gradient(145deg,#182338,#101725);border:1px solid var(--line);border-radius:13px;padding:14px}
+.stat small{display:block;color:var(--muted);margin-bottom:7px}
+.stat strong{color:var(--gold);font-size:20px}
+nav{display:flex;gap:7px;overflow-x:auto;padding:14px 0}
+button{background:#202c40;border:1px solid #46536b;color:#fff;border-radius:8px;padding:11px 13px;font-weight:bold;cursor:pointer;white-space:nowrap}
+button:hover{border-color:var(--gold);color:var(--gold)}
+button:disabled{opacity:.4}
+.primary{background:linear-gradient(120deg,#f59e0b,#ea580c);border:0;color:#160d03}
+.danger{background:#481d29;border-color:#a63c51}
+.page{display:none}.page.show{display:block}
+h2{color:var(--gold);margin-top:0}
+h3{margin:8px 0}
+p{line-height:1.5}
+.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}
+.item{background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:13px}
+.item p{color:var(--muted);font-size:13px;min-height:35px}
+.item button{width:100%;margin-top:7px}
+.bar{height:10px;background:#30394b;border-radius:20px;overflow:hidden;margin:8px 0 13px}
+.bar span{display:block;height:100%;transition:width .2s}
+.hp{background:#ef4444}.mana{background:#38bdf8}.xp{background:#f59e0b}
+.badge{display:inline-block;background:#29364b;color:var(--gold);padding:5px 9px;border-radius:7px;font-size:12px}
+.row{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+input,select{width:100%;padding:11px;border:1px solid #46536b;border-radius:8px;background:#080d17;color:white;margin:6px 0 12px}
+.boss{text-align:center;font-size:65px;margin:10px}
+.center{text-align:center}
+.log{background:#070b12;border-radius:8px;padding:12px;margin-top:12px;color:#c1cee0;min-height:48px;font-size:14px}
+footer{text-align:center;color:#8491a6;font-size:12px;padding:25px}
+@media(max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}main{padding:9px}.stat{padding:11px}}
 </style>
 </head>
 <body>
-<div id="authView" class="wrap">
-  <div class="auth">
-    <div class="mark">🐉</div><div class="logo" style="text-align:center">DRAGON <span>WAR</span></div>
-    <p class="muted" style="text-align:center">RISE OF POWER • Entre no reino</p>
-    <div class="tabs"><button id="tabLogin" class="active" onclick="authMode('login')">Entrar</button><button id="tabSignup" onclick="authMode('signup')">Criar conta</button></div>
-    <label for="authNick">Nome de jogador (cadastro)</label><input id="authNick" maxlength="20" placeholder="Ex.: Guerreiro das Sombras">
-    <label for="authEmail">E-mail</label><input id="authEmail" type="email" autocomplete="email" placeholder="voce@email.com">
-    <label for="authPass">Senha</label><input id="authPass" type="password" autocomplete="current-password" placeholder="Mínimo 6 caracteres">
-    <div class="actions" style="margin-top:14px"><button id="authSubmit" class="primary" onclick="submitAuth()">Entrar no jogo</button><button onclick="resetPassword()">Recuperar senha</button></div>
-    <div id="authMsg" class="notice hidden"></div>
-    <p class="smalltext muted" style="margin-top:13px">Use uma conta sua. Nunca compartilhe sua senha. O jogo precisa estar publicado em um domínio autorizado no Firebase.</p>
-  </div>
+<header>
+<h1>🐉 DRAGON WAR</h1>
+<p>RISE OF POWER · O reino precisa de um herói</p>
+</header>
+<main>
+<div class="stats">
+<div class="stat"><small>⭐ Nível</small><strong id="level">1</strong></div>
+<div class="stat"><small>🪙 Ouro</small><strong id="coins">500</strong></div>
+<div class="stat"><small>💎 Gemas</small><strong id="gems">20</strong></div>
+<div class="stat"><small>🏆 Pontos</small><strong id="points">0</strong></div>
 </div>
 
-<div id="gameView" class="wrap hidden">
-  <header class="top">
-    <div><div class="brand">🐉 DRAGON <span class="gold">WAR</span></div><div id="playerLine" class="smalltext muted">Aventureiro</div></div>
-    <div class="stats"><span class="pill">🪙 <b id="coinsTop">0</b></span><span class="pill">💎 <b id="gemsTop">0</b></span><span class="pill">⚡ <b id="energyTop">0</b></span><span class="pill">🏅 Nv. <b id="levelTop">1</b></span></div>
-    <button class="small" onclick="logout()">Sair</button>
-  </header>
-  <div class="layout">
-    <nav class="nav" id="nav">
-      <button class="active" data-page="home">🏠 Início</button>
-      <button data-page="combat">⚔️ Combate</button>
-      <button data-page="maps">🗺️ Exploração</button>
-      <button data-page="powers">✨ Poderes</button>
-      <button data-page="inventory">🎒 Inventário</button>
-      <button data-page="shop">🛒 Loja</button>
-      <button data-page="missions">📜 Missões</button>
-      <button data-page="skins">🎭 Skins</button>
-      <button data-page="ranking">🏆 Ranking</button>
-      <button data-page="community">🤝 Comunidade</button>
-      <button data-page="events">🎉 Eventos</button>
-      <button data-page="profile">👤 Perfil</button>
-      <button id="adminNav" data-page="admin" class="hidden">🛡️ Painel ADM</button>
-    </nav>
-    <main class="main">
-      <section class="page active" id="page-home">
-        <div class="panel hero"><div><span class="badge">TEMPORADA I • O DESPERTAR</span><h1>Seu destino<br><span class="gold">começa aqui.</span></h1><p class="muted">Treine, explore reinos, enfrente dragões e conquiste seu lugar no ranking.</p><div class="actions"><button class="primary" onclick="go('combat')">⚔️ JOGAR</button><button onclick="go('maps')">Explorar mapa</button></div></div><div class="dragon-art">🐲</div></div>
-        <div class="grid">
-          <div class="card"><div class="emoji">❤️</div><div class="meter"><span>Vida</span><b id="hpText">100/100</b></div><div class="bar"><i id="hpBar"></i></div></div>
-          <div class="card"><div class="emoji">🔷</div><div class="meter"><span>Mana</span><b id="manaText">100/100</b></div><div class="bar"><i id="manaBar"></i></div></div>
-          <div class="card"><div class="emoji">⭐</div><div class="meter"><span>Experiência</span><b id="xpText">0/100</b></div><div class="bar"><i id="xpBar"></i></div></div>
-        </div>
-        <div class="panel" style="margin-top:14px"><div class="sectionhead"><h2>Recompensa diária</h2><span class="badge">GRÁTIS</span></div><p class="muted">Volte todos os dias para fortalecer seu herói.</p><button id="dailyBtn" class="primary" onclick="claimDaily()">🎁 Resgatar recompensa</button></div>
-        <div class="panel"><h2>Resumo do herói</h2><div class="grid"><div class="card"><div class="muted smalltext">Patente</div><h3 id="rankText">Recruta</h3></div><div class="card"><div class="muted smalltext">Dragões derrotados</div><h3 id="dragonsText">0</h3></div><div class="card"><div class="muted smalltext">Vitórias</div><h3 id="winsText">0</h3></div></div></div>
-      </section>
-      <section class="page" id="page-combat">
-        <div class="panel"><h2>⚔️ Arena de combate</h2><p class="muted">Escolha seu oponente. As batalhas desta versão são resolvidas no cliente; para competição real, a lógica deve ser validada no servidor.</p><div id="enemyGrid" class="grid"></div><div class="divider"></div><div id="battleLog" class="notice">O reino aguarda seu primeiro combate.</div></div>
-      </section>
-      <section class="page" id="page-maps">
-        <div class="panel"><h2>🗺️ Mapas e exploração</h2><p class="muted">Explore regiões para encontrar recursos e inimigos.</p><div id="mapGrid" class="grid"></div><div id="exploreResult" class="notice hidden"></div></div>
-      </section>
-      <section class="page" id="page-powers">
-        <div class="panel"><h2>✨ Poderes e habilidades</h2><p class="muted">Use mana para lançar habilidades durante o combate.</p><div id="powerGrid" class="grid"></div></div>
-      </section>
-      <section class="page" id="page-inventory">
-        <div class="panel"><h2>🎒 Inventário e equipamentos</h2><div class="grid two"><div class="card"><h3>Equipamento atual</h3><p id="equipmentText">Faca de Aprendiz</p><p class="muted smalltext">Bônus de ataque: <b id="weaponDamage">10</b></p></div><div class="card"><h3>Armadura</h3><p id="armorText">Túnica de viajante</p><p class="muted smalltext">Bônus de defesa: <b id="armorDefense">0</b></p></div></div><div class="divider"></div><h3>Itens</h3><div id="itemList" class="list"></div></div>
-      </section>
-      <section class="page" id="page-shop">
-        <div class="panel"><h2>🛒 Loja do reino</h2><p class="muted">Compre melhorias usando moedas ou gemas.</p><div id="shopGrid" class="grid"></div></div>
-      </section>
-      <section class="page" id="page-missions">
-        <div class="panel"><h2>📜 Missões e conquistas</h2><div id="missionList" class="list"></div></div>
-      </section>
-      <section class="page" id="page-skins">
-        <div class="panel"><h2>🎭 Skins e personalização</h2><p class="muted">Desbloqueie aparências e escolha sua identidade visual.</p><div id="skinGrid" class="grid"></div></div>
-      </section>
-      <section class="page" id="page-ranking">
-        <div class="panel"><div class="sectionhead"><h2>🏆 Ranking global</h2><button class="small" onclick="loadRanking()">Atualizar</button></div><p class="muted smalltext">O ranking mostra os dados públicos de jogadores que permitem aparecer nele.</p><div id="rankingList" class="list"><div class="empty">Carregando ranking…</div></div></div>
-      </section>
-      <section class="page" id="page-community">
-        <div class="panel"><h2>🤝 Comunidade</h2><p class="muted">Adicione amigos pelo UID, envie pedidos e denuncie comportamentos inadequados.</p><label>UID do jogador</label><input id="friendUid" placeholder="Cole o UID do jogador"><div class="actions" style="margin-top:8px"><button onclick="sendFriendRequest()">Enviar pedido de amizade</button><button class="danger" onclick="reportPlayer()">Denunciar jogador</button><button onclick="blockPlayer()">Bloquear jogador</button></div><div class="divider"></div><h3>Chat da comunidade</h3><div id="chatList" class="list" style="max-height:240px;overflow:auto"><div class="empty">Carregando mensagens…</div></div><label>Mensagem (máx. 300 caracteres)</label><textarea id="chatMessage" maxlength="300" placeholder="Seja respeitoso. Não compartilhe dados pessoais."></textarea><button class="primary" onclick="sendChat()" style="margin-top:8px">Enviar mensagem</button><div class="notice">O chat deve usar regras do Firestore para limitar spam, impedir alterações de autoria e proteger denúncias. Não envie informações pessoais.</div></div>
-      </section>
-      <section class="page" id="page-events">
-        <div class="panel"><h2>🎉 Eventos e recompensas</h2><div id="eventList" class="list"></div><div id="globalMessage" class="notice hidden"></div></div>
-      </section>
-      <section class="page" id="page-profile">
-        <div class="panel"><h2>👤 Perfil do jogador</h2><label>Nome público</label><input id="profileNick" maxlength="20"><label>Descrição</label><textarea id="profileBio" maxlength="160" placeholder="Conte um pouco sobre seu herói"></textarea><label><input id="showRanking" type="checkbox" style="width:auto"> Mostrar meu perfil no ranking</label><div class="actions"><button class="primary" onclick="saveProfile()">Salvar perfil</button><button onclick="refreshSave()">Sincronizar salvamento</button></div><div class="divider"></div><p class="smalltext muted">UID da conta: <code id="uidText"></code></p><button class="danger" onclick="logout()">Sair da conta</button></div>
-      </section>
-      <section class="page" id="page-admin">
-        <div class="panel"><div class="sectionhead"><h2>🛡️ Painel ADM</h2><span class="badge admin">ADMINISTRADOR</span></div><p class="muted">Acesso visual reservado ao administrador. A segurança real depende das regras e das funções confiáveis do Firebase.</p><div class="grid"><div class="card"><span class="muted smalltext">Jogadores carregados</span><h2 id="admPlayers">—</h2></div><div class="card"><span class="muted smalltext">Online recentes</span><h2 id="admOnline">—</h2></div><div class="card"><span class="muted smalltext">Denúncias</span><h2 id="admReports">—</h2></div></div><label>Buscar jogador por nome, e-mail ou UID</label><input id="adminSearch" placeholder="Pesquisar..." oninput="renderAdminPlayers()"><div id="adminPlayerList" class="list" style="margin-top:10px"></div><div class="divider"></div><h3>Mensagem global</h3><textarea id="adminMessage" maxlength="500" placeholder="Aviso para todos os jogadores"></textarea><button class="primary" onclick="publishGlobalMessage()">Publicar mensagem</button><div class="divider"></div><h3>Criar evento</h3><label>Título</label><input id="eventTitle" maxlength="70" placeholder="Evento do Dragão Ancestral"><label>Descrição</label><textarea id="eventDesc" maxlength="300"></textarea><label>Data final</label><input id="eventEnd" type="date"><button class="primary" onclick="createEvent()" style="margin-top:8px">Criar evento</button><div class="divider"></div><h3>Logs administrativos</h3><div id="adminLogs" class="list"></div></div>
-      </section>
-    </main>
-  </div>
-  <div class="footer">Dragon War: Rise of Power • Protótipo em evolução • Nunca compartilhe sua senha</div>
+<nav id="nav">
+<button class="active" onclick="page('home',this)">🏠 Início</button>
+<button onclick="page('battle',this)">⚔️ Combate</button>
+<button onclick="page('maps',this)">🗺️ Mapas</button>
+<button onclick="page('powers',this)">✨ Poderes</button>
+<button onclick="page('shop',this)">🛒 Loja</button>
+<button onclick="page('inventory',this)">🎒 Inventário</button>
+<button onclick="page('missions',this)">📜 Missões</button>
+<button onclick="page('ranking',this)">🏆 Ranking</button>
+<button onclick="page('community',this)">💬 Comunidade</button>
+<button onclick="page('profile',this)">👤 Perfil</button>
+<button id="adminNav" style="display:none" onclick="page('admin',this)">👑 ADM</button>
+</nav>
+
+<section id="home" class="page show">
+<div class="panel">
+<h2>🔥 A aventura começa</h2>
+<p>Derrote monstros, explore terras desconhecidas, melhore seus equipamentos e conquiste o reino.</p>
+<div class="row"><span class="badge" id="rank">RECRUTA</span><span id="weaponLabel">Arma: Faca de Aprendiz</span></div>
+<h3>❤️ Vida <span id="hpText"></span></h3><div class="bar"><span id="hpBar" class="hp"></span></div>
+<h3>🔷 Mana <span id="manaText"></span></h3><div class="bar"><span id="manaBar" class="mana"></span></div>
+<h3>⭐ Experiência <span id="xpText"></span></h3><div class="bar"><span id="xpBar" class="xp"></span></div>
+<button class="primary" onclick="page('battle',nav.children[1])">ENTRAR EM COMBATE</button>
+<button onclick="rest()">Descansar · 20 ouro</button>
 </div>
-<div id="toast" class="toast hidden"></div>
+<div class="grid" style="margin-top:12px">
+<div class="item"><h3>🐉 Chefes lendários</h3><p>Enfrente inimigos cada vez mais perigosos.</p></div>
+<div class="item"><h3>⚔️ Arsenal de guerra</h3><p>Compre armas, armaduras e consumíveis.</p></div>
+<div class="item"><h3>✨ Poderes mágicos</h3><p>Desbloqueie habilidades usando ouro e mana.</p></div>
+</div>
+</section>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, addDoc, serverTimestamp, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+<section id="battle" class="page">
+<div class="panel center">
+<h2>⚔️ Arena de Combate</h2>
+<label for="enemy">Escolha o inimigo</label>
+<select id="enemy" onchange="selectEnemy()"></select>
+<div class="boss" id="enemyIcon">🟢</div>
+<h3 id="enemyName"></h3>
+<div class="bar"><span class="hp" id="enemyBar" style="width:100%"></span></div>
+<p id="enemyHp"></p>
+<button class="primary" onclick="attack()">⚔️ Atacar</button>
+<button onclick="battlePower()">✨ Poder</button>
+<button onclick="usePotion()">🧪 Poção</button>
+<button onclick="runAway()">🏃 Fugir</button>
+<div class="log" id="battleLog">Escolha um inimigo para começar.</div>
+</div>
+</section>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyALY21W_Cp_b-flYIm1B4JWqZP47KC4ri0",
-  authDomain: "dragon-war-rise-of-power-3.firebaseapp.com",
-  projectId: "dragon-war-rise-of-power-3",
-  storageBucket: "dragon-war-rise-of-power-3.firebasestorage.app",
-  messagingSenderId: "407121894319",
-  appId: "1:407121894319:web:65ea8404b721807f326d5a",
-  measurementId: "G-5WSQ6CVV0Q"
-};
-const ADMIN_EMAIL = "groupsacabraldigital@gmail.com".toLowerCase();
-const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
-let user=null, isAdmin=false, authTab="login", player=null, saveTimer=null, stopChat=null, adminPlayers=[];
-const defaultPlayer = (nick,email,uid)=>({uid,nick:nick||"Guerreiro",email, bio:"",showRanking:true,coins:500,gems:20,energy:100,hp:100,maxHp:100,mana:100,maxMana:100,level:1,xp:0,points:0,rank:"Recruta",weapon:"Faca de Aprendiz",weaponDamage:10,armor:"Túnica de viajante",armorDefense:0,items:{potion:2,mana:2},skins:["Aprendiz"],skin:"Aprendiz",powers:["Bola de Fogo"],powerLevels:{"Bola de Fogo":1},wins:0,dragonsDefeated:0,battles:0,missions:{firstBattle:false,slayDragon:false,explorer:false},dailyClaim:"",banned:false,createdAt:Date.now(),lastSeen:Date.now()});
+<section id="maps" class="page">
+<div class="panel"><h2>🗺️ Exploração</h2><p class="muted">Explore cada região para conseguir recompensas. Regiões avançadas exigem nível mínimo.</p><div class="grid" id="mapsGrid"></div></div>
+</section>
+
+<section id="powers" class="page">
+<div class="panel"><h2>✨ Livro de Poderes</h2><div class="grid" id="powersGrid"></div></div>
+</section>
+
+<section id="shop" class="page">
+<div class="panel"><h2>🛒 Loja do Reino</h2>
+<div class="row"><span>Moeda: 🪙 Ouro</span><span>Saldo: <b id="shopCoins"></b></span></div>
+<div class="grid" id="shopGrid"></div>
+</div>
+</section>
+
+<section id="inventory" class="page">
+<div class="panel"><h2>🎒 Inventário</h2><div id="inventoryGrid" class="grid"></div></div>
+</section>
+
+<section id="missions" class="page">
+<div class="panel"><h2>📜 Missões</h2><div id="missionsGrid" class="grid"></div></div>
+</section>
+
+<section id="ranking" class="page">
+<div class="panel"><h2>🏆 Ranking</h2><p class="muted">Ranking local deste navegador. Ainda não representa outros jogadores online.</p><div id="rankingContent"></div></div>
+</section>
+
+<section id="community" class="page">
+<div class="panel"><h2>💬 Mural local</h2><p class="muted">Mensagens salvas neste navegador; não são enviadas para outros jogadores.</p>
+<div id="chatMessages"></div>
+<label for="chatText">Sua mensagem</label><input id="chatText" maxlength="200" placeholder="Escreva uma mensagem...">
+<button class="primary" onclick="sendMessage()">Enviar mensagem</button>
+</div>
+</section>
+
+<section id="profile" class="page">
+<div class="panel"><h2>👤 Perfil do Guerreiro</h2>
+<label for="playerName">Nome</label><input id="playerName" maxlength="20">
+<label for="classSelect">Classe</label>
+<select id="classSelect"><option>Guerreiro</option><option>Mago</option><option>Arqueiro</option></select>
+<button class="primary" onclick="saveProfile()">Salvar perfil</button>
+<div id="profileInfo"></div>
+<button class="danger" onclick="resetGame()">Apagar progresso local</button>
+</div>
+</section>
+
+<section id="admin" class="page">
+<div class="panel"><h2>👑 Painel ADM — Gabriel</h2>
+<p class="muted">Painel demonstrativo. O acesso por e-mail digitado não verifica a identidade do proprietário da conta.</p>
+<div id="adminLogin">
+<label for="adminEmail">Gmail administrativo</label>
+<input id="adminEmail" type="email" placeholder="Digite o Gmail">
+<button class="primary" onclick="adminLogin()">Verificar Gmail</button>
+<p id="adminError" class="muted"></p>
+</div>
+<div id="adminArea" style="display:none">
+<span class="badge">ADM GABRIEL</span>
+<h3>Recursos de demonstração</h3>
+<button onclick="adminGive('coins',1000)">+1.000 ouro</button>
+<button onclick="adminGive('gems',50)">+50 gemas</button>
+<button onclick="adminGive('points',100)">+100 pontos</button>
+<button onclick="adminGive('xp',100)">+100 XP</button>
+<h3>Mensagem global local</h3>
+<input id="globalMessage" placeholder="Escreva um aviso">
+<button onclick="publishMessage()">Publicar aviso</button>
+<div id="adminNotice"></div>
+<button class="danger" onclick="adminLogout()">Sair do painel</button>
+</div>
+</div>
+</section>
+</main>
+<footer>🎮 Desenvolvido por Gabriel Cabral<br>Dragon War: Rise of Power · Protótipo local</footer>
+
+<script>
+const KEY="dragonWarCompleteV2";
+const ADMIN_EMAIL="groupsacabraldigital@gmail.com";
+const defaults=()=>({
+name:"Gabriel",classe:"Guerreiro",level:1,xp:0,coins:500,gems:20,points:0,
+hp:100,maxHp:100,mana:100,maxMana:100,weapon:"Faca de Aprendiz",
+damage:10,armor:0,potions:2,manaPotions:2,battles:0,wins:0,kills:0,dragons:0,
+explored:0,claimed:[],owned:["Faca de Aprendiz"],powers:["Bola de Fogo"],
+mapsVisited:[],messages:[],notice:""
+});
+let p;
+try{p={...defaults(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){p=defaults()}
 const enemies=[
- {id:"slime",name:"Slime Sombrio",emoji:"🟣",hp:45,damage:8,reward:45,xp:25,dragon:false},
- {id:"wolf",name:"Lobo das Cinzas",emoji:"🐺",hp:90,damage:15,reward:90,xp:45,dragon:false},
- {id:"golem",name:"Guardião de Pedra",emoji:"🗿",hp:160,damage:24,reward:160,xp:70,dragon:false},
- {id:"dragon",name:"Dragão Ancião",emoji:"🐉",hp:400,damage:35,reward:500,xp:180,dragon:true},
- {id:"queen",name:"Rainha Dracônica",emoji:"🔥",hp:800,damage:48,reward:1200,xp:350,dragon:true},
- {id:"void",name:"Devorador do Vazio",emoji:"🌌",hp:1500,damage:65,reward:2500,xp:700,dragon:true}
-];
-const shops=[
- {id:"sword1",name:"Espada de Ferro",emoji:"🗡️",type:"weapon",cost:180,damage:22,desc:"+12 de ataque"},
- {id:"sword2",name:"Lâmina Dracônica",emoji:"⚔️",type:"weapon",cost:800,damage:48,desc:"+38 de ataque"},
- {id:"armor1",name:"Armadura de Escamas",emoji:"🛡️",type:"armor",cost:250,defense:8,desc:"+8 de defesa"},
- {id:"armor2",name:"Couraça Ancestral",emoji:"🛡️",type:"armor",cost:900,defense:20,desc:"+20 de defesa"},
- {id:"potion",name:"Poção de Vida",emoji:"🧪",type:"item",cost:60,item:"potion",desc:"Recupera 40 de vida"},
- {id:"mana",name:"Elixir de Mana",emoji:"🔷",type:"item",cost:55,item:"mana",desc:"Recupera 50 de mana"},
- {id:"gemskin",name:"Skin Guardião Celeste",emoji:"🌠",type:"skin",cost:10,currency:"gems",skin:"Guardião Celeste",desc:"Aparência rara"}
+{name:"Slime Sombrio",icon:"🟢",hp:45,damage:8,reward:45,xp:25,min:1},
+{name:"Lobo das Cinzas",icon:"🐺",hp:90,damage:15,reward:90,xp:45,min:2},
+{name:"Guardião de Pedra",icon:"🗿",hp:160,damage:24,reward:160,xp:70,min:4},
+{name:"Dragão Ancião",icon:"🐉",hp:400,damage:35,reward:500,xp:180,min:7},
+{name:"Rainha Dracônica",icon:"🐲",hp:800,damage:48,reward:1200,xp:350,min:12},
+{name:"Devorador do Vazio",icon:"👹",hp:1500,damage:65,reward:2500,xp:700,min:20}
 ];
 const powers=[
- {name:"Bola de Fogo",emoji:"🔥",cost:20,damage:45,desc:"Dano mágico confiável"},
- {name:"Cura Arcana",emoji:"💚",cost:25,heal:45,desc:"Recupera vida"},
- {name:"Raio Dracônico",emoji:"⚡",cost:40,damage:100,desc:"Grande dano mágico"},
- {name:"Explosão do Vazio",emoji:"🌌",cost:60,damage:180,desc:"Dano devastador",level:5}
+{name:"Bola de Fogo",icon:"🔥",cost:20,damage:35,min:1,price:0,desc:"Uma esfera de chamas."},
+{name:"Cura Arcana",icon:"💚",cost:25,heal:45,min:2,price:200,desc:"Recupera vida."},
+{name:"Raio Dracônico",icon:"⚡",cost:40,damage:85,min:5,price:500,desc:"Raio de energia."},
+{name:"Explosão do Vazio",icon:"🌌",cost:65,damage:180,min:10,price:1500,desc:"Dano mágico extremo."},
+{name:"Tempestade de Gelo",icon:"❄️",cost:50,damage:125,min:8,price:1000,desc:"Poder congelante."},
+{name:"Fúria do Dragão",icon:"🐲",cost:90,damage:300,min:15,price:3500,desc:"Ataque lendário."}
+];
+const goods=[
+{name:"Faca de Aprendiz",icon:"🗡️",cost:0,damage:10,desc:"Arma inicial."},
+{name:"Espada de Ferro",icon:"⚔️",cost:180,damage:22,desc:"Dano 22."},
+{name:"Lâmina Dracônica",icon:"🐉",cost:800,damage:48,desc:"Dano 48."},
+{name:"Machado do Titã",icon:"🪓",cost:1400,damage:68,desc:"Dano 68."},
+{name:"Katana das Sombras",icon:"🌑",cost:2200,damage:85,desc:"Dano 85."},
+{name:"Arco Celestial",icon:"🏹",cost:3200,damage:100,desc:"Dano 100."},
+{name:"Espada Infernal",icon:"🔥",cost:4000,damage:120,desc:"Dano 120."},
+{name:"Martelo do Rei",icon:"🔨",cost:5500,damage:150,desc:"Dano 150."},
+{name:"Lança do Dragão",icon:"🔱",cost:7000,damage:175,desc:"Dano 175."},
+{name:"Espada do Vazio",icon:"🌌",cost:12000,damage:250,desc:"Arma mítica."},
+{name:"Armadura de Escamas",icon:"🛡️",cost:250,armor:5,desc:"Defesa 5."},
+{name:"Couraça Dracônica",icon:"🐲",cost:1000,armor:12,desc:"Defesa 12."},
+{name:"Armadura de Titã",icon:"⚙️",cost:3000,armor:20,desc:"Defesa 20."},
+{name:"Armadura Celestial",icon:"✨",cost:6500,armor:30,desc:"Defesa 30."},
+{name:"Poção de Vida",icon:"🧪",cost:40,type:"potion",desc:"Adiciona uma poção de vida."},
+{name:"Pacote de Poções",icon:"❤️",cost:120,type:"bigpotion",desc:"Adiciona três poções."},
+{name:"Poção de Mana",icon:"🔷",cost:35,type:"mana",desc:"Adiciona uma poção de mana."},
+{name:"Elixir Supremo",icon:"🧬",cost:250,type:"elixir",desc:"Restaura vida e mana."},
+{name:"Cristal de Poder",icon:"💎",cost:300,type:"gems",desc:"Concede 5 gemas."},
+{name:"Pacote de Gemas",icon:"💠",cost:1000,type:"biggems",desc:"Concede 25 gemas."},
+{name:"Pergaminho de XP",icon:"📜",cost:250,type:"xp",desc:"Concede 100 XP."}
 ];
 const maps=[
- {name:"Floresta Esmeralda",emoji:"🌲",level:1,desc:"Recursos e criaturas iniciais",coins:40,xp:20},
- {name:"Montanhas de Cinza",emoji:"🌋",level:2,desc:"Território de lobos e guardiões",coins:80,xp:35},
- {name:"Ruínas Dracônicas",emoji:"🏛️",level:4,desc:"Vestígios de dragões antigos",coins:150,xp:65},
- {name:"Abismo do Vazio",emoji:"🌀",level:7,desc:"Região de alto risco",coins:300,xp:100}
+{name:"Floresta Esmeralda",icon:"🌲",min:1,reward:50,desc:"Uma floresta cheia de criaturas."},
+{name:"Montanhas de Cinza",icon:"🌋",min:3,reward:120,desc:"Território de monstros fortes."},
+{name:"Ruínas Dracônicas",icon:"🏰",min:7,reward:250,desc:"Antigas ruínas de dragões."},
+{name:"Abismo do Vazio",icon:"🌌",min:12,reward:500,desc:"Uma região extremamente perigosa."}
 ];
-const skins=[{name:"Aprendiz",emoji:"🧙",cost:0,currency:"coins"},{name:"Cavaleiro Rubro",emoji:"🧝",cost:300,currency:"coins"},{name:"Guardião Celeste",emoji:"🌠",cost:10,currency:"gems"},{name:"Sombra Dracônica",emoji:"🐉",cost:25,currency:"gems"}];
-const $=id=>document.getElementById(id);
-function toast(s){$("toast").textContent=s;$("toast").classList.remove("hidden");clearTimeout(window.__toast);window.__toast=setTimeout(()=>$("toast").classList.add("hidden"),3000)}
-function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-window.authMode=(mode)=>{authTab=mode;$("tabLogin").classList.toggle("active",mode==="login");$("tabSignup").classList.toggle("active",mode==="signup");$("authNick").classList.toggle("hidden",mode!=="signup");$("authSubmit").textContent=mode==="signup"?"Criar conta":"Entrar no jogo";$("authMsg").classList.add("hidden")};
-window.submitAuth=async()=>{const email=$("authEmail").value.trim().toLowerCase(),pass=$("authPass").value,nick=$("authNick").value.trim();if(!email||!pass){return authMessage("Digite seu e-mail e sua senha.")}if(pass.length<6)return authMessage("A senha precisa ter pelo menos 6 caracteres.");$("authSubmit").disabled=true;try{if(authTab==="signup"){if(!nick)return authMessage("Escolha um nome de jogador.");const cred=await createUserWithEmailAndPassword(auth,email,pass);await updateProfile(cred.user,{displayName:nick});}else await signInWithEmailAndPassword(auth,email,pass)}catch(e){authMessage(authError(e))}finally{$("authSubmit").disabled=false}};
-function authMessage(s){$("authMsg").textContent=s;$("authMsg").classList.remove("hidden")}
-window.resetPassword=async()=>{const email=$("authEmail").value.trim();if(!email)return authMessage("Digite seu e-mail primeiro.");try{await sendPasswordResetEmail(auth,email);authMessage("Se o endereço estiver cadastrado, você receberá o link de recuperação. Confira spam e lixo eletrônico.")}catch(e){authMessage(authError(e))}};
-function authError(e){const c=e?.code||"";return ({"auth/invalid-email":"O formato do e-mail é inválido.","auth/user-not-found":"Conta não encontrada. Confira o e-mail ou crie uma conta.","auth/wrong-password":"Senha incorreta. Use a senha atual ou recupere-a.","auth/invalid-credential":"E-mail ou senha incorretos. Confira os dados e tente novamente.","auth/email-already-in-use":"Este e-mail já possui uma conta. Tente entrar.","auth/weak-password":"Escolha uma senha com pelo menos 6 caracteres.","auth/too-many-requests":"Muitas tentativas. Aguarde um pouco e tente novamente.","auth/unauthorized-domain":"Este domínio não está autorizado no Firebase Authentication.","auth/network-request-failed":"Falha de conexão. Verifique sua internet."})[c]||("Não foi possível autenticar ("+c+"). Confira o Firebase Authentication.")}
-
-onAuthStateChanged(auth,async u=>{if(!u){user=null;player=null;$("authView").classList.remove("hidden");$("gameView").classList.add("hidden");if(stopChat){stopChat();stopChat=null}return}user=u;isAdmin=(u.email||"").toLowerCase()===ADMIN_EMAIL;try{const ref=doc(db,"players",u.uid),snap=await getDoc(ref);if(snap.exists())player={...defaultPlayer(u.displayName,u.email,u.uid),...snap.data(),uid:u.uid,email:u.email||""};else{player=defaultPlayer(u.displayName,u.email,u.uid);await setDoc(ref,{...player,createdAt:serverTimestamp(),lastSeen:serverTimestamp()})}if(player.banned){await signOut(auth);alert("Esta conta está bloqueada. Se acredita que é um erro, entre em contato com o suporte.");return}player.nick=player.nick||u.displayName||"Guerreiro";$("authView").classList.add("hidden");$("gameView").classList.remove("hidden");$("adminNav").classList.toggle("hidden",!isAdmin);$("uidText").textContent=u.uid;renderAll();go("home");await touchPresence();loadRanking();loadEvents();loadChat();if(isAdmin)loadAdmin()}catch(e){console.error(e);toast("Erro ao carregar dados. Confira as regras do Firestore.")}});
-window.logout=async()=>{await signOut(auth);toast("Você saiu da conta.")};
-window.go=(page)=>{if(page==="admin"&&!isAdmin){toast("Acesso restrito.");return}document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$("page-"+page)?.classList.add("active");document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===page));if(page==="ranking")loadRanking();if(page==="community")loadChat();if(page==="admin"&&isAdmin)loadAdmin();window.scrollTo({top:0,behavior:"smooth"})};
-$("nav").addEventListener("click",e=>{const b=e.target.closest("button[data-page]");if(b)go(b.dataset.page)});
-function rankFor(level){return level>=20?"Lenda Dracônica":level>=15?"Mestre dos Dragões":level>=10?"Cavaleiro Real":level>=5?"Guerreiro":level>=3?"Escudeiro":"Recruta"}
-function renderAll(){if(!player)return;player.rank=rankFor(player.level);$("playerLine").textContent=player.nick+" • "+player.rank;$("coinsTop").textContent=player.coins;$("gemsTop").textContent=player.gems;$("energyTop").textContent=player.energy+"/100";$("levelTop").textContent=player.level;$("hpText").textContent=player.hp+"/"+player.maxHp;$("manaText").textContent=player.mana+"/"+player.maxMana;$("xpText").textContent=player.xp+"/100";$("hpBar").style.width=Math.max(0,player.hp/player.maxHp*100)+"%";$("manaBar").style.width=Math.max(0,player.mana/player.maxMana*100)+"%";$("xpBar").style.width=Math.min(100,player.xp)+"%";$("rankText").textContent=player.rank;$("dragonsText").textContent=player.dragonsDefeated;$("winsText").textContent=player.wins;$("profileNick").value=player.nick;$("profileBio").value=player.bio||"";$("showRanking").checked=player.showRanking!==false;$("equipmentText").textContent=player.weapon;$("weaponDamage").textContent=player.weaponDamage;$("armorText").textContent=player.armor;$("armorDefense").textContent=player.armorDefense;renderEnemies();renderMaps();renderPowers();renderShop();renderItems();renderMissions();renderSkins();$("dailyBtn").disabled=player.dailyClaim===new Date().toISOString().slice(0,10);$("dailyBtn").textContent=$("dailyBtn").disabled?"✓ Recompensa resgatada hoje":"🎁 Resgatar recompensa"}
-function renderEnemies(){$("enemyGrid").innerHTML=enemies.map(e=>`<div class="card"><div class="emoji">${e.emoji}</div><h3>${e.name}</h3><p class="muted smalltext">❤️ ${e.hp} • ⚔️ ${e.damage} • Nv. recomendado ${e.id==="dragon"?4:e.id==="queen"?8:e.id==="void"?12:1}</p><p class="smalltext">Recompensa: 🪙 ${e.reward} • ⭐ ${e.xp} XP</p><button class="primary" onclick="fight('${e.id}')">Enfrentar</button></div>`).join("")}
-window.fight=(id)=>{const e=enemies.find(x=>x.id===id);if(!e||!player)return;if(player.energy<10)return toast("Energia insuficiente. Explore para recuperar recursos.");if(player.level<(e.id==="dragon"?4:e.id==="queen"?8:e.id==="void"?12:1))return toast("Seu nível ainda é baixo para esse inimigo.");player.energy-=10;let enemyHp=e.hp,heroHp=player.hp;const attack=player.weaponDamage+player.level*3;let turns=0;while(enemyHp>0&&heroHp>0&&turns<20){enemyHp-=attack; if(enemyHp>0)heroHp-=Math.max(1,e.damage-player.armorDefense);turns++}player.battles++;if(heroHp>0){player.hp=Math.min(player.maxHp,heroHp);player.wins++;player.coins+=e.reward;player.points+=e.reward;gainXp(e.xp);if(e.dragon){player.dragonsDefeated++;player.missions.slayDragon=true}player.missions.firstBattle=true;$("battleLog").textContent=`Vitória contra ${e.name}! Você ganhou ${e.reward} moedas e ${e.xp} XP.`}else{player.hp=Math.max(1,Math.floor(player.maxHp*.25));$("battleLog").textContent=`Você foi derrotado por ${e.name}. Recuperou-se com 25% da vida.`}renderAll();savePlayer();toast("Combate finalizado!")};
-function gainXp(n){player.xp+=n;while(player.xp>=100){player.xp-=100;player.level++;player.maxHp+=10;player.hp=player.maxHp;player.maxMana+=5;player.mana=player.maxMana;toast("Subiu para o nível "+player.level+"!")}player.rank=rankFor(player.level)}
-window.claimDaily=()=>{const today=new Date().toISOString().slice(0,10);if(player.dailyClaim===today)return toast("Você já resgatou hoje.");player.dailyClaim=today;player.coins+=200;player.gems+=1;player.energy=Math.min(100,player.energy+25);renderAll();savePlayer();toast("Recompensa diária: 200 moedas e 1 gema!")};
-function renderMaps(){$("mapGrid").innerHTML=maps.map(m=>`<div class="card"><div class="emoji">${m.emoji}</div><h3>${m.name}</h3><p class="muted smalltext">${m.desc}</p><p class="smalltext">Nível mínimo: ${m.level}</p><button ${player.level<m.level?"disabled":""} onclick="explore('${m.name}')">Explorar</button></div>`).join("")}
-window.explore=(name)=>{const m=maps.find(x=>x.name===name);if(player.level<m.level)return toast("Nível insuficiente.");if(player.energy<5)return toast("Energia insuficiente.");player.energy-=5;player.coins+=m.coins;gainXp(m.xp);if(Math.random()<.25)player.items.potion=(player.items.potion||0)+1;$("exploreResult").textContent=`Você explorou ${m.name}, ganhou ${m.coins} moedas e ${m.xp} XP. Pode ter encontrado uma poção.`;$("exploreResult").classList.remove("hidden");renderAll();savePlayer()};
-function renderPowers(){$("powerGrid").innerHTML=powers.map(p=>`<div class="card"><div class="emoji">${p.emoji}</div><h3>${p.name}</h3><p class="muted smalltext">${p.desc}</p><p class="smalltext">Custo: ${p.cost} mana ${p.level?"• Nível "+p.level+" necessário":""}</p><button ${player.mana<p.cost||player.level<(p.level||1)?"disabled":""} onclick="castPower('${p.name}')">Usar poder</button></div>`).join("")}
-window.castPower=(name)=>{const p=powers.find(x=>x.name===name);if(player.mana<p.cost||player.level<(p.level||1))return toast("Mana ou nível insuficiente.");player.mana-=p.cost;if(p.heal)player.hp=Math.min(player.maxHp,player.hp+p.heal);else{player.points+=p.damage;player.coins+=Math.floor(p.damage/4)}renderAll();savePlayer();toast(p.heal?"Cura lançada!":"Poder lançado! Dano de treino registrado. Use poderes na arena em uma atualização futura.")};
-function renderShop(){$("shopGrid").innerHTML=shops.map(s=>`<div class="card"><div class="emoji">${s.emoji}</div><h3>${s.name}</h3><p class="muted smalltext">${s.desc}</p><p class="gold">${s.currency==="gems"?"💎 "+s.cost:"🪙 "+s.cost}</p><button class="primary" onclick="buy('${s.id}')">Comprar</button></div>`).join("")}
-window.buy=(id)=>{const s=shops.find(x=>x.id===id);if(!s)return;const field=s.currency==="gems"?"gems":"coins";if(player[field]<s.cost)return toast("Saldo insuficiente.");if(s.type==="skin"&&player.skins.includes(s.skin))return toast("Você já possui essa skin.");player[field]-=s.cost;if(s.type==="weapon"){player.weapon=s.name;player.weaponDamage=s.damage;player.items[s.id]=true}else if(s.type==="armor"){player.armor=s.name;player.armorDefense=s.defense;player.items[s.id]=true}else if(s.type==="item")player.items[s.item]=(player.items[s.item]||0)+1;else if(s.type==="skin"){player.skins.push(s.skin)}renderAll();savePlayer();toast(s.name+" comprado!")};
-function renderItems(){const items=[{id:"potion",name:"Poção de Vida",emoji:"🧪",count:player.items.potion||0,desc:"Recupera 40 de vida"},{id:"mana",name:"Elixir de Mana",emoji:"🔷",count:player.items.mana||0,desc:"Recupera 50 de mana"}];$("itemList").innerHTML=items.map(i=>`<div class="listitem"><div class="info"><strong>${i.emoji} ${i.name} × ${i.count}</strong><small>${i.desc}</small></div><button class="small" ${i.count<=0?"disabled":""} onclick="useItem('${i.id}')">Usar</button></div>`).join("")+`<div class="listitem"><div class="info"><strong>🗡️ ${esc(player.weapon)}</strong><small>Equipado • ataque ${player.weaponDamage}</small></div><span class="badge">EQUIPADO</span></div>`}
-window.useItem=(id)=>{if(!player.items[id])return toast("Você não tem esse item.");if(id==="potion")player.hp=Math.min(player.maxHp,player.hp+40);if(id==="mana")player.mana=Math.min(player.maxMana,player.mana+50);player.items[id]--;renderAll();savePlayer();toast("Item utilizado!")};
-function renderMissions(){const ms=[{id:"firstBattle",title:"Primeira vitória",desc:"Vença seu primeiro combate.",done:player.missions.firstBattle,reward:100},{id:"slayDragon",title:"Caçador de dragões",desc:"Derrote um dragão.",done:player.missions.slayDragon,reward:500},{id:"explorer",title:"Explorador",desc:"Explore regiões do reino.",done:player.missions.explorer,reward:150}];$("missionList").innerHTML=ms.map(m=>`<div class="listitem"><div class="info"><strong>${m.done?"✅":"📜"} ${m.title}</strong><small>${m.desc} • Recompensa: ${m.reward} moedas</small></div><button class="small" ${!m.done||player.items["claimed_"+m.id]?"disabled":""} onclick="claimMission('${m.id}',${m.reward})">${player.items["claimed_"+m.id]?"Resgatada":m.done?"Resgatar":"Em andamento"}</button></div>`).join("")}
-window.claimMission=(id,reward)=>{if(!player.missions[id]||player.items["claimed_"+id])return;player.items["claimed_"+id]=true;player.coins+=reward;renderAll();savePlayer();toast("Recompensa da missão resgatada!")};
-function renderSkins(){$("skinGrid").innerHTML=skins.map(s=>{const owned=player.skins.includes(s.name);return `<div class="card"><div class="emoji">${s.emoji}</div><h3>${s.name}</h3><p class="gold">${s.cost===0?"Grátis":s.currency==="gems"?"💎 "+s.cost:"🪙 "+s.cost}</p><button ${owned?"":""} onclick="${owned?`equipSkin('${s.name}')`:`buySkin('${s.name}')`}" class="${player.skin===s.name?"good":"primary"}">${player.skin===s.name?"Equipado":owned?"Equipar":"Desbloquear"}</button></div>`}).join("")}
-window.buySkin=(name)=>{const s=skins.find(x=>x.name===name);if(!s)return;if(player.skins.includes(name))return equipSkin(name);if(player[s.currency]<s.cost)return toast("Saldo insuficiente.");player[s.currency]-=s.cost;player.skins.push(name);player.skin=name;renderAll();savePlayer();toast("Skin desbloqueada!")};
-window.equipSkin=(name)=>{if(!player.skins.includes(name))return;player.skin=name;renderAll();savePlayer();toast("Skin equipada!")};
-window.saveProfile=()=>{const nick=$("profileNick").value.trim();if(!nick||nick.length>20)return toast("Nome precisa ter de 1 a 20 caracteres.");player.nick=nick;player.bio=$("profileBio").value.trim();player.showRanking=$("showRanking").checked;renderAll();savePlayer();toast("Perfil salvo!")};
-async function touchPresence(){try{await updateDoc(doc(db,"players",user.uid),{lastSeen:serverTimestamp()})}catch{}}
-async function savePlayer(){if(!user||!player)return;const payload={...player,email:user.email||"",lastSeen:serverTimestamp()};delete payload.createdAt;try{await setDoc(doc(db,"players",user.uid),payload,{merge:true});$("playerLine").textContent=player.nick+" • "+player.rank}catch(e){console.error(e);toast("Não foi possível salvar. Confira as regras do Firestore.")}}
-window.refreshSave=async()=>{await savePlayer();toast("Sincronização solicitada.")};
-async function loadRanking(){try{const q=query(collection(db,"players"),orderBy("points","desc"),limit(50)),snap=await getDocs(q);const rows=[];snap.forEach(d=>{const p=d.data();if(p.showRanking!==false&&!p.banned)rows.push({...p,uid:d.id})});$("rankingList").innerHTML=rows.length?rows.map((p,i)=>`<div class="listitem"><div class="row"><strong>${i+1}.</strong><div class="info"><strong>${esc(p.nick||"Guerreiro")} ${p.uid===user.uid?"(você)":""}</strong><small>${esc(p.rank||rankFor(p.level||1))} • Nv. ${p.level||1} • ${p.points||0} pontos</small></div></div><span class="badge">${i===0?"👑 LENDÁRIO":"RANK"}</span></div>`).join(""):'<div class="empty">Ainda não há jogadores no ranking.</div>'}catch(e){$("rankingList").innerHTML='<div class="notice">O ranking não pôde carregar. Confira as regras e o índice do Firestore.</div>';console.error(e)}}
-window.sendFriendRequest=async()=>{const target=$("friendUid").value.trim();if(!target||target===user.uid)return toast("Informe o UID de outro jogador.");try{await addDoc(collection(db,"friendRequests"),{fromUid:user.uid,fromNick:player.nick,toUid:target,status:"pending",createdAt:serverTimestamp()});await logCommunity("friend_request",target);toast("Pedido de amizade enviado.")}catch(e){toast("Pedido bloqueado pelas regras do banco.")}};
-window.reportPlayer=async()=>{const target=$("friendUid").value.trim();if(!target||target===user.uid)return toast("Informe o UID do jogador que deseja denunciar.");const reason=prompt("Descreva o motivo da denúncia (não inclua dados pessoais):");if(!reason)return;try{await addDoc(collection(db,"reports"),{reporterUid:user.uid,targetUid:target,reason:reason.slice(0,500),status:"open",createdAt:serverTimestamp()});toast("Denúncia enviada para análise.")}catch(e){toast("Não foi possível enviar. Confira as regras do banco.")}};
-window.blockPlayer=async()=>{const target=$("friendUid").value.trim();if(!target||target===user.uid)return toast("Informe um UID válido.");try{await setDoc(doc(db,"blocks",user.uid+"_"+target),{ownerUid:user.uid,blockedUid:target,createdAt:serverTimestamp()});toast("Jogador bloqueado para sua conta.")}catch(e){toast("Não foi possível bloquear com as regras atuais.")}};
-async function logCommunity(type,target){try{await addDoc(collection(db,"communityLogs"),{uid:user.uid,type,target,createdAt:serverTimestamp()})}catch{}}
-function loadChat(){if(stopChat)stopChat();try{const q=query(collection(db,"chat"),orderBy("createdAt","desc"),limit(40));stopChat=onSnapshot(q,snap=>{const arr=[];snap.forEach(d=>arr.push(d.data()));arr.reverse();$("chatList").innerHTML=arr.length?arr.map(m=>`<div class="listitem"><div class="info"><strong>${esc(m.nick||"Jogador")}</strong><small>${esc(m.text||"")}</small></div><span class="smalltext muted">${m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):""}</span></div>`).join(""):'<div class="empty">Nenhuma mensagem ainda.</div>'},e=>{$("chatList").innerHTML='<div class="notice">Chat indisponível: configure as regras do Firestore.</div>'})}catch(e){console.error(e)}}
-window.sendChat=async()=>{const text=$("chatMessage").value.trim();if(!text)return;if(text.length>300)return toast("Mensagem muito longa.");try{await addDoc(collection(db,"chat"),{uid:user.uid,nick:player.nick,text,createdAt:serverTimestamp()});$("chatMessage").value="";toast("Mensagem enviada.")}catch(e){toast("Chat bloqueado pelas regras do banco.")}
-};
-async function loadEvents(){try{const snap=await getDocs(query(collection(db,"events"),orderBy("createdAt","desc"),limit(30)));const arr=[];snap.forEach(d=>arr.push(d.data()));$("eventList").innerHTML=arr.length?arr.map(e=>`<div class="listitem"><div class="info"><strong>🎉 ${esc(e.title||"Evento")}</strong><small>${esc(e.description||"")} ${e.endDate?"• Até "+esc(e.endDate):""}</small></div><span class="badge">EVENTO</span></div>`).join(""):'<div class="empty">Nenhum evento publicado.</div>'}catch(e){$("eventList").innerHTML='<div class="notice">Eventos indisponíveis até configurar o Firestore.</div>'}try{const snap=await getDoc(doc(db,"settings","global"));if(snap.exists()&&snap.data().message){$("globalMessage").textContent=snap.data().message;$("globalMessage").classList.remove("hidden")}}catch{}}
-async function loadAdmin(){if(!isAdmin)return;try{const [ps,rs]=await Promise.all([getDocs(query(collection(db,"players"),limit(500))),getDocs(query(collection(db,"reports"),limit(500)))]);adminPlayers=[];ps.forEach(d=>adminPlayers.push({...d.data(),uid:d.id}));$("admPlayers").textContent=adminPlayers.length;$("admOnline").textContent=adminPlayers.filter(p=>{const t=p.lastSeen?.toDate?p.lastSeen.toDate().getTime():Number(p.lastSeen||0);return Date.now()-t<60000}).length;$("admReports").textContent=rs.size;renderAdminPlayers();const logs=await getDocs(query(collection(db,"adminLogs"),orderBy("createdAt","desc"),limit(20)));const arr=[];logs.forEach(d=>arr.push(d.data()));$("adminLogs").innerHTML=arr.map(l=>`<div class="listitem"><div class="info"><strong>${esc(l.action||"Ação administrativa")}</strong><small>${esc(l.targetUid||"")} • ${l.createdAt?.toDate?l.createdAt.toDate().toLocaleString("pt-BR"):""}</small></div></div>`).join("")||'<div class="empty">Nenhum log ainda.</div>'}catch(e){console.error(e);$("adminPlayerList").innerHTML='<div class="notice">Dados administrativos bloqueados. Configure regras seguras e backend de administrador.</div>'}}
-window.renderAdminPlayers=()=>{if(!isAdmin)return;const term=($("adminSearch")?.value||"").toLowerCase();const arr=adminPlayers.filter(p=>(p.nick||"").toLowerCase().includes(term)||(p.email||"").toLowerCase().includes(term)||p.uid.toLowerCase().includes(term));$("adminPlayerList").innerHTML=arr.map(p=>`<div class="listitem"><div class="info"><strong>${esc(p.nick||"Guerreiro")} ${p.banned?'<span class="badge banned">BANIDO</span>':""}</strong><small>${esc(p.email||"")} • Nv. ${p.level||1} • ${p.points||0} pts • UID ${esc(p.uid)}</small></div><div class="row"><button class="small" onclick="adminAdjust('${p.uid}','coins',100)">+100 🪙</button><button class="small" onclick="adminAdjust('${p.uid}','gems',5)">+5 💎</button><button class="small" onclick="adminBan('${p.uid}',${!p.banned})">${p.banned?"Desbanir":"Banir"}</button></div></div>`).join("")||'<div class="empty">Nenhum jogador encontrado.</div>'};
-async function writeAdminLog(action,targetUid,extra={}){await addDoc(collection(db,"adminLogs"),{adminUid:user.uid,adminEmail:user.email,action,targetUid,extra,createdAt:serverTimestamp()})}
-window.adminAdjust=async(uid,field,amount)=>{if(!isAdmin)return toast("Acesso negado.");const p=adminPlayers.find(x=>x.uid===uid);if(!p)return;try{await updateDoc(doc(db,"players",uid),{[field]:Number(p[field]||0)+amount});await writeAdminLog("Ajustou "+field,uid,{amount});toast("Alteração solicitada.");loadAdmin()}catch(e){toast("Operação recusada pelas regras. Use backend confiável.")}};
-window.adminBan=async(uid,banned)=>{if(!isAdmin)return toast("Acesso negado.");try{await updateDoc(doc(db,"players",uid),{banned});await writeAdminLog(banned?"Baniu jogador":"Desbaniu jogador",uid);toast("Ação solicitada.");loadAdmin()}catch(e){toast("Banimento recusado pelas regras. Configure backend confiável.")}};
-window.publishGlobalMessage=async()=>{if(!isAdmin)return;const message=$("adminMessage").value.trim();if(!message)return toast("Escreva uma mensagem.");try{await setDoc(doc(db,"settings","global"),{message,updatedAt:serverTimestamp(),updatedBy:user.uid});await writeAdminLog("Publicou mensagem global","global");$("globalMessage").textContent=message;$("globalMessage").classList.remove("hidden");toast("Mensagem publicada.")}catch(e){toast("Publicação recusada pelas regras do Firestore.")}};
-window.createEvent=async()=>{if(!isAdmin)return;const title=$("eventTitle").value.trim(),description=$("eventDesc").value.trim(),endDate=$("eventEnd").value;if(!title)return toast("Informe o título do evento.");try{await addDoc(collection(db,"events"),{title,description,endDate,createdBy:user.uid,createdAt:serverTimestamp()});await writeAdminLog("Criou evento",title);$("eventTitle").value="";$("eventDesc").value="";loadEvents();toast("Evento criado.")}catch(e){toast("Criação recusada pelas regras do Firestore.")}};
-setInterval(()=>{if(user&&player){touchPresence()}},30000);
+function el(id){return document.getElementById(id)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){}}
+function page(id,btn){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("show"));
+el(id).classList.add("show");
+document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));
+if(btn)btn.classList.add("active");
+render();
+}
+function rank(){return p.level>=20?"LENDÁRIO":p.level>=12?"MESTRE":p.level>=7?"PROFISSIONAL":p.level>=3?"INTERMEDIÁRIO":"RECRUTA"}
+function levelUp(){
+while(p.xp>=p.level*100){
+p.xp-=p.level*100;p.level++;p.maxHp+=10;p.maxMana+=10;
+p.hp=p.maxHp;p.mana=p.maxMana;p.damage+=2;
+}
+}
+function render(){
+el("level").textContent=p.level;
+el("coins").textContent=p.coins.toLocaleString("pt-BR");
+el("gems").textContent=p.gems;el("points").textContent=p.points;
+el("rank").textContent=rank();el("weaponLabel").textContent="Arma: "+p.weapon;
+el("hpText").textContent=p.hp+"/"+p.maxHp;
+el("manaText").textContent=p.mana+"/"+p.maxMana;
+el("xpText").textContent=p.xp+"/"+(p.level*100);
+el("hpBar").style.width=100*p.hp/p.maxHp+"%";
+el("manaBar").style.width=100*p.mana/p.maxMana+"%";
+el("xpBar").style.width=100*p.xp/(p.level*100)+"%";
+el("shopCoins").textContent=p.coins;
+el("playerName").value=p.name;
+el("classSelect").value=p.classe;
+el("profileInfo").innerHTML="<p>Classe: "+esc(p.classe)+" · Nível "+p.level+"</p><p>Vitórias: "+p.wins+" · Inimigos: "+p.kills+"</p><p>Dragões: "+p.dragons+" · Explorações: "+p.explored+"</p>";
+renderPowers();renderShop();renderInventory();renderMissions();renderMaps();renderRanking();renderChat();save();
+}
+function renderPowers(){
+el("powersGrid").innerHTML=powers.map((x,i)=>{
+let owned=p.powers.includes(x.name);
+return `<div class="item"><h3>${x.icon} ${x.name}</h3><p>${x.desc}<br>Mana: ${x.cost} · Dano: ${x.damage||0}<br>Nível ${x.min}</p>${owned?`<span class="badge">Desbloqueado</span>`:`<button ${p.level<x.min||p.coins<x.price?"disabled":""} onclick="unlockPower(${i})">Desbloquear · ${x.price} ouro</button>`}<button ${!owned||p.level<x.min?"disabled":""} onclick="castPower(${i})">Usar poder</button></div>`;
+}).join("");
+}
+function renderShop(){
+el("shopGrid").innerHTML=goods.map((x,i)=>`<div class="item"><h3>${x.icon} ${x.name}</h3><p>${x.desc}</p><span class="badge">${x.cost===0?"Grátis":x.cost+" ouro"}</span><button ${x.cost===0&&p.owned.includes(x.name)?"disabled":""} onclick="buy(${i})">${x.cost===0&&p.owned.includes(x.name)?"Já possui":"Comprar"}</button></div>`).join("");
+}
+function renderInventory(){
+let items=[
+...p.owned.map(n=>({icon:"⚔️",name:n,desc:n===p.weapon?"Arma equipada":"Arma disponível",action:()=>equip(n)})),
+{name:"Poções de Vida",icon:"🧪",desc:"Quantidade: "+p.potions},
+{name:"Poções de Mana",icon:"🔷",desc:"Quantidade: "+p.manaPotions},
+...p.powers.map(n=>({icon:"✨",name:n,desc:"Poder desbloqueado"}))
+];
+el("inventoryGrid").innerHTML=items.map(x=>`<div class="item"><h3>${x.icon} ${esc(x.name)}</h3><p>${esc(x.desc)}</p>${x.action&&x.name!==p.weapon?`<button onclick="equip('${esc(x.name)}')">Equipar</button>`:""}</div>`).join("");
+}
+function renderMissions(){
+let ms=[
+["win","Primeira vitória",p.wins>=1,"Vença uma batalha.",100,30],
+["kills","Caçador",p.kills>=5,"Derrote 5 inimigos.",200,50],
+["dragon","Caçador de dragões",p.dragons>=1,"Derrote um chefe.",500,100],
+["explore","Explorador",p.explored>=3,"Explore 3 vezes.",150,40],
+["level","Veterano",p.level>=5,"Alcance o nível 5.",300,50]
+];
+el("missionsGrid").innerHTML=ms.map(m=>`<div class="item"><h3>${p.claimed.includes(m[0])?"✅":"📜"} ${m[1]}</h3><p>${m[3]} Recompensa: ${m[4]} ouro e ${m[5]} pontos.</p>${p.claimed.includes(m[0])?'<span class="badge">Resgatada</span>':`<button ${m[2]?"":"disabled"} onclick="claim('${m[0]}',${m[4]},${m[5]})">Resgatar</button>`}</div>`).join("");
+}
+function renderMaps(){
+el("mapsGrid").innerHTML=maps.map((m,i)=>`<div class="item"><h3>${m.icon} ${m.name}</h3><p>${m.desc}<br>Nível mínimo: ${m.min}<br>Recompensa: ${m.reward} ouro</p><button ${p.level<m.min?"disabled":""} onclick="explore(${i})">Explorar</button></div>`).join("");
+}
+function renderRanking(){
+el("rankingContent").innerHTML=`<div class="item"><h3>🥇 1º · ${esc(p.name)}</h3><p>${p.points} pontos · Nível ${p.level} · ${p.wins} vitórias</p><span class="badge">${rank()}</span></div>`;
+}
+function renderChat(){
+el("chatMessages").innerHTML=(p.messages||[]).slice(-30).map(m=>`<div class="item"><b>${esc(m.name)}</b><p>${esc(m.text)}</p></div>`).join("");
+}
+let currentEnemy=0,enemyHp=enemies[0].hp,enemyMax=enemyHp,battleOver=false;
+function setupEnemies(){
+el("enemy").innerHTML=enemies.map((e,i)=>`<option value="${i}">${e.name} · nível ${e.min}</option>`).join("");
+}
+function selectEnemy(){
+currentEnemy=Number(el("enemy").value);enemyMax=enemies[currentEnemy].hp;enemyHp=enemyMax;battleOver=false;updateEnemy();log("Um "+enemies[currentEnemy].name+" apareceu!");
+}
+function updateEnemy(){
+let e=enemies[currentEnemy];el("enemyIcon").textContent=e.icon;el("enemyName").textContent=e.name;
+el("enemyHp").textContent=Math.max(0,enemyHp)+" / "+enemyMax+" HP";
+el("enemyBar").style.width=Math.max(0,100*enemyHp/enemyMax)+"%";
+}
+function log(s){el("battleLog").textContent=s}
+function enemyTurn(){
+let e=enemies[currentEnemy],taken=Math.max(1,e.damage-p.armor);
+p.hp=Math.max(0,p.hp-taken);
+return taken;
+}
+function attack(){
+let e=enemies[currentEnemy];
+if(battleOver){log("Escolha outro inimigo.");return}
+if(p.hp<=0){log("Você está sem vida. Descanse primeiro.");return}
+if(p.level<e.min){log("Você precisa alcançar o nível "+e.min+".");return}
+let d=p.damage+Math.floor(Math.random()*8);
+enemyHp=Math.max(0,enemyHp-d);
+if(enemyHp===0){winEnemy();return}
+let taken=enemyTurn();
+log("Você causou "+d+" de dano. O inimigo respondeu com "+taken+".");
+if(p.hp===0)log("Você foi derrotado! Descanse para recuperar sua vida.");
+updateEnemy();render();
+}
+function winEnemy(){
+let e=enemies[currentEnemy];battleOver=true;
+p.coins+=e.reward;p.xp+=e.xp;p.points+=Math.ceil(e.xp/2);p.kills++;p.wins++;p.battles++;
+if(/Dragão|Dracônica|Vazio/.test(e.name))p.dragons++;
+levelUp();
+log("VITÓRIA! +"+e.reward+" ouro, +"+e.xp+" XP e pontos!");
+updateEnemy();render();
+}
+function castPower(i){
+let x=powers[i];
+if(!p.powers.includes(x.name)){alert("Desbloqueie este poder primeiro.");return}
+if(p.level<x.min){alert("Nível mínimo: "+x.min);return}
+if(p.mana<x.cost){alert("Mana insuficiente!");return}
+if(x.heal){p.mana-=x.cost;p.hp=Math.min(p.maxHp,p.hp+x.heal);render();alert("Cura Arcana utilizada!");return}
+if(x.damage){alert("Poder ofensivo: entre em combate para usá-lo.");return}
+}
+function battlePower(){
+let i=powers.findIndex(x=>x.damage&&p.powers.includes(x.name)&&p.level>=x.min);
+if(i<0){log("Desbloqueie um poder ofensivo no Livro de Poderes.");return}
+let x=powers[i],e=enemies[currentEnemy];
+if(battleOver){log("Escolha outro inimigo.");return}
+if(p.hp<=0){log("Você está sem vida.");return}
+if(p.level<e.min){log("Nível insuficiente.");return}
+if(p.mana<x.cost){log("Mana insuficiente.");return}
+p.mana-=x.cost;enemyHp=Math.max(0,enemyHp-x.damage);
+if(enemyHp===0){winEnemy();return}
+let taken=enemyTurn();log(x.name+" causou "+x.damage+" de dano! Você recebeu "+taken+".");
+if(p.hp===0)log("Você foi derrotado! Descanse.");
+updateEnemy();render();
+}
+function unlockPower(i){
+let x=powers[i];
+if(p.powers.includes(x.name))return;
+if(p.level<x.min||p.coins<x.price){alert("Nível ou ouro insuficiente.");return}
+p.coins-=x.price;p.powers.push(x.name);render();alert(x.name+" desbloqueado!");
+}
+function buy(i){
+let x=goods[i];
+if(x.cost===0&&p.owned.includes(x.name)){alert("Você já possui este item.");return}
+if(p.coins<x.cost){alert("Ouro insuficiente!");return}
+p.coins-=x.cost;
+if(x.type==="potion")p.potions++;
+else if(x.type==="bigpotion")p.potions+=3;
+else if(x.type==="mana")p.manaPotions++;
+else if(x.type==="elixir"){p.hp=p.maxHp;p.mana=p.maxMana}
+else if(x.type==="gems")p.gems+=5;
+else if(x.type==="biggems")p.gems+=25;
+else if(x.type==="xp"){p.xp+=100;levelUp()}
+else if(x.damage){
+if(!p.owned.includes(x.name))p.owned.push(x.name);
+p.weapon=x.name;p.damage=x.damage;
+}
+else if(x.armor)p.armor=Math.max(p.armor,x.armor);
+render();alert(x.name+" comprado!");
+}
+function equip(name){
+let x=goods.find(g=>g.name===name);
+if(x&&x.damage){p.weapon=x.name;p.damage=x.damage;render();alert("Arma equipada!")}
+}
+function usePotion(){
+if(p.potions>0&&p.hp<p.maxHp){p.potions--;p.hp=Math.min(p.maxHp,p.hp+50);log("Você recuperou vida.");render()}
+else if(p.manaPotions>0&&p.mana<p.maxMana){p.manaPotions--;p.mana=Math.min(p.maxMana,p.mana+50);log("Você recuperou mana.");render()}
+else log("Sem poção adequada ou barra já cheia.");
+}
+function rest(){
+if(p.coins<20){alert("Você precisa de 20 ouro.");return}
+p.coins-=20;p.hp=p.maxHp;p.mana=p.maxMana;render();
+}
+function runAway(){battleOver=true;log("Você fugiu do combate.");}
+function claim(id,gold,pts){
+if(p.claimed.includes(id))return;
+p.claimed.push(id);p.coins+=gold;p.points+=pts;render();
+}
+function explore(i){
+let m=maps[i];if(p.level<m.min)return;
+p.explored++;p.coins+=m.reward;p.xp+=20;p.points+=10;
+if(!p.mapsVisited.includes(m.name))p.mapsVisited.push(m.name);
+levelUp();render();alert("Exploração concluída! Você ganhou "+m.reward+" ouro.");
+}
+function saveProfile(){
+p.name=el("playerName").value.trim().slice(0,20)||"Guerreiro";
+p.classe=el("classSelect").value;render();alert("Perfil salvo!");
+}
+function sendMessage(){
+let text=el("chatText").value.trim();
+if(!text)return;
+p.messages.push({name:p.name,text:text.slice(0,200)});
+p.messages=p.messages.slice(-30);el("chatText").value="";renderChat();save();
+}
+function adminLogin(){
+let email=el("adminEmail").value.trim().toLowerCase();
+if(email!==ADMIN_EMAIL){
+el("adminError").textContent="Acesso negado. Gmail não autorizado.";
+el("adminArea").style.display="none";return;
+}
+el("adminError").textContent="";
+el("adminArea").style.display="block";
+}
+function adminLogout(){
+el("adminArea").style.display="none";el("adminEmail").value="";
+el("adminError").textContent="";
+}
+function adminGive(field,n){
+if(el("adminArea").style.display==="none")return;
+if(field==="xp"){p.xp+=n;levelUp()}else p[field]+=n;
+render();alert("Recursos de demonstração adicionados.");
+}
+function publishMessage(){
+if(el("adminArea").style.display==="none")return;
+p.notice=el("globalMessage").value.trim().slice(0,200);
+el("adminNotice").textContent=p.notice?"Aviso local: "+p.notice:"Digite uma mensagem.";
+save();
+}
+function resetGame(){
+if(confirm("Apagar o progresso salvo neste navegador?")){
+localStorage.removeItem(KEY);p=defaults();setupEnemies();selectEnemy();render();alert("Progresso reiniciado.");
+}
+}
+setupEnemies();
+selectEnemy();
+render();
 </script>
 </body>
 </html>
