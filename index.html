@@ -4,463 +4,726 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080b12">
+<meta name="theme-color" content="#100d0a">
 <title>Dragon War: Rise of Power</title>
 <style>
-:root{--bg:#080b12;--panel:#121a29;--gold:#f4bd50;--orange:#f97316;--muted:#a5b1c5;--line:#303d54}
+:root{
+--bg:#0b0b0b;--panel:#17130f;--panel2:#211a14;
+--gold:#c6a45c;--gold2:#f0d99b;--text:#e9dfcb;
+--muted:#a89b86;--line:#51412c;--red:#762f2a;
+}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#202b42,#080b12 70%);color:#f5f7fb;font-family:Arial,sans-serif;min-height:100vh}
-header{text-align:center;padding:22px 12px;background:#080b12;border-bottom:1px solid var(--line)}
-header h1{color:var(--gold);font-size:clamp(25px,5vw,38px);margin:0;text-shadow:0 0 20px #f59e0b44}
-header p{color:var(--muted);margin:8px 0 0}
-main{max-width:1100px;margin:auto;padding:14px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.stat,.panel{background:linear-gradient(145deg,#182338,#101725);border:1px solid var(--line);border-radius:13px;padding:14px}
-.stat small{display:block;color:var(--muted);margin-bottom:7px}
-.stat strong{color:var(--gold);font-size:20px}
-nav{display:flex;gap:7px;overflow-x:auto;padding:14px 0}
-button{background:#202c40;border:1px solid #46536b;color:#fff;border-radius:8px;padding:11px 13px;font-weight:bold;cursor:pointer;white-space:nowrap}
-button:hover{border-color:var(--gold);color:var(--gold)}
-button:disabled{opacity:.4}
-.primary{background:linear-gradient(120deg,#f59e0b,#ea580c);border:0;color:#160d03}
-.danger{background:#481d29;border-color:#a63c51}
-.page{display:none}.page.show{display:block}
-h2{color:var(--gold);margin-top:0}
-h3{margin:8px 0}
-p{line-height:1.5}
-.muted{color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}
-.item{background:#0b1220;border:1px solid var(--line);border-radius:11px;padding:13px}
-.item p{color:var(--muted);font-size:13px;min-height:35px}
-.item button{width:100%;margin-top:7px}
-.bar{height:10px;background:#30394b;border-radius:20px;overflow:hidden;margin:8px 0 13px}
-.bar span{display:block;height:100%;transition:width .2s}
-.hp{background:#ef4444}.mana{background:#38bdf8}.xp{background:#f59e0b}
-.badge{display:inline-block;background:#29364b;color:var(--gold);padding:5px 9px;border-radius:7px;font-size:12px}
-.row{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-input,select{width:100%;padding:11px;border:1px solid #46536b;border-radius:8px;background:#080d17;color:white;margin:6px 0 12px}
-.boss{text-align:center;font-size:65px;margin:10px}
-.center{text-align:center}
-.log{background:#070b12;border-radius:8px;padding:12px;margin-top:12px;color:#c1cee0;min-height:48px;font-size:14px}
-footer{text-align:center;color:#8491a6;font-size:12px;padding:25px}
-@media(max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}main{padding:9px}.stat{padding:11px}}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,serif}
+button,input,select{font:inherit}
+button{cursor:pointer;color:var(--text);background:#292016;border:1px solid var(--line);padding:10px 13px;border-radius:4px;transition:.2s}
+button:hover{border-color:var(--gold);color:var(--gold2);background:#38291a}
+button:disabled{opacity:.4;cursor:not-allowed}
+.primary{background:#927440;color:#fff3d4;border-color:#d1b474}
+.danger{border-color:#803a32;background:#391d19}
+input,select{width:100%;padding:12px;background:#0e0c0a;color:var(--text);border:1px solid var(--line);border-radius:4px;margin:7px 0 14px}
+label{display:block;color:var(--gold2);font-size:13px}
+h1,h2,h3,p{margin-top:0}
+h2{color:var(--gold2);font-weight:normal;border-bottom:1px solid var(--line);padding-bottom:12px}
+h3{color:#e8d2a1;font-weight:normal}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.hidden{display:none!important}
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,#392b19,#100e0b 55%,#050505)}
+.authbox{width:100%;max-width:430px;padding:30px;background:linear-gradient(145deg,#211a12,#0e0c09);border:1px solid #927440;box-shadow:0 0 50px #000;border-radius:5px}
+.logo{text-align:center;color:var(--gold2);font-size:34px;letter-spacing:3px;margin-bottom:6px}
+.subtitle{text-align:center;color:var(--muted);font-size:12px;letter-spacing:3px;margin-bottom:28px}
+.auth-tabs{display:flex;gap:8px;margin-bottom:20px}
+.auth-tabs button{flex:1}
+#game{min-height:100vh}
+.topbar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 18px;background:#100d0a;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.brand{color:var(--gold2);letter-spacing:2px;font-size:19px}
+.topstats{display:flex;gap:14px;font-size:13px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:215px minmax(0,1fr);min-height:calc(100vh - 62px)}
+.sidebar{background:#100d0a;border-right:1px solid var(--line);padding:17px 12px}
+.playerbox{padding:13px;background:#1c1711;border:1px solid var(--line);margin-bottom:18px;text-align:center}
+.avatar{width:65px;height:65px;border:1px solid var(--gold);border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-size:35px;background:#292016}
+.playername{font-size:16px;overflow-wrap:anywhere}
+.leveltext{font-size:12px;color:var(--gold);margin-top:7px}
+.navbtn{width:100%;display:flex;justify-content:flex-start;align-items:center;gap:11px;margin:4px 0;background:transparent;border-color:transparent;text-align:left}
+.navbtn.active{background:#302316;border-color:#66502d;color:var(--gold2)}
+.navbtn span:first-child{width:22px;text-align:center}
+.sidebar-bottom{margin-top:20px;padding-top:12px;border-top:1px solid var(--line)}
+.content{min-width:0;padding:22px;max-width:1500px;width:100%;margin:0 auto}
+.page{display:none}.page.active{display:block}
+.hero{position:relative;min-height:225px;padding:27px;border:1px solid #67502e;background:linear-gradient(90deg,#15100c 0%,#21170e 55%,#17110c);overflow:hidden;display:flex;align-items:center}
+.hero:after{content:"🐉";position:absolute;right:30px;bottom:-40px;font-size:190px;opacity:.15;pointer-events:none}
+.hero-content{position:relative;z-index:1;max-width:560px}
+.hero h2{font-size:29px;border:0;margin-bottom:8px}
+.hero p{line-height:1.6;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.stat,.panel,.card{background:linear-gradient(145deg,#211a13,#15110d);border:1px solid var(--line);padding:15px;border-radius:4px;min-width:0}
+.stat small{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.stat strong{color:var(--gold2);font-size:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:8px}
+.card p{font-size:13px;color:var(--muted);line-height:1.5;flex:1}
+.card .bigicon{font-size:35px}
+.card button{width:100%;margin-top:4px}
+.tag{display:inline-block;border:1px solid #76603b;padding:5px 8px;color:var(--gold2);font-size:11px;border-radius:3px}
+.bar{height:8px;background:#342b22;margin:8px 0 13px;overflow:hidden}
+.bar span{height:100%;display:block;transition:width .25s}
+.hp{background:#a33b32}.mana{background:#397da2}.xp{background:#b18a37}
+.combat{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.7fr);gap:14px}
+.bossarea{background:radial-gradient(ellipse at center,#42301b,#17110d 65%);border:1px solid var(--line);padding:24px;text-align:center}
+.bossicon{font-size:100px;margin:15px}
+.enemyname{font-size:23px;color:var(--gold2)}
+.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:15px}
+.log{background:#090806;border:1px solid var(--line);padding:13px;min-height:65px;margin-top:14px;font-size:13px;line-height:1.6;color:#d3c3a5}
+.listrow{display:grid;grid-template-columns:35px minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px 8px;border-bottom:1px solid #382d20}
+.ranknum{font-size:20px;color:var(--gold)}
+.listrow small{display:block;color:var(--muted);margin-top:5px}
+.tablehead{display:grid;grid-template-columns:40px minmax(0,1fr) 90px 80px;gap:8px;padding:10px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--line)}
+.progressnote{color:var(--muted);font-size:12px}
+footer{text-align:center;padding:24px;color:#716657;font-size:12px}
+@media(max-width:760px){
+ .layout{grid-template-columns:1fr}
+ .sidebar{padding:8px;position:sticky;top:62px;z-index:4;border-right:0;border-bottom:1px solid var(--line)}
+ .playerbox,.sidebar-bottom{display:none}
+ .sidebar nav{display:flex;gap:5px;overflow-x:auto}
+ .navbtn{width:auto;flex-shrink:0;margin:0;padding:10px;font-size:12px}
+ .content{padding:12px}
+ .topbar{padding:9px 12px}
+ .brand{font-size:14px}
+ .topstats{gap:7px;font-size:11px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .combat{grid-template-columns:1fr}
+ .hero{min-height:190px;padding:18px}
+ .hero h2{font-size:24px}
+ .hero:after{font-size:125px;right:0}
+ .tablehead{grid-template-columns:30px minmax(0,1fr) 60px}
+ .tablehead span:last-child{display:none}
+}
 </style>
 </head>
 <body>
-<header>
-<h1>🐉 DRAGON WAR</h1>
-<p>RISE OF POWER · O reino precisa de um herói</p>
-</header>
-<main>
-<div class="stats">
-<div class="stat"><small>⭐ Nível</small><strong id="level">1</strong></div>
-<div class="stat"><small>🪙 Ouro</small><strong id="coins">500</strong></div>
-<div class="stat"><small>💎 Gemas</small><strong id="gems">20</strong></div>
-<div class="stat"><small>🏆 Pontos</small><strong id="points">0</strong></div>
+
+<section id="auth">
+ <div class="authbox">
+  <div class="logo">🐉 DRAGON WAR</div>
+  <div class="subtitle">RISE OF POWER</div>
+  <div class="auth-tabs">
+   <button id="loginTab" class="primary" onclick="authMode('login')">Entrar</button>
+   <button id="registerTab" onclick="authMode('register')">Criar conta</button>
+  </div>
+  <form id="authForm" onsubmit="authenticate(event)">
+   <label>Nome de jogador</label>
+   <input id="authName" maxlength="20" placeholder="Seu nome" autocomplete="username" required>
+   <label>Senha</label>
+   <input id="authPass" type="password" minlength="4" maxlength="80" placeholder="Sua senha" autocomplete="current-password" required>
+   <button class="primary" id="authSubmit" type="submit" style="width:100%">ENTRAR NO REINO</button>
+  </form>
+  <p id="authMsg" class="muted" style="margin-top:15px"></p>
+  <p class="muted">Protótipo local: suas contas e seu progresso ficam neste navegador. Não use uma senha real.</p>
+ </div>
+</section>
+
+<div id="game" class="hidden">
+ <header class="topbar">
+  <div class="brand">🐉 DRAGON WAR</div>
+  <div class="topstats">
+   <span>🪙 <b id="topCoins">500</b></span>
+   <span>💎 <b id="topGems">20</b></span>
+   <span>⭐ Nv. <b id="topLevel">1</b></span>
+   <button onclick="logout()">↪ Sair</button>
+  </div>
+ </header>
+ <div class="layout">
+  <aside class="sidebar">
+   <div class="playerbox">
+    <div class="avatar">⚔️</div>
+    <div id="sideName" class="playername">Guerreiro</div>
+    <div class="leveltext">NÍVEL <span id="sideLevel">1</span> · <span id="sideRank">RECRUTA</span></div>
+   </div>
+   <nav id="navigation">
+    <button class="navbtn active" data-page="home" onclick="go('home')"><span>⌂</span> Início</button>
+    <button class="navbtn" data-page="battle" onclick="go('battle')"><span>⚔</span> Combate</button>
+    <button class="navbtn" data-page="maps" onclick="go('maps')"><span>♧</span> Exploração</button>
+    <button class="navbtn" data-page="inventory" onclick="go('inventory')"><span>♜</span> Inventário</button>
+    <button class="navbtn" data-page="skills" onclick="go('skills')"><span>✧</span> Habilidades</button>
+    <button class="navbtn" data-page="shop" onclick="go('shop')"><span>▣</span> Loja</button>
+    <button class="navbtn" data-page="missions" onclick="go('missions')"><span>▤</span> Missões</button>
+    <button class="navbtn" data-page="ranking" onclick="go('ranking')"><span>♛</span> Ranking</button>
+    <button class="navbtn" data-page="profile" onclick="go('profile')"><span>◉</span> Perfil</button>
+    <button class="navbtn" data-page="admin" id="adminNav" onclick="go('admin')"><span>♜</span> Administração</button>
+   </nav>
+   <div class="sidebar-bottom">
+    <button class="navbtn" onclick="logout()">↪ Sair da conta</button>
+   </div>
+  </aside>
+
+  <main class="content">
+   <section class="page active" id="page-home">
+    <div class="hero">
+     <div class="hero-content">
+      <span class="tag">CRÔNICAS DO REINO</span>
+      <h2>O destino pertence aos fortes.</h2>
+      <p>Explore terras esquecidas, domine as artes arcanas e enfrente os dragões ancestrais. Sua lenda começa agora.</p>
+      <button class="primary" onclick="go('battle')">⚔ INICIAR JORNADA</button>
+      <button onclick="go('maps')">Explorar o mundo</button>
+     </div>
+    </div>
+    <div class="stats">
+     <div class="stat"><small>❤️ VIDA</small><strong id="homeHp">100/100</strong><div class="bar"><span id="hpBar" class="hp" style="width:100%"></span></div></div>
+     <div class="stat"><small>🔷 MANA</small><strong id="homeMana">100/100</strong><div class="bar"><span id="manaBar" class="mana" style="width:100%"></span></div></div>
+     <div class="stat"><small>⭐ EXPERIÊNCIA</small><strong id="homeXp">0/100</strong><div class="bar"><span id="xpBar" class="xp" style="width:0%"></span></div></div>
+     <div class="stat"><small>🏆 PONTOS</small><strong id="homePoints">0</strong><p class="progressnote">Pontuação pessoal</p></div>
+    </div>
+    <h2>Crônicas recentes</h2>
+    <div class="grid">
+     <div class="card"><div class="bigicon">🐉</div><h3>Chefes ancestrais</h3><p>Enfrente criaturas lendárias e conquiste recompensas cada vez maiores.</p><button onclick="go('battle')">Entrar na arena</button></div>
+     <div class="card"><div class="bigicon">🗝️</div><h3>Terras esquecidas</h3><p>Descubra novas regiões e receba ouro e experiência.</p><button onclick="go('maps')">Explorar regiões</button></div>
+     <div class="card"><div class="bigicon">📜</div><h3>Ordens do reino</h3><p>Complete missões e resgate recompensas.</p><button onclick="go('missions')">Ver missões</button></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+     <div class="row"><h2 style="margin:0;border:0">Recuperação</h2><span class="tag">CUSTO: 20 OURO</span></div>
+     <p class="muted">Recupere completamente sua vida e sua mana antes da próxima batalha.</p>
+     <button class="primary" onclick="rest()">Descansar na estalagem</button>
+    </div>
+   </section>
+
+   <section class="page" id="page-battle">
+    <h2>⚔ Arena dos Campeões</h2>
+    <p class="muted">Escolha seu adversário. Inimigos mais poderosos exigem níveis maiores.</p>
+    <div class="combat">
+     <div class="bossarea">
+      <div class="tag">CAMPO DE BATALHA</div>
+      <div class="bossicon" id="enemyIcon">🟢</div>
+      <div class="enemyname" id="enemyName">Slime Sombrio</div>
+      <p class="muted" id="enemyLevel">Nível 1</p>
+      <div class="bar"><span id="enemyBar" class="hp" style="width:100%"></span></div>
+      <p id="enemyHp">45 / 45 HP</p>
+      <div class="actions">
+       <button class="primary" onclick="attack()">⚔ Atacar</button>
+       <button onclick="battlePower()">✧ Habilidade</button>
+       <button onclick="usePotion()">🧪 Poção</button>
+       <button onclick="runAway()">Fugir</button>
+      </div>
+      <div id="battleLog" class="log">Um inimigo aguarda seu desafio.</div>
+     </div>
+     <div class="panel">
+      <h2>Seu guerreiro</h2>
+      <div class="avatar">⚔️</div>
+      <h3 id="battlePlayerName" class="center">Guerreiro</h3>
+      <p>Arma: <b id="battleWeapon">Faca de Aprendiz</b></p>
+      <p>Dano: <b id="battleDamage">10</b></p>
+      <p>Defesa: <b id="battleArmor">0</b></p>
+      <p>Poções de vida: <b id="battlePotions">2</b></p>
+      <label>Adversário</label>
+      <select id="enemySelect" onchange="selectEnemy()"></select>
+      <p class="muted">Vitórias: <b id="battleWins">0</b> · Derrotas: <b id="battleLosses">0</b></p>
+     </div>
+    </div>
+   </section>
+
+   <section class="page" id="page-maps">
+    <h2>🗺️ Atlas das Terras Antigas</h2>
+    <p class="muted">Cada região guarda tesouros e perigos. Escolha seu próximo destino.</p>
+    <div id="mapsGrid" class="grid"></div>
+   </section>
+
+   <section class="page" id="page-inventory">
+    <h2>🎒 Arsenal e Inventário</h2>
+    <div class="stats">
+     <div class="stat"><small>ARMA EQUIPADA</small><strong id="invWeapon" style="font-size:16px">Faca</strong></div>
+     <div class="stat"><small>DANO TOTAL</small><strong id="invDamage">10</strong></div>
+     <div class="stat"><small>DEFESA</small><strong id="invArmor">0</strong></div>
+     <div class="stat"><small>POÇÕES DE VIDA</small><strong id="invPotions">2</strong></div>
+    </div>
+    <div id="inventoryGrid" class="grid"></div>
+   </section>
+
+   <section class="page" id="page-skills">
+    <h2>✧ Árvore das Artes Arcanas</h2>
+    <p class="muted">Desbloqueie habilidades usando ouro. Cada habilidade consome mana durante o combate.</p>
+    <div id="skillsGrid" class="grid"></div>
+   </section>
+
+   <section class="page" id="page-shop">
+    <h2>▣ Mercado do Reino</h2>
+    <p class="muted">Armas, armaduras, poções e relíquias para sua jornada.</p>
+    <div class="row" style="margin-bottom:14px"><span>Seu saldo: 🪙 <b id="shopBalance">500</b></span><select id="shopFilter" style="width:auto;min-width:130px;margin:0" onchange="renderShop()"><option value="all">Todos os itens</option><option value="weapon">Armas</option><option value="armor">Armaduras</option><option value="potion">Poções</option><option value="other">Relíquias</option></select></div>
+    <div id="shopGrid" class="grid"></div>
+   </section>
+
+   <section class="page" id="page-missions">
+    <h2>📜 Ordens da Coroa</h2>
+    <p class="muted">Complete objetivos para conquistar ouro e pontos.</p>
+    <div id="missionsGrid" class="grid"></div>
+   </section>
+
+   <section class="page" id="page-ranking">
+    <h2>♛ Salão da Glória</h2>
+    <p class="muted">Classificação dos perfis registrados neste navegador. Para um ranking global, é necessário conectar um banco de dados online.</p>
+    <div class="panel">
+     <div class="tablehead"><span>#</span><span>GUERREIRO</span><span>NÍVEL</span><span>PONTOS</span></div>
+     <div id="rankingList"></div>
+    </div>
+   </section>
+
+   <section class="page" id="page-profile">
+    <h2>◉ Crônicas do Guerreiro</h2>
+    <div class="panel">
+     <div class="avatar">⚔️</div>
+     <form onsubmit="saveProfile(event)">
+      <label>Nome de jogador</label><input id="profileName" maxlength="20" required>
+      <label>Classe</label><select id="profileClass"><option>Guerreiro</option><option>Mago</option><option>Arqueiro</option><option>Paladino</option></select>
+      <button class="primary" type="submit">Salvar alterações</button>
+     </form>
+     <div class="stats">
+      <div class="stat"><small>NÍVEL</small><strong id="profileLevel">1</strong></div>
+      <div class="stat"><small>VITÓRIAS</small><strong id="profileWins">0</strong></div>
+      <div class="stat"><small>INIMIGOS DERROTADOS</small><strong id="profileKills">0</strong></div>
+      <div class="stat"><small>DRAGÕES DERROTADOS</small><strong id="profileDragons">0</strong></div>
+     </div>
+     <button class="danger" onclick="resetProgress()">Reiniciar meu progresso</button>
+    </div>
+   </section>
+
+   <section class="page" id="page-admin">
+    <h2>♜ Administração do Reino</h2>
+    <div class="panel">
+     <span class="tag">MODO DEMONSTRAÇÃO LOCAL</span>
+     <p class="muted">Este painel serve para testes. A validação por e-mail no navegador não constitui autenticação segura de administrador. Não publique privilégios administrativos sem autenticação e autorização no servidor.</p>
+     <div id="adminContent"></div>
+    </div>
+   </section>
+   <footer>DRAGON WAR · RISE OF POWER<br>Uma aventura de Gabriel Cabral</footer>
+  </main>
+ </div>
 </div>
-
-<nav id="nav">
-<button class="active" onclick="page('home',this)">🏠 Início</button>
-<button onclick="page('battle',this)">⚔️ Combate</button>
-<button onclick="page('maps',this)">🗺️ Mapas</button>
-<button onclick="page('powers',this)">✨ Poderes</button>
-<button onclick="page('shop',this)">🛒 Loja</button>
-<button onclick="page('inventory',this)">🎒 Inventário</button>
-<button onclick="page('missions',this)">📜 Missões</button>
-<button onclick="page('ranking',this)">🏆 Ranking</button>
-<button onclick="page('community',this)">💬 Comunidade</button>
-<button onclick="page('profile',this)">👤 Perfil</button>
-<button id="adminNav" style="display:none" onclick="page('admin',this)">👑 ADM</button>
-</nav>
-
-<section id="home" class="page show">
-<div class="panel">
-<h2>🔥 A aventura começa</h2>
-<p>Derrote monstros, explore terras desconhecidas, melhore seus equipamentos e conquiste o reino.</p>
-<div class="row"><span class="badge" id="rank">RECRUTA</span><span id="weaponLabel">Arma: Faca de Aprendiz</span></div>
-<h3>❤️ Vida <span id="hpText"></span></h3><div class="bar"><span id="hpBar" class="hp"></span></div>
-<h3>🔷 Mana <span id="manaText"></span></h3><div class="bar"><span id="manaBar" class="mana"></span></div>
-<h3>⭐ Experiência <span id="xpText"></span></h3><div class="bar"><span id="xpBar" class="xp"></span></div>
-<button class="primary" onclick="page('battle',nav.children[1])">ENTRAR EM COMBATE</button>
-<button onclick="rest()">Descansar · 20 ouro</button>
-</div>
-<div class="grid" style="margin-top:12px">
-<div class="item"><h3>🐉 Chefes lendários</h3><p>Enfrente inimigos cada vez mais perigosos.</p></div>
-<div class="item"><h3>⚔️ Arsenal de guerra</h3><p>Compre armas, armaduras e consumíveis.</p></div>
-<div class="item"><h3>✨ Poderes mágicos</h3><p>Desbloqueie habilidades usando ouro e mana.</p></div>
-</div>
-</section>
-
-<section id="battle" class="page">
-<div class="panel center">
-<h2>⚔️ Arena de Combate</h2>
-<label for="enemy">Escolha o inimigo</label>
-<select id="enemy" onchange="selectEnemy()"></select>
-<div class="boss" id="enemyIcon">🟢</div>
-<h3 id="enemyName"></h3>
-<div class="bar"><span class="hp" id="enemyBar" style="width:100%"></span></div>
-<p id="enemyHp"></p>
-<button class="primary" onclick="attack()">⚔️ Atacar</button>
-<button onclick="battlePower()">✨ Poder</button>
-<button onclick="usePotion()">🧪 Poção</button>
-<button onclick="runAway()">🏃 Fugir</button>
-<div class="log" id="battleLog">Escolha um inimigo para começar.</div>
-</div>
-</section>
-
-<section id="maps" class="page">
-<div class="panel"><h2>🗺️ Exploração</h2><p class="muted">Explore cada região para conseguir recompensas. Regiões avançadas exigem nível mínimo.</p><div class="grid" id="mapsGrid"></div></div>
-</section>
-
-<section id="powers" class="page">
-<div class="panel"><h2>✨ Livro de Poderes</h2><div class="grid" id="powersGrid"></div></div>
-</section>
-
-<section id="shop" class="page">
-<div class="panel"><h2>🛒 Loja do Reino</h2>
-<div class="row"><span>Moeda: 🪙 Ouro</span><span>Saldo: <b id="shopCoins"></b></span></div>
-<div class="grid" id="shopGrid"></div>
-</div>
-</section>
-
-<section id="inventory" class="page">
-<div class="panel"><h2>🎒 Inventário</h2><div id="inventoryGrid" class="grid"></div></div>
-</section>
-
-<section id="missions" class="page">
-<div class="panel"><h2>📜 Missões</h2><div id="missionsGrid" class="grid"></div></div>
-</section>
-
-<section id="ranking" class="page">
-<div class="panel"><h2>🏆 Ranking</h2><p class="muted">Ranking local deste navegador. Ainda não representa outros jogadores online.</p><div id="rankingContent"></div></div>
-</section>
-
-<section id="community" class="page">
-<div class="panel"><h2>💬 Mural local</h2><p class="muted">Mensagens salvas neste navegador; não são enviadas para outros jogadores.</p>
-<div id="chatMessages"></div>
-<label for="chatText">Sua mensagem</label><input id="chatText" maxlength="200" placeholder="Escreva uma mensagem...">
-<button class="primary" onclick="sendMessage()">Enviar mensagem</button>
-</div>
-</section>
-
-<section id="profile" class="page">
-<div class="panel"><h2>👤 Perfil do Guerreiro</h2>
-<label for="playerName">Nome</label><input id="playerName" maxlength="20">
-<label for="classSelect">Classe</label>
-<select id="classSelect"><option>Guerreiro</option><option>Mago</option><option>Arqueiro</option></select>
-<button class="primary" onclick="saveProfile()">Salvar perfil</button>
-<div id="profileInfo"></div>
-<button class="danger" onclick="resetGame()">Apagar progresso local</button>
-</div>
-</section>
-
-<section id="admin" class="page">
-<div class="panel"><h2>👑 Painel ADM — Gabriel</h2>
-<p class="muted">Painel demonstrativo. O acesso por e-mail digitado não verifica a identidade do proprietário da conta.</p>
-<div id="adminLogin">
-<label for="adminEmail">Gmail administrativo</label>
-<input id="adminEmail" type="email" placeholder="Digite o Gmail">
-<button class="primary" onclick="adminLogin()">Verificar Gmail</button>
-<p id="adminError" class="muted"></p>
-</div>
-<div id="adminArea" style="display:none">
-<span class="badge">ADM GABRIEL</span>
-<h3>Recursos de demonstração</h3>
-<button onclick="adminGive('coins',1000)">+1.000 ouro</button>
-<button onclick="adminGive('gems',50)">+50 gemas</button>
-<button onclick="adminGive('points',100)">+100 pontos</button>
-<button onclick="adminGive('xp',100)">+100 XP</button>
-<h3>Mensagem global local</h3>
-<input id="globalMessage" placeholder="Escreva um aviso">
-<button onclick="publishMessage()">Publicar aviso</button>
-<div id="adminNotice"></div>
-<button class="danger" onclick="adminLogout()">Sair do painel</button>
-</div>
-</div>
-</section>
-</main>
-<footer>🎮 Desenvolvido por Gabriel Cabral<br>Dragon War: Rise of Power · Protótipo local</footer>
 
 <script>
-const KEY="dragonWarCompleteV2";
-const ADMIN_EMAIL="groupsacabraldigital@gmail.com";
-const defaults=()=>({
-name:"Gabriel",classe:"Guerreiro",level:1,xp:0,coins:500,gems:20,points:0,
-hp:100,maxHp:100,mana:100,maxMana:100,weapon:"Faca de Aprendiz",
-damage:10,armor:0,potions:2,manaPotions:2,battles:0,wins:0,kills:0,dragons:0,
-explored:0,claimed:[],owned:["Faca de Aprendiz"],powers:["Bola de Fogo"],
-mapsVisited:[],messages:[],notice:""
+"use strict";
+const STORE="dragonwar_accounts_v4";
+const SESSION="dragonwar_session_v4";
+const ADMIN="groupsacabraldigital@gmail.com";
+
+const defaults=(name)=>({
+ name:name||"Guerreiro",classe:"Guerreiro",level:1,xp:0,
+ coins:500,gems:20,points:0,hp:100,maxHp:100,mana:100,maxMana:100,
+ weapon:"Faca de Aprendiz",damage:10,armor:0,potions:2,manaPotions:2,
+ wins:0,losses:0,kills:0,dragons:0,explored:0,claimed:[],
+ owned:["Faca de Aprendiz"],ownedArmor:[],powers:["Bola de Fogo"],
+ mapsVisited:[],notice:""
 });
-let p;
-try{p={...defaults(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){p=defaults()}
+
 const enemies=[
-{name:"Slime Sombrio",icon:"🟢",hp:45,damage:8,reward:45,xp:25,min:1},
-{name:"Lobo das Cinzas",icon:"🐺",hp:90,damage:15,reward:90,xp:45,min:2},
-{name:"Guardião de Pedra",icon:"🗿",hp:160,damage:24,reward:160,xp:70,min:4},
-{name:"Dragão Ancião",icon:"🐉",hp:400,damage:35,reward:500,xp:180,min:7},
-{name:"Rainha Dracônica",icon:"🐲",hp:800,damage:48,reward:1200,xp:350,min:12},
-{name:"Devorador do Vazio",icon:"👹",hp:1500,damage:65,reward:2500,xp:700,min:20}
+ {name:"Slime Sombrio",icon:"🟢",hp:45,damage:8,reward:45,xp:25,min:1},
+ {name:"Lobo das Cinzas",icon:"🐺",hp:90,damage:15,reward:90,xp:45,min:2},
+ {name:"Guardião de Pedra",icon:"🗿",hp:160,damage:24,reward:160,xp:70,min:4},
+ {name:"Cavaleiro Caído",icon:"💀",hp:260,damage:30,reward:300,xp:110,min:5},
+ {name:"Dragão Ancião",icon:"🐉",hp:400,damage:35,reward:500,xp:180,min:7},
+ {name:"Rainha Dracônica",icon:"🐲",hp:800,damage:48,reward:1200,xp:350,min:12},
+ {name:"Devorador do Vazio",icon:"👹",hp:1500,damage:65,reward:2500,xp:700,min:20}
 ];
-const powers=[
-{name:"Bola de Fogo",icon:"🔥",cost:20,damage:35,min:1,price:0,desc:"Uma esfera de chamas."},
-{name:"Cura Arcana",icon:"💚",cost:25,heal:45,min:2,price:200,desc:"Recupera vida."},
-{name:"Raio Dracônico",icon:"⚡",cost:40,damage:85,min:5,price:500,desc:"Raio de energia."},
-{name:"Explosão do Vazio",icon:"🌌",cost:65,damage:180,min:10,price:1500,desc:"Dano mágico extremo."},
-{name:"Tempestade de Gelo",icon:"❄️",cost:50,damage:125,min:8,price:1000,desc:"Poder congelante."},
-{name:"Fúria do Dragão",icon:"🐲",cost:90,damage:300,min:15,price:3500,desc:"Ataque lendário."}
-];
+
 const goods=[
-{name:"Faca de Aprendiz",icon:"🗡️",cost:0,damage:10,desc:"Arma inicial."},
-{name:"Espada de Ferro",icon:"⚔️",cost:180,damage:22,desc:"Dano 22."},
-{name:"Lâmina Dracônica",icon:"🐉",cost:800,damage:48,desc:"Dano 48."},
-{name:"Machado do Titã",icon:"🪓",cost:1400,damage:68,desc:"Dano 68."},
-{name:"Katana das Sombras",icon:"🌑",cost:2200,damage:85,desc:"Dano 85."},
-{name:"Arco Celestial",icon:"🏹",cost:3200,damage:100,desc:"Dano 100."},
-{name:"Espada Infernal",icon:"🔥",cost:4000,damage:120,desc:"Dano 120."},
-{name:"Martelo do Rei",icon:"🔨",cost:5500,damage:150,desc:"Dano 150."},
-{name:"Lança do Dragão",icon:"🔱",cost:7000,damage:175,desc:"Dano 175."},
-{name:"Espada do Vazio",icon:"🌌",cost:12000,damage:250,desc:"Arma mítica."},
-{name:"Armadura de Escamas",icon:"🛡️",cost:250,armor:5,desc:"Defesa 5."},
-{name:"Couraça Dracônica",icon:"🐲",cost:1000,armor:12,desc:"Defesa 12."},
-{name:"Armadura de Titã",icon:"⚙️",cost:3000,armor:20,desc:"Defesa 20."},
-{name:"Armadura Celestial",icon:"✨",cost:6500,armor:30,desc:"Defesa 30."},
-{name:"Poção de Vida",icon:"🧪",cost:40,type:"potion",desc:"Adiciona uma poção de vida."},
-{name:"Pacote de Poções",icon:"❤️",cost:120,type:"bigpotion",desc:"Adiciona três poções."},
-{name:"Poção de Mana",icon:"🔷",cost:35,type:"mana",desc:"Adiciona uma poção de mana."},
-{name:"Elixir Supremo",icon:"🧬",cost:250,type:"elixir",desc:"Restaura vida e mana."},
-{name:"Cristal de Poder",icon:"💎",cost:300,type:"gems",desc:"Concede 5 gemas."},
-{name:"Pacote de Gemas",icon:"💠",cost:1000,type:"biggems",desc:"Concede 25 gemas."},
-{name:"Pergaminho de XP",icon:"📜",cost:250,type:"xp",desc:"Concede 100 XP."}
+ {name:"Faca de Aprendiz",icon:"🗡️",cost:0,damage:10,type:"weapon",desc:"Arma inicial."},
+ {name:"Espada de Ferro",icon:"⚔️",cost:180,damage:22,type:"weapon",desc:"Uma lâmina confiável."},
+ {name:"Lâmina Dracônica",icon:"🐉",cost:800,damage:48,type:"weapon",desc:"Forjada com poder dracônico."},
+ {name:"Machado do Titã",icon:"🪓",cost:1400,damage:68,type:"weapon",desc:"Um golpe devastador."},
+ {name:"Katana das Sombras",icon:"🌑",cost:2200,damage:85,type:"weapon",desc:"Rápida e mortal."},
+ {name:"Arco Celestial",icon:"🏹",cost:3200,damage:100,type:"weapon",desc:"Precisão lendária."},
+ {name:"Espada Infernal",icon:"🔥",cost:4000,damage:120,type:"weapon",desc:"Chamas do submundo."},
+ {name:"Martelo do Rei",icon:"🔨",cost:5500,damage:150,type:"weapon",desc:"O peso de um reino."},
+ {name:"Lança do Dragão",icon:"🔱",cost:7000,damage:175,type:"weapon",desc:"Uma relíquia ancestral."},
+ {name:"Espada do Vazio",icon:"🌌",cost:12000,damage:250,type:"weapon",desc:"Poder além da realidade."},
+ {name:"Armadura de Escamas",icon:"🛡️",cost:250,armor:5,type:"armor",desc:"Defesa básica."},
+ {name:"Couraça Dracônica",icon:"🐲",cost:1000,armor:12,type:"armor",desc:"Proteção das escamas."},
+ {name:"Armadura de Titã",icon:"⚙️",cost:3000,armor:20,type:"armor",desc:"Armadura resistente."},
+ {name:"Armadura Celestial",icon:"✨",cost:6500,armor:30,type:"armor",desc:"Proteção dos antigos."},
+ {name:"Poção de Vida",icon:"🧪",cost:40,type:"potion",desc:"Adiciona uma poção de vida."},
+ {name:"Pacote de Poções",icon:"❤️",cost:120,type:"bigpotion",desc:"Adiciona três poções de vida."},
+ {name:"Poção de Mana",icon:"🔷",cost:35,type:"mana",desc:"Adiciona uma poção de mana."},
+ {name:"Elixir Supremo",icon:"🧬",cost:250,type:"elixir",desc:"Recupera vida e mana."},
+ {name:"Cristal de Poder",icon:"💎",cost:300,type:"gems",desc:"Concede 5 gemas."},
+ {name:"Pacote de Gemas",icon:"💠",cost:1000,type:"biggems",desc:"Concede 25 gemas."},
+ {name:"Pergaminho de XP",icon:"📜",cost:250,type:"xp",desc:"Concede 100 XP."}
 ];
+
+const powers=[
+ {name:"Bola de Fogo",icon:"🔥",cost:20,damage:35,min:1,price:0,desc:"Uma esfera de chamas."},
+ {name:"Cura Arcana",icon:"💚",cost:25,heal:45,min:2,price:200,desc:"Recupera 45 pontos de vida."},
+ {name:"Raio Dracônico",icon:"⚡",cost:40,damage:85,min:5,price:500,desc:"Descarga de energia."},
+ {name:"Tempestade de Gelo",icon:"❄️",cost:50,damage:125,min:8,price:1000,desc:"Fúria congelante."},
+ {name:"Explosão do Vazio",icon:"🌌",cost:65,damage:180,min:10,price:1500,desc:"Energia destrutiva."},
+ {name:"Fúria do Dragão",icon:"🐲",cost:90,damage:300,min:15,price:3500,desc:"O poder dos dragões."}
+];
+
 const maps=[
-{name:"Floresta Esmeralda",icon:"🌲",min:1,reward:50,desc:"Uma floresta cheia de criaturas."},
-{name:"Montanhas de Cinza",icon:"🌋",min:3,reward:120,desc:"Território de monstros fortes."},
-{name:"Ruínas Dracônicas",icon:"🏰",min:7,reward:250,desc:"Antigas ruínas de dragões."},
-{name:"Abismo do Vazio",icon:"🌌",min:12,reward:500,desc:"Uma região extremamente perigosa."}
+ {name:"Floresta Esmeralda",icon:"🌲",min:1,reward:50,desc:"Criaturas antigas se escondem entre as árvores."},
+ {name:"Montanhas de Cinza",icon:"🌋",min:3,reward:120,desc:"Um território marcado pelo fogo."},
+ {name:"Ruínas Dracônicas",icon:"🏰",min:7,reward:250,desc:"Restos de um império esquecido."},
+ {name:"Abismo do Vazio",icon:"🌌",min:12,reward:500,desc:"Uma região onde a realidade se desfaz."},
+ {name:"Trono dos Dragões",icon:"🐉",min:20,reward:1000,desc:"O domínio dos soberanos ancestrais."}
 ];
+
+let accounts={},currentUser="",p=null,authKind="login";
+let currentEnemy=0,enemyHp=45,enemyMax=45,battleOver=false;
+
 function el(id){return document.getElementById(id)}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){}}
-function page(id,btn){
-document.querySelectorAll(".page").forEach(x=>x.classList.remove("show"));
-el(id).classList.add("show");
-document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));
-if(btn)btn.classList.add("active");
-render();
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function loadAccounts(){
+ try{accounts=JSON.parse(localStorage.getItem(STORE)||"{}")}catch(e){accounts={}}
 }
-function rank(){return p.level>=20?"LENDÁRIO":p.level>=12?"MESTRE":p.level>=7?"PROFISSIONAL":p.level>=3?"INTERMEDIÁRIO":"RECRUTA"}
+function saveAccounts(){
+ try{localStorage.setItem(STORE,JSON.stringify(accounts));return true}
+ catch(e){alert("Não foi possível salvar. O armazenamento do navegador pode estar cheio.");return false}
+}
+function savePlayer(){
+ if(!currentUser||!accounts[currentUser])return;
+ accounts[currentUser].player=p;
+ saveAccounts();
+}
+function authMode(mode){
+ authKind=mode;
+ el("loginTab").classList.toggle("primary",mode==="login");
+ el("registerTab").classList.toggle("primary",mode==="register");
+ el("authSubmit").textContent=mode==="login"?"ENTRAR NO REINO":"CRIAR PERSONAGEM";
+ el("authMsg").textContent="";
+ el("authPass").value="";
+ el("authPass").autocomplete=mode==="login"?"current-password":"new-password";
+}
+function authenticate(e){
+ e.preventDefault();
+ loadAccounts();
+ const name=el("authName").value.trim();
+ const pass=el("authPass").value;
+ if(name.length<2){el("authMsg").textContent="Use um nome com pelo menos 2 caracteres.";return}
+ const key=name.toLowerCase();
+ if(authKind==="register"){
+  if(accounts[key]){el("authMsg").textContent="Esse nome já está registrado neste navegador.";return}
+  accounts[key]={name:name,password:pass,player:defaults(name),admin:name.toLowerCase()==="gabriel"&&el("authPass").value===pass};
+  if(!saveAccounts()){delete accounts[key];return}
+ }else{
+  if(!accounts[key]||accounts[key].password!==pass){
+   el("authMsg").textContent="Nome ou senha incorretos.";return
+  }
+ }
+ currentUser=key;
+ p={...defaults(accounts[key].name),...(accounts[key].player||{})};
+ try{sessionStorage.setItem(SESSION,key)}catch(e){}
+ startGame();
+}
+function startGame(){
+ el("auth").classList.add("hidden");
+ el("game").classList.remove("hidden");
+ el("adminNav").style.display=isAdmin()?"flex":"none";
+ currentEnemy=0;
+ setupEnemies();
+ selectEnemy();
+ render();
+ go("home");
+}
+function logout(){
+ savePlayer();
+ currentUser="";p=null;
+ try{sessionStorage.removeItem(SESSION)}catch(e){}
+ el("game").classList.add("hidden");
+ el("auth").classList.remove("hidden");
+ el("authPass").value="";
+ el("authMsg").textContent="Você saiu da sua conta.";
+ authMode("login");
+}
+function isAdmin(){
+ return !!(accounts[currentUser]&&accounts[currentUser].admin===true);
+}
+function go(name){
+ if(name==="admin"&&!isAdmin()){alert("Área administrativa não autorizada.");return}
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+ const target=el("page-"+name);
+ if(!target)return;
+ target.classList.add("active");
+ document.querySelectorAll(".navbtn[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function rank(){
+ return p.level>=20?"LENDÁRIO":p.level>=12?"MESTRE":p.level>=7?"VETERANO":p.level>=3?"GUERREIRO":"RECRUTA";
+}
 function levelUp(){
-while(p.xp>=p.level*100){
-p.xp-=p.level*100;p.level++;p.maxHp+=10;p.maxMana+=10;
-p.hp=p.maxHp;p.mana=p.maxMana;p.damage+=2;
-}
+ let ups=0;
+ while(p.xp>=p.level*100&&p.level<100){
+  p.xp-=p.level*100;p.level++;
+  p.maxHp+=10;p.maxMana+=10;p.hp=p.maxHp;p.mana=p.maxMana;
+  ups++;
+ }
+ if(p.level>=100)p.xp=0;
+ if(ups)alert("SUBIU DE NÍVEL! Agora você é nível "+p.level+".");
 }
 function render(){
-el("level").textContent=p.level;
-el("coins").textContent=p.coins.toLocaleString("pt-BR");
-el("gems").textContent=p.gems;el("points").textContent=p.points;
-el("rank").textContent=rank();el("weaponLabel").textContent="Arma: "+p.weapon;
-el("hpText").textContent=p.hp+"/"+p.maxHp;
-el("manaText").textContent=p.mana+"/"+p.maxMana;
-el("xpText").textContent=p.xp+"/"+(p.level*100);
-el("hpBar").style.width=100*p.hp/p.maxHp+"%";
-el("manaBar").style.width=100*p.mana/p.maxMana+"%";
-el("xpBar").style.width=100*p.xp/(p.level*100)+"%";
-el("shopCoins").textContent=p.coins;
-el("playerName").value=p.name;
-el("classSelect").value=p.classe;
-el("profileInfo").innerHTML="<p>Classe: "+esc(p.classe)+" · Nível "+p.level+"</p><p>Vitórias: "+p.wins+" · Inimigos: "+p.kills+"</p><p>Dragões: "+p.dragons+" · Explorações: "+p.explored+"</p>";
-renderPowers();renderShop();renderInventory();renderMissions();renderMaps();renderRanking();renderChat();save();
+ if(!p)return;
+ el("topCoins").textContent=p.coins.toLocaleString("pt-BR");
+ el("topGems").textContent=p.gems;
+ el("topLevel").textContent=p.level;
+ el("sideName").textContent=p.name;
+ el("sideLevel").textContent=p.level;
+ el("sideRank").textContent=rank();
+ el("homeHp").textContent=p.hp+"/"+p.maxHp;
+ el("homeMana").textContent=p.mana+"/"+p.maxMana;
+ el("homeXp").textContent=p.xp+"/"+(p.level*100);
+ el("homePoints").textContent=p.points.toLocaleString("pt-BR");
+ el("hpBar").style.width=100*p.hp/p.maxHp+"%";
+ el("manaBar").style.width=100*p.mana/p.maxMana+"%";
+ el("xpBar").style.width=100*p.xp/(p.level*100)+"%";
+ el("battlePlayerName").textContent=p.name;
+ el("battleWeapon").textContent=p.weapon;
+ el("battleDamage").textContent=p.damage;
+ el("battleArmor").textContent=p.armor;
+ el("battlePotions").textContent=p.potions;
+ el("battleWins").textContent=p.wins;
+ el("battleLosses").textContent=p.losses;
+ el("invWeapon").textContent=p.weapon;
+ el("invDamage").textContent=p.damage;
+ el("invArmor").textContent=p.armor;
+ el("invPotions").textContent=p.potions;
+ el("profileName").value=p.name;
+ el("profileClass").value=p.classe;
+ el("profileLevel").textContent=p.level;
+ el("profileWins").textContent=p.wins;
+ el("profileKills").textContent=p.kills;
+ el("profileDragons").textContent=p.dragons;
+ el("shopBalance").textContent=p.coins.toLocaleString("pt-BR");
+ renderMaps();renderInventory();renderSkills();renderShop();renderMissions();renderRanking();renderAdmin();
+ updateEnemy();
+ savePlayer();
 }
-function renderPowers(){
-el("powersGrid").innerHTML=powers.map((x,i)=>{
-let owned=p.powers.includes(x.name);
-return `<div class="item"><h3>${x.icon} ${x.name}</h3><p>${x.desc}<br>Mana: ${x.cost} · Dano: ${x.damage||0}<br>Nível ${x.min}</p>${owned?`<span class="badge">Desbloqueado</span>`:`<button ${p.level<x.min||p.coins<x.price?"disabled":""} onclick="unlockPower(${i})">Desbloquear · ${x.price} ouro</button>`}<button ${!owned||p.level<x.min?"disabled":""} onclick="castPower(${i})">Usar poder</button></div>`;
-}).join("");
-}
-function renderShop(){
-el("shopGrid").innerHTML=goods.map((x,i)=>`<div class="item"><h3>${x.icon} ${x.name}</h3><p>${x.desc}</p><span class="badge">${x.cost===0?"Grátis":x.cost+" ouro"}</span><button ${x.cost===0&&p.owned.includes(x.name)?"disabled":""} onclick="buy(${i})">${x.cost===0&&p.owned.includes(x.name)?"Já possui":"Comprar"}</button></div>`).join("");
-}
-function renderInventory(){
-let items=[
-...p.owned.map(n=>({icon:"⚔️",name:n,desc:n===p.weapon?"Arma equipada":"Arma disponível",action:()=>equip(n)})),
-{name:"Poções de Vida",icon:"🧪",desc:"Quantidade: "+p.potions},
-{name:"Poções de Mana",icon:"🔷",desc:"Quantidade: "+p.manaPotions},
-...p.powers.map(n=>({icon:"✨",name:n,desc:"Poder desbloqueado"}))
-];
-el("inventoryGrid").innerHTML=items.map(x=>`<div class="item"><h3>${x.icon} ${esc(x.name)}</h3><p>${esc(x.desc)}</p>${x.action&&x.name!==p.weapon?`<button onclick="equip('${esc(x.name)}')">Equipar</button>`:""}</div>`).join("");
-}
-function renderMissions(){
-let ms=[
-["win","Primeira vitória",p.wins>=1,"Vença uma batalha.",100,30],
-["kills","Caçador",p.kills>=5,"Derrote 5 inimigos.",200,50],
-["dragon","Caçador de dragões",p.dragons>=1,"Derrote um chefe.",500,100],
-["explore","Explorador",p.explored>=3,"Explore 3 vezes.",150,40],
-["level","Veterano",p.level>=5,"Alcance o nível 5.",300,50]
-];
-el("missionsGrid").innerHTML=ms.map(m=>`<div class="item"><h3>${p.claimed.includes(m[0])?"✅":"📜"} ${m[1]}</h3><p>${m[3]} Recompensa: ${m[4]} ouro e ${m[5]} pontos.</p>${p.claimed.includes(m[0])?'<span class="badge">Resgatada</span>':`<button ${m[2]?"":"disabled"} onclick="claim('${m[0]}',${m[4]},${m[5]})">Resgatar</button>`}</div>`).join("");
-}
-function renderMaps(){
-el("mapsGrid").innerHTML=maps.map((m,i)=>`<div class="item"><h3>${m.icon} ${m.name}</h3><p>${m.desc}<br>Nível mínimo: ${m.min}<br>Recompensa: ${m.reward} ouro</p><button ${p.level<m.min?"disabled":""} onclick="explore(${i})">Explorar</button></div>`).join("");
-}
-function renderRanking(){
-el("rankingContent").innerHTML=`<div class="item"><h3>🥇 1º · ${esc(p.name)}</h3><p>${p.points} pontos · Nível ${p.level} · ${p.wins} vitórias</p><span class="badge">${rank()}</span></div>`;
-}
-function renderChat(){
-el("chatMessages").innerHTML=(p.messages||[]).slice(-30).map(m=>`<div class="item"><b>${esc(m.name)}</b><p>${esc(m.text)}</p></div>`).join("");
-}
-let currentEnemy=0,enemyHp=enemies[0].hp,enemyMax=enemyHp,battleOver=false;
 function setupEnemies(){
-el("enemy").innerHTML=enemies.map((e,i)=>`<option value="${i}">${e.name} · nível ${e.min}</option>`).join("");
+ el("enemySelect").innerHTML=enemies.map((e,i)=>`<option value="${i}">${safe(e.name)} · Nv. ${e.min}</option>`).join("");
 }
 function selectEnemy(){
-currentEnemy=Number(el("enemy").value);enemyMax=enemies[currentEnemy].hp;enemyHp=enemyMax;battleOver=false;updateEnemy();log("Um "+enemies[currentEnemy].name+" apareceu!");
+ currentEnemy=Number(el("enemySelect").value||0);
+ const e=enemies[currentEnemy];
+ enemyMax=e.hp;enemyHp=enemyMax;battleOver=false;
+ updateEnemy();
+ if(el("battleLog"))el("battleLog").textContent=e.name+" aguarda seu desafio.";
 }
 function updateEnemy(){
-let e=enemies[currentEnemy];el("enemyIcon").textContent=e.icon;el("enemyName").textContent=e.name;
-el("enemyHp").textContent=Math.max(0,enemyHp)+" / "+enemyMax+" HP";
-el("enemyBar").style.width=Math.max(0,100*enemyHp/enemyMax)+"%";
+ const e=enemies[currentEnemy];
+ if(!e)return;
+ el("enemyIcon").textContent=e.icon;
+ el("enemyName").textContent=e.name;
+ el("enemyLevel").textContent="Nível "+e.min;
+ el("enemyHp").textContent=Math.max(0,enemyHp)+" / "+enemyMax+" HP";
+ el("enemyBar").style.width=Math.max(0,100*enemyHp/enemyMax)+"%";
 }
-function log(s){el("battleLog").textContent=s}
+function battleLog(s){el("battleLog").textContent=s}
 function enemyTurn(){
-let e=enemies[currentEnemy],taken=Math.max(1,e.damage-p.armor);
-p.hp=Math.max(0,p.hp-taken);
-return taken;
+ const e=enemies[currentEnemy];
+ const d=Math.max(1,e.damage-p.armor);
+ p.hp=Math.max(0,p.hp-d);
+ return d;
 }
 function attack(){
-let e=enemies[currentEnemy];
-if(battleOver){log("Escolha outro inimigo.");return}
-if(p.hp<=0){log("Você está sem vida. Descanse primeiro.");return}
-if(p.level<e.min){log("Você precisa alcançar o nível "+e.min+".");return}
-let d=p.damage+Math.floor(Math.random()*8);
-enemyHp=Math.max(0,enemyHp-d);
-if(enemyHp===0){winEnemy();return}
-let taken=enemyTurn();
-log("Você causou "+d+" de dano. O inimigo respondeu com "+taken+".");
-if(p.hp===0)log("Você foi derrotado! Descanse para recuperar sua vida.");
-updateEnemy();render();
+ const e=enemies[currentEnemy];
+ if(battleOver){battleLog("Escolha outro inimigo.");return}
+ if(p.hp<=0){battleLog("Sua vida acabou. Descanse antes de lutar.");return}
+ if(p.level<e.min){battleLog("Você precisa alcançar o nível "+e.min+".");return}
+ const d=p.damage+Math.floor(Math.random()*8);
+ enemyHp=Math.max(0,enemyHp-d);
+ if(enemyHp===0){winEnemy();return}
+ const taken=enemyTurn();
+ battleLog("Você causou "+d+" de dano. "+e.name+" respondeu com "+taken+" de dano.");
+ if(p.hp===0){p.losses++;battleLog("Você foi derrotado! Descanse para recuperar suas forças.")}
+ render();
 }
 function winEnemy(){
-let e=enemies[currentEnemy];battleOver=true;
-p.coins+=e.reward;p.xp+=e.xp;p.points+=Math.ceil(e.xp/2);p.kills++;p.wins++;p.battles++;
-if(/Dragão|Dracônica|Vazio/.test(e.name))p.dragons++;
-levelUp();
-log("VITÓRIA! +"+e.reward+" ouro, +"+e.xp+" XP e pontos!");
-updateEnemy();render();
-}
-function castPower(i){
-let x=powers[i];
-if(!p.powers.includes(x.name)){alert("Desbloqueie este poder primeiro.");return}
-if(p.level<x.min){alert("Nível mínimo: "+x.min);return}
-if(p.mana<x.cost){alert("Mana insuficiente!");return}
-if(x.heal){p.mana-=x.cost;p.hp=Math.min(p.maxHp,p.hp+x.heal);render();alert("Cura Arcana utilizada!");return}
-if(x.damage){alert("Poder ofensivo: entre em combate para usá-lo.");return}
+ const e=enemies[currentEnemy];
+ battleOver=true;p.coins+=e.reward;p.xp+=e.xp;
+ p.points+=Math.ceil(e.xp/2);p.kills++;p.wins++;
+ if(/Dragão|Dracônica|Vazio/.test(e.name))p.dragons++;
+ levelUp();
+ battleLog("VITÓRIA! +"+e.reward+" ouro · +"+e.xp+" XP · +"+Math.ceil(e.xp/2)+" pontos.");
+ render();
 }
 function battlePower(){
-let i=powers.findIndex(x=>x.damage&&p.powers.includes(x.name)&&p.level>=x.min);
-if(i<0){log("Desbloqueie um poder ofensivo no Livro de Poderes.");return}
-let x=powers[i],e=enemies[currentEnemy];
-if(battleOver){log("Escolha outro inimigo.");return}
-if(p.hp<=0){log("Você está sem vida.");return}
-if(p.level<e.min){log("Nível insuficiente.");return}
-if(p.mana<x.cost){log("Mana insuficiente.");return}
-p.mana-=x.cost;enemyHp=Math.max(0,enemyHp-x.damage);
-if(enemyHp===0){winEnemy();return}
-let taken=enemyTurn();log(x.name+" causou "+x.damage+" de dano! Você recebeu "+taken+".");
-if(p.hp===0)log("Você foi derrotado! Descanse.");
-updateEnemy();render();
-}
-function unlockPower(i){
-let x=powers[i];
-if(p.powers.includes(x.name))return;
-if(p.level<x.min||p.coins<x.price){alert("Nível ou ouro insuficiente.");return}
-p.coins-=x.price;p.powers.push(x.name);render();alert(x.name+" desbloqueado!");
-}
-function buy(i){
-let x=goods[i];
-if(x.cost===0&&p.owned.includes(x.name)){alert("Você já possui este item.");return}
-if(p.coins<x.cost){alert("Ouro insuficiente!");return}
-p.coins-=x.cost;
-if(x.type==="potion")p.potions++;
-else if(x.type==="bigpotion")p.potions+=3;
-else if(x.type==="mana")p.manaPotions++;
-else if(x.type==="elixir"){p.hp=p.maxHp;p.mana=p.maxMana}
-else if(x.type==="gems")p.gems+=5;
-else if(x.type==="biggems")p.gems+=25;
-else if(x.type==="xp"){p.xp+=100;levelUp()}
-else if(x.damage){
-if(!p.owned.includes(x.name))p.owned.push(x.name);
-p.weapon=x.name;p.damage=x.damage;
-}
-else if(x.armor)p.armor=Math.max(p.armor,x.armor);
-render();alert(x.name+" comprado!");
-}
-function equip(name){
-let x=goods.find(g=>g.name===name);
-if(x&&x.damage){p.weapon=x.name;p.damage=x.damage;render();alert("Arma equipada!")}
+ if(battleOver){battleLog("Escolha outro inimigo.");return}
+ if(p.hp<=0){battleLog("Você precisa recuperar sua vida.");return}
+ const e=enemies[currentEnemy];
+ if(p.level<e.min){battleLog("Nível insuficiente.");return}
+ const available=powers.filter(x=>p.powers.includes(x.name)&&x.damage&&p.level>=x.min);
+ if(!available.length){battleLog("Desbloqueie um poder ofensivo no livro de habilidades.");return}
+ const x=available[available.length-1];
+ if(p.mana<x.cost){battleLog("Mana insuficiente.");return}
+ p.mana-=x.cost;
+ enemyHp=Math.max(0,enemyHp-x.damage);
+ if(enemyHp===0){winEnemy();return}
+ const taken=enemyTurn();
+ battleLog(x.name+" causou "+x.damage+" de dano. Você recebeu "+taken+" de dano.");
+ if(p.hp===0){p.losses++;battleLog("Você foi derrotado. Descanse para se recuperar.")}
+ render();
 }
 function usePotion(){
-if(p.potions>0&&p.hp<p.maxHp){p.potions--;p.hp=Math.min(p.maxHp,p.hp+50);log("Você recuperou vida.");render()}
-else if(p.manaPotions>0&&p.mana<p.maxMana){p.manaPotions--;p.mana=Math.min(p.maxMana,p.mana+50);log("Você recuperou mana.");render()}
-else log("Sem poção adequada ou barra já cheia.");
+ if(p.hp<p.maxHp&&p.potions>0){
+  p.potions--;p.hp=Math.min(p.maxHp,p.hp+50);battleLog("Poção utilizada: você recuperou 50 de vida.");render();return
+ }
+ if(p.mana<p.maxMana&&p.manaPotions>0){
+  p.manaPotions--;p.mana=Math.min(p.maxMana,p.mana+50);battleLog("Poção de mana utilizada: você recuperou 50 de mana.");render();return
+ }
+ battleLog("Não há poções adequadas ou suas barras já estão cheias.");
 }
+function runAway(){battleOver=true;battleLog("Você abandonou o campo de batalha.");}
 function rest(){
-if(p.coins<20){alert("Você precisa de 20 ouro.");return}
-p.coins-=20;p.hp=p.maxHp;p.mana=p.maxMana;render();
+ if(p.coins<20){alert("Você precisa de 20 de ouro.");return}
+ p.coins-=20;p.hp=p.maxHp;p.mana=p.maxMana;render();alert("Você descansou e recuperou toda a vida e mana.");
 }
-function runAway(){battleOver=true;log("Você fugiu do combate.");}
-function claim(id,gold,pts){
-if(p.claimed.includes(id))return;
-p.claimed.push(id);p.coins+=gold;p.points+=pts;render();
+function renderMaps(){
+ el("mapsGrid").innerHTML=maps.map((m,i)=>`
+ <div class="card"><div class="bigicon">${m.icon}</div><h3>${m.name}</h3><p>${m.desc}</p><span class="tag">Nível mínimo ${m.min}</span><p>Recompensa: ${m.reward} ouro e 20 XP</p>
+ <button ${p.level<m.min?"disabled":""} onclick="explore(${i})">${p.level<m.min?"Nível insuficiente":"Explorar região"}</button></div>`).join("");
 }
 function explore(i){
-let m=maps[i];if(p.level<m.min)return;
-p.explored++;p.coins+=m.reward;p.xp+=20;p.points+=10;
-if(!p.mapsVisited.includes(m.name))p.mapsVisited.push(m.name);
-levelUp();render();alert("Exploração concluída! Você ganhou "+m.reward+" ouro.");
+ const m=maps[i];
+ if(p.level<m.min){alert("Você precisa do nível "+m.min+".");return}
+ p.explored++;p.coins+=m.reward;p.xp+=20;p.points+=10;
+ if(!p.mapsVisited.includes(m.name))p.mapsVisited.push(m.name);
+ levelUp();render();alert("Exploração concluída! +"+m.reward+" ouro, +20 XP e +10 pontos.");
 }
-function saveProfile(){
-p.name=el("playerName").value.trim().slice(0,20)||"Guerreiro";
-p.classe=el("classSelect").value;render();alert("Perfil salvo!");
+function renderInventory(){
+ const items=[
+ ...p.owned.map(n=>({name:n,icon:(goods.find(x=>x.name===n)||{}).icon||"⚔️",desc:n===p.weapon?"Arma equipada":"Arma possuída",type:"weapon"})),
+ ...p.ownedArmor.map(n=>({name:n,icon:(goods.find(x=>x.name===n)||{}).icon||"🛡️",desc:"Armadura adquirida",type:"armor"})),
+ {name:"Poções de Vida",icon:"🧪",desc:"Quantidade: "+p.potions},
+ {name:"Poções de Mana",icon:"🔷",desc:"Quantidade: "+p.manaPotions},
+ ...p.powers.map(n=>({name:n,icon:"✨",desc:"Habilidade desbloqueada"}))
+ ];
+ el("inventoryGrid").innerHTML=items.map(x=>`<div class="card"><div class="bigicon">${x.icon}</div><h3>${safe(x.name)}</h3><p>${safe(x.desc)}</p>${x.type==="weapon"&&x.name!==p.weapon?`<button onclick="equipWeapon('${safe(x.name)}')">Equipar arma</button>`:x.type==="weapon"?'<span class="tag">Equipada</span>':x.type==="armor"?'<span class="tag">Adquirida</span>':""}</div>`).join("");
 }
-function sendMessage(){
-let text=el("chatText").value.trim();
-if(!text)return;
-p.messages.push({name:p.name,text:text.slice(0,200)});
-p.messages=p.messages.slice(-30);el("chatText").value="";renderChat();save();
+function equipWeapon(name){
+ const x=goods.find(g=>g.name===name&&g.type==="weapon");
+ if(!x||!p.owned.includes(name))return;
+ p.weapon=x.name;p.damage=x.damage;render();alert("Arma equipada: "+x.name);
 }
-function adminLogin(){
-let email=el("adminEmail").value.trim().toLowerCase();
-if(email!==ADMIN_EMAIL){
-el("adminError").textContent="Acesso negado. Gmail não autorizado.";
-el("adminArea").style.display="none";return;
+function renderSkills(){
+ el("skillsGrid").innerHTML=powers.map((x,i)=>{
+ const owned=p.powers.includes(x.name);
+ return `<div class="card"><div class="bigicon">${x.icon}</div><h3>${x.name}</h3><p>${x.desc}<br>Mana: ${x.cost} · Dano: ${x.damage||0}<br>Nível mínimo: ${x.min}</p><span class="tag">${owned?"Desbloqueada":x.price+" ouro"}</span>${owned?'<button disabled>Aprendida</button>':`<button ${p.level<x.min||p.coins<x.price?"disabled":""} onclick="unlockPower(${i})">Aprender habilidade</button>`}${owned&&x.heal?`<button onclick="castHeal(${i})">Usar cura</button>`:""}</div>`;
+ }).join("");
 }
-el("adminError").textContent="";
-el("adminArea").style.display="block";
+function unlockPower(i){
+ const x=powers[i];
+ if(p.powers.includes(x.name))return;
+ if(p.level<x.min||p.coins<x.price){alert("Nível ou ouro insuficiente.");return}
+ p.coins-=x.price;p.powers.push(x.name);render();alert(x.name+" desbloqueada!");
 }
-function adminLogout(){
-el("adminArea").style.display="none";el("adminEmail").value="";
-el("adminError").textContent="";
+function castHeal(i){
+ const x=powers[i];
+ if(!p.powers.includes(x.name)||!x.heal)return;
+ if(p.mana<x.cost){alert("Mana insuficiente.");return}
+ p.mana-=x.cost;p.hp=Math.min(p.maxHp,p.hp+x.heal);render();alert("Cura Arcana utilizada!");
+}
+function renderShop(){
+ const filter=el("shopFilter").value;
+ const filtered=goods.filter(x=>{
+  if(filter==="all")return true;
+  if(filter==="weapon"||filter==="armor")return x.type===filter;
+  if(filter==="potion")return ["potion","bigpotion","mana","elixir"].includes(x.type);
+  return ["gems","biggems","xp"].includes(x.type);
+ });
+ el("shopGrid").innerHTML=filtered.map(x=>{
+  const owned=x.type==="weapon"?p.owned.includes(x.name):x.type==="armor"?p.ownedArmor.includes(x.name):false;
+  return `<div class="card"><div class="bigicon">${x.icon}</div><h3>${x.name}</h3><p>${x.desc}</p><span class="tag">${x.cost===0?"Grátis":x.cost.toLocaleString("pt-BR")+" ouro"}</span><button ${owned||p.coins<x.cost?"disabled":""} onclick="buyItem('${safe(x.name)}')">${owned?"Já adquirido":p.coins<x.cost?"Ouro insuficiente":"Comprar"}</button></div>`;
+ }).join("");
+}
+function buyItem(name){
+ const x=goods.find(g=>g.name===name);
+ if(!x)return;
+ if(p.coins<x.cost){alert("Ouro insuficiente.");return}
+ if(x.type==="weapon"&&p.owned.includes(x.name)){alert("Você já possui esta arma.");return}
+ if(x.type==="armor"&&p.ownedArmor.includes(x.name)){alert("Você já possui esta armadura.");return}
+ p.coins-=x.cost;
+ if(x.type==="weapon"){
+  p.owned.push(x.name);p.weapon=x.name;p.damage=x.damage;
+ }else if(x.type==="armor"){
+  p.ownedArmor.push(x.name);p.armor=Math.max(p.armor,x.armor);
+ }else if(x.type==="potion")p.potions++;
+ else if(x.type==="bigpotion")p.potions+=3;
+ else if(x.type==="mana")p.manaPotions++;
+ else if(x.type==="elixir"){p.hp=p.maxHp;p.mana=p.maxMana}
+ else if(x.type==="gems")p.gems+=5;
+ else if(x.type==="biggems")p.gems+=25;
+ else if(x.type==="xp"){p.xp+=100;levelUp()}
+ render();alert("Compra concluída: "+x.name+".");
+}
+function renderMissions(){
+ const ms=[
+  ["win","Primeira vitória",p.wins>=1,"Vença uma batalha.",100,30],
+  ["kills","Caçador",p.kills>=5,"Derrote cinco inimigos.",200,50],
+  ["dragon","Caçador de dragões",p.dragons>=1,"Derrote um dragão ou chefe.",500,100],
+  ["explore","Explorador",p.explored>=3,"Explore três regiões.",150,40],
+  ["level","Veterano",p.level>=5,"Alcance o nível cinco.",300,50],
+  ["wealth","Fortuna do reino",p.coins>=2000,"Acumule 2.000 de ouro.",250,75]
+ ];
+ el("missionsGrid").innerHTML=ms.map(m=>`<div class="card"><div class="bigicon">${p.claimed.includes(m[0])?"✅":"📜"}</div><h3>${m[1]}</h3><p>${m[3]}</p><span class="tag">Recompensa: ${m[4]} ouro · ${m[5]} pontos</span>${p.claimed.includes(m[0])?'<button disabled>Resgatada</button>':`<button ${m[2]?"":"disabled"} onclick="claimMission('${m[0]}',${m[4]},${m[5]})">${m[2]?"Resgatar recompensa":"Objetivo incompleto"}</button>`}</div>`).join("");
+}
+function claimMission(id,gold,pts){
+ if(p.claimed.includes(id))return;
+ const conditions={win:p.wins>=1,kills:p.kills>=5,dragon:p.dragons>=1,explore:p.explored>=3,level:p.level>=5,wealth:p.coins>=2000};
+ if(!conditions[id]){alert("Você ainda não completou esta missão.");return}
+ p.claimed.push(id);p.coins+=gold;p.points+=pts;render();alert("Recompensa resgatada!");
+}
+function renderRanking(){
+ const list=Object.values(accounts).filter(a=>a.player).map(a=>({name:a.player.name,level:a.player.level||1,points:a.player.points||0,wins:a.player.wins||0}));
+ if(!list.some(x=>x.name===p.name))list.push({name:p.name,level:p.level,points:p.points,wins:p.wins});
+ list.sort((a,b)=>b.points-a.points||b.level-a.level||b.wins-a.wins);
+ el("rankingList").innerHTML=list.slice(0,50).map((x,i)=>`<div class="listrow"><div class="ranknum">${i+1}</div><div>${i===0?"👑 ":""}${safe(x.name)}<small>${x.wins} vitórias</small></div><div>Nv. ${x.level}</div><div>${x.points}</div></div>`).join("");
+}
+function saveProfile(e){
+ e.preventDefault();
+ const name=el("profileName").value.trim().slice(0,20);
+ if(name.length<2){alert("O nome deve ter pelo menos 2 caracteres.");return}
+ p.name=name;p.classe=el("profileClass").value;
+ accounts[currentUser].name=name;
+ render();alert("Perfil atualizado.");
+}
+function resetProgress(){
+ if(!confirm("Deseja apagar todo o progresso deste personagem? Esta ação não pode ser desfeita."))return;
+ p=defaults(accounts[currentUser].name);
+ savePlayer();currentEnemy=0;selectEnemy();render();go("home");
+}
+function renderAdmin(){
+ if(!isAdmin()){el("adminContent").innerHTML="<p class='muted'>Área restrita.</p>";return}
+ el("adminContent").innerHTML=`
+ <h3>Ferramentas de teste</h3>
+ <p class="muted">Os comandos abaixo alteram somente o personagem atual deste navegador.</p>
+ <div class="grid">
+ <button onclick="adminGive('coins',1000)">+1.000 ouro</button>
+ <button onclick="adminGive('gems',50)">+50 gemas</button>
+ <button onclick="adminGive('points',100)">+100 pontos</button>
+ <button onclick="adminGive('xp',100)">+100 XP</button>
+ </div>
+ <h3 style="margin-top:25px">Aviso local</h3>
+ <label>Mensagem de teste</label>
+ <input id="adminNoticeInput" maxlength="200" placeholder="Digite um aviso">
+ <button class="primary" onclick="publishNotice()">Salvar aviso</button>
+ <p id="adminNoticeText" class="muted">${safe(p.notice||"Nenhum aviso configurado.")}</p>`;
 }
 function adminGive(field,n){
-if(el("adminArea").style.display==="none")return;
-if(field==="xp"){p.xp+=n;levelUp()}else p[field]+=n;
-render();alert("Recursos de demonstração adicionados.");
+ if(!isAdmin())return;
+ p[field]+=n;
+ if(field==="xp")levelUp();
+ render();alert("Recurso de teste adicionado.");
 }
-function publishMessage(){
-if(el("adminArea").style.display==="none")return;
-p.notice=el("globalMessage").value.trim().slice(0,200);
-el("adminNotice").textContent=p.notice?"Aviso local: "+p.notice:"Digite uma mensagem.";
-save();
+function publishNotice(){
+ if(!isAdmin())return;
+ p.notice=el("adminNoticeInput").value.trim().slice(0,200);
+ render();alert("Aviso local salvo.");
 }
-function resetGame(){
-if(confirm("Apagar o progresso salvo neste navegador?")){
-localStorage.removeItem(KEY);p=defaults();setupEnemies();selectEnemy();render();alert("Progresso reiniciado.");
-}
-}
-setupEnemies();
-selectEnemy();
-render();
+
+loadAccounts();
+try{
+ const session=sessionStorage.getItem(SESSION);
+ if(session&&accounts[session]){
+  currentUser=session;
+  p={...defaults(accounts[session].name),...(accounts[session].player||{})};
+  startGame();
+ }
+}catch(e){}
 </script>
 </body>
 </html>
