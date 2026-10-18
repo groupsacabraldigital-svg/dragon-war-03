@@ -900,3 +900,52 @@ renderPet();
  if(typeof oldBuyItem==='function')window.buyItem=function(i){const item=(typeof shop!=='undefined'&&shop[i])||null;const isChest=!!(item&&item.mysteryChest);if(isChest)dwToast('🗝️ Abrindo baú misterioso…',true);const result=oldBuyItem.apply(this,arguments);if(isChest)setTimeout(()=>dwToast('🎁 BAÚ ABERTO! Confira suas recompensas.',true),180);return result};
 })();
 </script>
+
+<script>
+// Progressão de nível baseada em XP: ganha XP ao vencer batalhas e salva no Firestore.
+(function(){
+  function xpForNextLevel(level){ return Math.max(100, Number(level||1)*100); }
+  function awardBattleXP(){
+    if(typeof state==='undefined') return;
+    const oldLevel=Math.max(1,Number(state.level)||1);
+    const points=Number(state.lastBattlePoints)||0;
+    const gained=Math.max(50,Math.floor(points*2)||50);
+    state.xp=Math.max(0,Number(state.xp)||0)+gained;
+    let level=oldLevel, remaining=state.xp;
+    while(level<100 && remaining>=xpForNextLevel(level)){
+      remaining-=xpForNextLevel(level); level++;
+    }
+    state.xp=remaining;
+    state.level=Math.max(oldLevel,level);
+    if(state.level>oldLevel){
+      const levels=state.level-oldLevel;
+      state.skillPoints=(Number(state.skillPoints)||0)+levels;
+      showToast('SUBIU DE NÍVEL! Nível '+state.level+' • +'+levels+' ponto(s) de habilidade');
+    }else{
+      showToast('+'+gained+' XP • Próximo nível: '+Math.max(0,xpForNextLevel(state.level)-state.xp)+' XP');
+    }
+    if(typeof updateUI==='function')updateUI();
+    if(typeof renderSkills==='function')renderSkills();
+    if(typeof saveGame==='function')saveGame(false);
+  }
+  const previousWin=window.winBattle;
+  if(typeof previousWin==='function'){
+    window.winBattle=function(){
+      const enemy=(typeof battle!=='undefined'&&battle)?(battle.enemy||((typeof enemies!=='undefined')?enemies[battle.index]:null)):null;
+      state.lastBattlePoints=enemy?Number(enemy.points)||0:25;
+      const result=previousWin.apply(this,arguments);
+      try{awardBattleXP();}catch(e){console.error('Falha na progressão de nível:',e)}
+      return result;
+    };
+  }
+  // Compatibilidade com saves antigos sem XP e com campos de nível ausentes.
+  const oldApply=window.applyCloudPlayer;
+  if(typeof oldApply==='function')window.applyCloudPlayer=function(data){
+    oldApply.apply(this,arguments);
+    if(data){state.xp=Math.max(0,Number(data.xp)||0);state.level=Math.max(1,Number(state.level)||1);}
+    if(typeof updateUI==='function')updateUI();
+  };
+  const oldSave=window.dragonCloudSave;
+  if(typeof oldSave==='function')window.dragonCloudSave=function(data){data.xp=Math.max(0,Number(state.xp)||0);data.level=Math.max(1,Number(state.level)||1);return oldSave.apply(this,arguments)};
+})();
+</script>
