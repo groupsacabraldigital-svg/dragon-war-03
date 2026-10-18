@@ -226,7 +226,7 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 <section id="combate" class="screen"><h1 class="section-title">🔥 COMBATE</h1><div class="combat"><div class="arena"><div class="enemy" id="battleEnemy">🐲</div><div class="player">⚔️</div></div><div class="panel"><div class="phase" id="battlePhase">FASE 1/3</div><h2 id="battleName">KHALDRON</h2><div id="battleReward">RECOMPENSA</div><div class="hpbig"><i id="enemyHp"></i></div><p>HP inimigo: <b id="enemyHpText">100</b></p><hr><p>Seu HP: <b id="playerHpText">100</b></p><div class="actions"><button onclick="attack()">⚔️ ATACAR</button><button class="power" onclick="usePower()">🔥 PODER</button><button onclick="heal()">💚 CURAR</button><button onclick="openScreen('jogar')">🚪 SAIR</button></div></div></div></section>
 <section id="inventario" class="screen"><h1 class="section-title">🎒 INVENTÁRIO</h1><div class="panel" style="text-align:center"><h2>🎭 SKIN EQUIPADA</h2><div id="equippedSkin" style="font-size:60px">⚔️</div><div id="equippedSkinName">Guerreiro</div><div id="equippedSkinAbility"></div></div><div class="grid4" id="inventoryGrid"></div></section>
 <section id="ranking" class="screen"><h1 class="section-title">🏆 RANKING</h1><div class="panel" style="margin-bottom:15px;text-align:center"><b>SEU RANK</b><div id="myRankBig" style="font-size:28px;color:#72eaff">🏅 INICIANTE</div><small id="myRankPoints">0 pontos</small></div><div class="panel ranking"><div class="rankrow"><b>#</b><b>JOGADOR</b><b class="hide-mobile">NÍVEL</b><b>PONTOS</b></div><div id="rankingList"></div></div></section>
-<section id="eventos" class="screen"><h1 class="section-title">🎁 EVENTOS</h1><div class="grid3"><div class="panel"><h2>🎁 Caixa diária</h2><p>Uma recompensa por dia.</p><button class="fight" onclick="dailyReward()">ABRIR</button></div><div class="panel"><h2>🔥 Evento do Dragão</h2><p>Derrote os três inimigos.</p><button class="fight" onclick="openScreen('jogar')">JOGAR</button></div><div class="panel"><h2>💎 Tesouro</h2><p>Use gemas para itens especiais.</p><button class="fight" onclick="openScreen('loja')">LOJA</button></div></div></section>
+<section id="eventos" class="screen"><h1 class="section-title">🎁 EVENTOS</h1><div class="grid3"><div class="panel"><h2>🎁 Baú diário</h2><p>Abra uma vez por dia para ganhar moedas, gemas ou itens.</p><button class="fight" onclick="dailyReward()">ABRIR BAÚ</button></div><div class="panel"><h2>🎡 Roleta da Sorte</h2><p>Seu primeiro giro do dia é grátis. Você pode ganhar moedas, gemas, itens ou até resgatar um pet!</p><div id="rouletteResult" style="text-align:center;min-height:34px;margin:10px 0;font-weight:bold;color:#ffd47b">A sorte está esperando!</div><button class="fight" onclick="spinRoulette('free')">🎁 GIRO GRÁTIS</button><button class="buy" style="margin-top:8px" onclick="spinRoulette('single')">💎 1 GIRO — 10 GEMAS</button><button class="buy" style="margin-top:8px" onclick="spinRoulette('ten')">💎 10 GIROS — 90 GEMAS</button></div><div class="panel"><h2>✨ Habilidade: Reserva de Energia</h2><p>Melhore esta habilidade na aba Poderes para aumentar sua energia máxima em +25 por nível.</p><button class="fight" onclick="openScreen('poderes')">MELHORAR HABILIDADE</button></div></div></section>
 <section id="config" class="screen"><h1 class="section-title">⚙️ CONFIGURAÇÕES</h1><div class="panel"><h2>👤 Perfil</h2><div class="field"><label>Nome do jogador</label><input id="nameInput" maxlength="18"><button class="fight" onclick="saveName()">SALVAR NOME</button></div><h2>🖼️ Foto de perfil</h2><p class="stats">Escolha uma foto do seu celular ou selecione um avatar de fantasia. A imagem será reduzida para salvar com segurança.</p><div class="profile-photo-tools"><label class="fight upload-photo" for="profilePhotoInput">📷 ESCOLHER FOTO DO CELULAR</label><input id="profilePhotoInput" type="file" accept="image/*" onchange="uploadProfilePhoto(this)" hidden><button class="fight secondary" type="button" onclick="removeProfilePhoto()">REMOVER FOTO</button></div><div class="avatar-gallery" id="avatarGallery"></div><h2>🧬 Personalização do personagem</h2><div class="field"><label for="characterClass">Classe do personagem</label><select id="characterClass" onchange="setCharacterClass(this.value)"><option value="Guerreiro">⚔️ Guerreiro</option><option value="Mago">🔮 Mago</option><option value="Assassino">🗡️ Assassino</option><option value="Guardião">🛡️ Guardião</option></select></div><div class="field"><label for="weaponSelect">Arma equipada</label><select id="weaponSelect" onchange="equipCharacterItem('Arma',this.value)"></select></div><div class="field"><label for="armorSelect">Armadura equipada</label><select id="armorSelect" onchange="equipCharacterItem('Armadura',this.value)"></select></div><div class="field"><label for="skinSelect">Visual / skin</label><select id="skinSelect" onchange="equipCharacterSkin(this.value)"></select></div><p class="stats">As opções de equipamento mostram os itens que você possui. Alterações de classe, arma, armadura e skin são salvas no progresso.</p><h2>🎮 Preferências reais</h2><div class="toggle"><label for="settingSfx">Efeitos sonoros</label><input id="settingSfx" type="checkbox" checked onchange="changeSetting('sfx',this.checked)"></div><div class="toggle"><label for="settingAnimations">Animações e efeitos</label><input id="settingAnimations" type="checkbox" checked onchange="changeSetting('animations',this.checked)"></div><div class="toggle"><label for="settingMusic">Música de fundo</label><input id="settingMusic" type="checkbox" onchange="changeSetting('music',this.checked)"></div><p class="stats">Preferências salvas no progresso e sincronizadas com o Firebase quando conectado.</p><button class="bigbtn" onclick="saveGame()">💾 SALVAR AGORA</button> <button class="bigbtn secondary" onclick="loadGame()">📂 RECARREGAR</button><button class="fight danger" onclick="newGame()">🆕 NOVA CAMPANHA</button></div></section>
 
 
@@ -617,4 +617,106 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
 <script>
 // Atualiza a energia automaticamente e salva quando houver regeneração.
 setInterval(()=>{if(regenerateEnergy()){updateUI();saveGame(false);}},5000);
+</script>
+
+<script>
+// Atualizações dos eventos e da habilidade de energia.
+state.energyMax = Math.max(100, Number(state.energyMax)||100);
+state.energySkillLevel = Math.max(0, Number(state.energySkillLevel)||0);
+state.rouletteDate = state.rouletteDate || "";
+state.rouletteFreeUsed = !!state.rouletteFreeUsed;
+state.roulettePetClaimed = !!state.roulettePetClaimed;
+// Mantém toda a atualização original da interface, ajustando apenas o limite de energia.
+updateUI = function(){regenerateEnergy();updateRank();$("topName").textContent=state.name;$("topLevel").textContent=state.level;$("topRankBadge").textContent="🏅 "+state.rank.toUpperCase();$("coins").textContent=fmt(state.coins);$("gems").textContent=fmt(state.gems);$("energy").textContent=state.energy+"/"+(state.energyMax||100);$("homeProfile").textContent=state.name+" • Nível "+state.level;$("myRankBig").textContent="🏅 "+state.rank.toUpperCase();$("myRankPoints").textContent=fmt(state.points)+" pontos";$("nameInput").value=state.name};
+const baseLoadCloudPlayer = window.applyCloudPlayer;
+window.applyCloudPlayer = function(d){ if(baseLoadCloudPlayer)baseLoadCloudPlayer(d); if(d){for(const k of ["energyMax","energySkillLevel","rouletteDate","rouletteFreeUsed","roulettePetClaimed"])if(d[k]!==undefined)state[k]=d[k];} updateUI();renderSkills(); };
+const baseSkills = skills.slice();
+if(!skills.some(x=>x[1]==="Reserva de Energia")) skills.push(["⚡","Reserva de Energia",0]);
+renderSkills = function(){
+  $("skillNodes").innerHTML=skills.map((s,i)=>`<div class="node ${i>4&&s[1]!=="Reserva de Energia"?"lock":""}" onclick="selectSkill(${i})">${s[0]}<small>${s[1]}</small></div>`).join("");
+  $("skillPoints").textContent=state.skillPoints;
+  if($("skillName").textContent.includes("Reserva de Energia")){ $("skillDamage").textContent="Energia máxima: "+state.energyMax+" (nível "+state.energySkillLevel+")"; }
+};
+selectSkill = function(i){
+  const sk=skills[i]; $("skillName").textContent=sk[0]+" "+sk[1];
+  if(sk[1]==="Reserva de Energia") $("skillDamage").textContent="Energia máxima: "+state.energyMax+" • Próximo nível: +25";
+  else $("skillDamage").textContent=sk[2];
+};
+upgradeSkill = function(){
+  if($("skillName").textContent.includes("Reserva de Energia")){
+    if(state.skillPoints<2)return showToast("Você precisa de 2 pontos.");
+    if(state.energySkillLevel>=10)return showToast("Reserva de Energia já está no nível máximo!");
+    state.skillPoints-=2;state.energySkillLevel++;state.energyMax=100+state.energySkillLevel*25;state.energy=Math.min(state.energyMax,state.energy+25);
+    renderSkills();updateUI();saveGame(false);return showToast("⚡ Energia máxima aumentada para "+state.energyMax+"!");
+  }
+  if(state.skillPoints<2)return showToast("Você precisa de 2 pontos.");state.skillPoints-=2;renderSkills();saveGame(false);showToast("Poder melhorado!");
+};
+// Reforça o salvamento de campos novos sem alterar o fluxo de login.
+const baseSaveGame = saveGame;
+saveGame = function(notify=true){state.energyMax=Math.max(100,Number(state.energyMax)||100);state.energySkillLevel=Number(state.energySkillLevel)||0;return baseSaveGame(notify);};
+function spinRoulette(mode){
+  const today=new Date().toDateString();
+  if(state.rouletteDate!==today){state.rouletteDate=today;state.rouletteFreeUsed=false;}
+  let count=1;
+  if(mode==="free"){
+    if(state.rouletteFreeUsed)return showToast("Seu giro grátis de hoje já foi usado. Você pode comprar giros com gemas.");
+    state.rouletteFreeUsed=true;
+  } else {
+    count=mode==="ten"?10:1;
+    const cost=count===10?90:10;
+    if(state.gems<cost)return showToast("Você precisa de "+cost+" gemas para essa opção.");
+    state.gems-=cost;
+  }
+  let results=[];
+  for(let i=0;i<count;i++){
+    const r=Math.random();
+    if(r<0.08 && !state.pet){state.pet={name:"Dracozinho da Sorte",level:1,xp:0,rescuedAt:"roleta"};results.push("🐣 PET RESGATADO!");}
+    else if(r<0.28){let g=3+Math.floor(Math.random()*8);state.gems+=g;results.push("💎 +"+g+" gemas");}
+    else if(r<0.63){let c=200+Math.floor(Math.random()*801);state.coins+=c;results.push("🪙 +"+c+" moedas");}
+    else if(r<0.82){state.energy=Math.min(state.energyMax,state.energy+25);results.push("⚡ +25 energia");}
+    else {state.points+=50;results.push("🏆 +50 pontos");}
+  }
+  const box=$("rouletteResult");if(box)box.textContent=results.join(" • ");
+  if(results.some(x=>x.includes("PET RESGATADO")))showModal("🐾 PET DA SORTE!","A roleta trouxe um companheiro para você! Vá à Loja para alimentá-lo e fortalecê-lo.");
+  updateUI();renderPet();renderInventory();renderShop();saveGame(false);
+  showToast(count===1?"Roleta: "+results[0]:"10 giros concluídos! Confira os prêmios na roleta.");
+}
+window.spinRoulette=spinRoulette;
+// Energia máxima acompanha a habilidade e regenera respeitando o limite atualizado.
+regenerateEnergy = function(){
+ const now=Date.now(), max=Math.max(100,Number(state.energyMax)||100);
+ let current=Math.max(0,Math.min(max,Number(state.energy)||0));let last=Number(state.energyUpdatedAt)||now;
+ if(current>=max){state.energy=max;state.energyUpdatedAt=now;return false;}
+ const gained=Math.floor(Math.max(0,now-last)/ENERGY_REGEN_MS);if(gained<=0)return false;
+ const before=current;state.energy=Math.min(max,current+gained);state.energyUpdatedAt=state.energy>=max?now:last+gained*ENERGY_REGEN_MS;return state.energy!==before;
+};
+renderSkills();updateUI();
+</script>
+
+
+<script>
+// Sistema de ovos e coleção de vários pets — extensão compatível com o salvamento existente.
+state.petCollection = Array.isArray(state.petCollection) ? state.petCollection : (state.pet ? [state.pet] : []);
+state.petEggs = Array.isArray(state.petEggs) ? state.petEggs : [];
+state.activePetId = state.activePetId || (state.petCollection[0] && state.petCollection[0].id) || null;
+const eggTypes = {
+ comum:{label:'Comum',color:'#cbd5e1',chance:0.70,pets:[{name:'Dracozinho Verde',emoji:'🐲'},{name:'Lobo da Floresta',emoji:'🐺'},{name:'Raposa Mística',emoji:'🦊'}]},
+ epico:{label:'Épico',color:'#c084fc',chance:0.25,pets:[{name:'Dragão Violeta',emoji:'🐉'},{name:'Fênix Arcana',emoji:'🦅'},{name:'Lobo das Sombras',emoji:'🐺'}]},
+ lendario:{label:'Lendário',color:'#fbbf24',chance:0.05,pets:[{name:'Dragão Celestial',emoji:'🐉'},{name:'Fênix Solar',emoji:'🔥'},{name:'Guardião Ancestral',emoji:'🦁'}]}
+};
+function syncActivePet(){let p=state.petCollection.find(x=>x.id===state.activePetId)||state.petCollection[0]||null;state.pet=p;if(p)state.activePetId=p.id;else state.activePetId=null;}
+function rollEggTier(){let n=Math.random();return n<.05?'lendario':n<.30?'epico':'comum';}
+function addPetEgg(source,tier){tier=tier||rollEggTier();let egg={id:'egg_'+Date.now()+'_'+Math.floor(Math.random()*999999),tier,source:source||'jornada',createdAt:Date.now()};state.petEggs.push(egg);return egg;}
+window.hatchPetEgg=function(id){const i=state.petEggs.findIndex(e=>e.id===id);if(i<0)return showToast('Esse ovo não está mais no inventário.');const egg=state.petEggs[i],type=eggTypes[egg.tier]||eggTypes.comum,pick=type.pets[Math.floor(Math.random()*type.pets.length)];state.petEggs.splice(i,1);const pet={id:'pet_'+Date.now()+'_'+Math.floor(Math.random()*999999),name:pick.name,emoji:pick.emoji,tier:egg.tier,level:1,xp:0,rescuedAt:egg.source,hatchedAt:Date.now()};state.petCollection.push(pet);state.activePetId=pet.id;syncActivePet();renderPet();renderInventory();saveGame(false);showModal('🥚 OVO CHOCADO!',pick.emoji+' '+pick.name+' nasceu! Categoria '+type.label+'. Ele já está disponível na sua coleção.');};
+window.setActivePet=function(id){if(!state.petCollection.some(p=>p.id===id))return;state.activePetId=id;syncActivePet();renderPet();saveGame(false);showToast('Pet escolhido para a batalha!');};
+renderPet=function(){const box=$('petDetails');if(!box)return;syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos para chocar ('+state.petEggs.length+')</h3>';if(!state.petEggs.length)html+='<p>Nenhum ovo ainda. Explore fases especiais e participe da Roleta da Sorte.</p>';else html+='<div class="grid4">'+state.petEggs.map(e=>{const t=eggTypes[e.tier]||eggTypes.comum;return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">🥚</div><h3 style="color:'+t.color+'">Ovo '+t.label+'</h3><p>Origem: '+(e.source==='roleta'?'Roleta da Sorte':e.source==='baú diário'?'Baú diário':'Jornada')+'</p><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">CHOCAR OVO</button></div>';}).join('')+'</div>';html+='</div><hr style="margin:14px 0;border-color:#334155"><h3>🐾 Coleção de pets ('+state.petCollection.length+')</h3>';if(!state.petCollection.length)html+='<div style="font-size:48px">🥚</div><p>Você ainda não tem pets. Encontre ovos durante sua jornada!</p>';else{html+='<div class="grid4">'+state.petCollection.map(p=>{const t=eggTypes[p.tier]||eggTypes.comum,lvl=Math.max(1,Number(p.level)||1);return '<div class="panel item" style="border:1px solid '+t.color+'"><div class="emoji">'+(p.emoji||'🐲')+'</div><h3>'+p.name+'</h3><p style="color:'+t.color+'">'+t.label+' • Nível '+lvl+'/10</p><p>⚔️ +'+(lvl*3)+'% ataque<br>🛡️ -'+lvl+'% dano recebido</p><button class="equip" onclick="setActivePet(\''+p.id+'\')">'+(state.activePetId===p.id?'✓ ATIVO':'USAR NA BATALHA')+'</button></div>';}).join('')+'</div>';if(active){const lvl=Math.max(1,Number(active.level)||1);html+='<div class="panel" style="margin-top:12px;text-align:center"><h3>Pet ativo: '+(active.emoji||'🐲')+' '+active.name+'</h3><p>Nível '+lvl+'/10 • '+(active.xp||0)+' carinho</p><p>Alimente-o para melhorar os bônus de batalha.</p><button class="buy" onclick="feedPet()">🍖 ALIMENTAR PET — 250 MOEDAS</button></div>';}}
+box.innerHTML=html;};
+window.feedPet=function(){syncActivePet();const p=state.pet;if(!p)return showToast('Choque um ovo e escolha um pet primeiro.');if(state.coins<250)return showToast('Você precisa de 250 moedas para alimentar o pet.');if((p.level||1)>=10)return showToast('Esse pet já atingiu o nível máximo!');state.coins-=250;p.xp=(p.xp||0)+1;p.level=Math.min(10,(p.level||1)+1);syncActivePet();renderPet();updateUI();saveGame(false);showToast('🍖 '+p.name+' cresceu para o nível '+p.level+'!');};
+maybeRescuePet=function(e){if(!e||((e.phase!==5)&&!e.boss))return false;const egg=addPetEgg('jornada');renderPet();renderInventory();saveGame(false);const tier=eggTypes[egg.tier].label;showModal('🥚 OVO ENCONTRADO!', 'Você encontrou um Ovo '+tier+' durante a jornada! Vá à Loja, abra o painel de pets e choque o ovo para descobrir qual companheiro nasceu.');return true;};
+spinRoulette=function(mode){const today=new Date().toDateString();if(state.rouletteDate!==today){state.rouletteDate=today;state.rouletteFreeUsed=false;}let count=1;if(mode==='free'){if(state.rouletteFreeUsed)return showToast('Seu giro grátis de hoje já foi usado.');state.rouletteFreeUsed=true;}else{count=mode==='ten'?10:1;const cost=count===10?90:10;if(state.gems<cost)return showToast('Você precisa de '+cost+' gemas.');state.gems-=cost;}const results=[];for(let i=0;i<count;i++){const r=Math.random();if(r<.08){const egg=addPetEgg('roleta');results.push('🥚 Ovo '+eggTypes[egg.tier].label+'!');}else if(r<.28){const g=3+Math.floor(Math.random()*8);state.gems+=g;results.push('💎 +'+g+' gemas');}else if(r<.63){const c=200+Math.floor(Math.random()*801);state.coins+=c;results.push('🪙 +'+c+' moedas');}else if(r<.82){state.energy=Math.min(state.energyMax||100,state.energy+25);results.push('⚡ +25 energia');}else{state.points+=50;results.push('🏆 +50 pontos');}}const out=$('rouletteResult');if(out)out.textContent=results.join(' • ');if(results.some(x=>x.includes('Ovo ')))showModal('🥚 OVO NA ROLETA!', 'Você ganhou um ovo! Abra a Loja e choque-o no painel de pets para descobrir sua categoria e espécie.');updateUI();renderPet();renderInventory();renderShop();saveGame(false);showToast(count===1?'Roleta: '+results[0]:count+' giros concluídos!');};
+const oldDailyReward=window.dailyReward||dailyReward;
+window.dailyReward=function(){const before=state.petEggs.length;oldDailyReward();if(state.petEggs.length===before&&Math.random()<.12){const egg=addPetEgg('baú diário');renderPet();saveGame(false);showToast('🥚 Bônus diário: você encontrou um Ovo '+eggTypes[egg.tier].label+'!');}};
+const previousLoadGame=loadGame;loadGame=function(){previousLoadGame();state.petCollection=Array.isArray(state.petCollection)?state.petCollection:(state.pet?[{...state.pet,id:state.pet.id||'pet_legacy',tier:state.pet.tier||'comum',emoji:state.pet.emoji||'🐲'}]:[]);state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];state.activePetId=state.activePetId||(state.petCollection[0]&&state.petCollection[0].id)||null;syncActivePet();};
+const previousSaveGame=saveGame;saveGame=function(notify=true){syncActivePet();return previousSaveGame(notify);};
+renderPet();
 </script>
