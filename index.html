@@ -481,18 +481,46 @@ window.exploreZone=function(zone){const cfg={forest:{cost:10,min:150,max:450,poi
 // cada conta convidada só pode resgatar uma vez e não pode resgatar após alcançar nível 20.
 function randomFriendCode(){const words=['LIGHTNING','DRAGON','SHADOW','PHOENIX','THUNDER','CRYSTAL','ABUSE','POWER','BLAZE','STORM','NOVA','FROST','VIPER','RISING'];const chars='ABCDEFGHJKLMNPQRSTUVWXYZ';let a=words[Math.floor(Math.random()*words.length)],b=words[Math.floor(Math.random()*words.length)];let out=(a+b).slice(0,14);while(out.length<11)out+=chars[Math.floor(Math.random()*chars.length)];return out;}
 async function ensureFriendCode(user=auth.currentUser){
- const status=document.getElementById('friendCodeStatus');
- if(!user||!user.email||!user.email.toLowerCase().endsWith('@gmail.com')){if(status)status.textContent='Entre com sua conta Gmail para ver seu código individual.';const visible=document.getElementById('friendCodeVisible');if(visible)visible.textContent='Necessário login com Gmail';return null;}
- const playerRef=doc(db,'players',user.uid);let code=null;
- await runTransaction(db,async tx=>{
-  const ps=await tx.get(playerRef);const data=ps.exists()?ps.data():{};
-  if(data.friendCode){code=String(data.friendCode);const cr=doc(db,'inviteCodes',code);const cs=await tx.get(cr);if(!cs.exists())tx.set(cr,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});}
-  else {for(let tries=0;tries<8;tries++){const candidate=randomFriendCode();const cr=doc(db,'inviteCodes',candidate);const cs=await tx.get(cr);if(!cs.exists()){code=candidate;tx.set(cr,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});tx.set(playerRef,{friendCode:candidate,updatedAt:serverTimestamp()},{merge:true});break;}}if(!code)throw new Error('Não foi possível criar um código único. Tente novamente.');}
- });
- const visible=document.getElementById('friendCodeVisible');if(visible)visible.textContent=code;if(status){const used=!!(window.restoreLocalBeforeCloud||{}).friendInviteUsed||!!state.friendInviteUsed;const capped=Number(state.level)>=20;status.textContent='Seu código: '+code+(used?' • Você já resgatou um convite.':capped?' • Nível 20 atingido: resgates bloqueados.':' • Código disponível para compartilhar.');}
- state.friendCode=code;return code;
+ const status=document.getElementById('friendCodeStatus'),visible=document.getElementById('friendCodeVisible');
+ const fail=(msg)=>{if(status)status.textContent=msg;if(visible)visible.textContent='Não foi possível carregar';return null;};
+ if(!user||!user.email||!user.email.toLowerCase().endsWith('@gmail.com'))return fail('Entre com uma conta autenticada terminada em @gmail.com para gerar seu código.');
+ try{
+  const playerRef=doc(db,'players',user.uid);
+  const ps=await getDoc(playerRef);
+  const data=ps.exists()?ps.data():{};
+  let code=String(data.friendCode||state.friendCode||'').trim().toUpperCase();
+  // Se já existe um código no perfil, não tente recriar o documento de convite a cada carregamento.
+  if(code){
+   const codeRef=doc(db,'inviteCodes',code);
+   const cs=await getDoc(codeRef);
+   if(!cs.exists()) await setDoc(codeRef,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});
+  }else{
+   let created=false;
+   for(let tries=0;tries<10;tries++){
+    const candidate=randomFriendCode();
+    const codeRef=doc(db,'inviteCodes',candidate);
+    const cs=await getDoc(codeRef);
+    if(cs.exists())continue;
+    // Regras do Firestore precisam permitir a criação de inviteCodes pelo próprio usuário.
+    await setDoc(codeRef,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});
+    code=candidate;created=true;break;
+   }
+   if(!created)throw new Error('Não foi possível reservar um código único. Tente novamente.');
+   await setDoc(playerRef,{friendCode:code,updatedAt:serverTimestamp()},{merge:true});
+   state.friendCode=code;
+  }
+  state.friendCode=code;
+  if(visible)visible.textContent=code;
+  if(status){const used=!!data.friendInviteUsed||!!state.friendInviteUsed;const capped=Number(state.level)>=20;status.textContent='Seu código: '+code+(used?' • Você já resgatou um convite.':capped?' • Nível 20 atingido: resgates bloqueados.':' • Código disponível para compartilhar.');}
+  return code;
+ }catch(e){
+  console.error('Falha ao gerar código de amizade:',e);
+  if(e?.code==='permission-denied')return fail('Permissão negada pelo Firestore. O HTML não consegue corrigir as regras do banco. Em Firestore > Regras, permita que usuários autenticados leiam códigos e criem apenas códigos cujo ownerUid seja o próprio UID.');
+  if(e?.code==='unavailable')return fail('Firebase indisponível. Verifique sua conexão e tente novamente.');
+  return fail(e?.message||'Falha ao criar o código de convite. Verifique as regras do Firestore.');
+ }
 }
-window.copyFriendCode=async()=>{const u=auth.currentUser;if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com'))return alert('Entre com uma conta Gmail autenticada para usar convites.');try{const code=await ensureFriendCode(u);if(!code)return;if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code)}else{const temp=document.createElement('textarea');temp.value=code;temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();const ok=document.execCommand('copy');temp.remove();if(!ok)throw new Error('Não foi possível copiar automaticamente. Seu código é: '+code)}document.getElementById('friendCodeStatus').textContent='Código copiado. Ele continua sendo seu código pessoal.';const visible=document.getElementById('friendCodeVisible');if(visible)visible.textContent=code;}catch(e){document.getElementById('friendCodeStatus').textContent=e.message||'Não foi possível gerar o código. Confira as regras do Firestore.';}};
+window.copyFriendCode=async()=>{const u=auth.currentUser;if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com'))return alert('Entre com uma conta Gmail autenticada para usar convites.');try{const code=await ensureFriendCode(u);if(!code)return;if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(code)}else{const temp=document.createElement('textarea');temp.value=code;temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();const ok=document.execCommand('copy');temp.remove();if(!ok)throw new Error('Não foi possível copiar automaticamente. Seu código é: '+code)}document.getElementById('friendCodeStatus').textContent='Código copiado. Ele continua sendo seu código pessoal.';const visible=document.getElementById('friendCodeVisible');if(visible)visible.textContent=code;}catch(e){console.error('Falha ao copiar código de amizade:',e);const status=document.getElementById('friendCodeStatus');if(status)status.textContent=e.message||'Não foi possível copiar o código. Confira as permissões do Firestore.';}};
 window.redeemFriendCode=async()=>{
  const u=auth.currentUser,field=document.getElementById('friendCodeInput'),status=document.getElementById('friendCodeStatus'),code=(field.value||'').trim().toUpperCase();
  if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com')){status.textContent='Somente contas autenticadas com Gmail podem resgatar convites.';return;}
