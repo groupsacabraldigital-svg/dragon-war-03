@@ -1712,3 +1712,31 @@ renderPet();
  };
 })();
 </script>
+<script id="eldoria-fix-shop-purchase-final">
+(function(){
+  if(typeof window==='undefined'||typeof state==='undefined'||!Array.isArray(window.shop))return;
+  window.buyItem=function(index){
+    const it=window.shop[Number(index)];
+    if(!it){if(typeof showToast==='function')showToast('Item não encontrado. Atualize a Loja e tente novamente.');return false;}
+    const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||Math.ceil(Math.max(1,Number(state.unlockedLevel)||1)/10));
+    if(Number(it.unlockWorld||1)>world){if(typeof showModal==='function')showModal('🔒 ITEM BLOQUEADO','Este item estará disponível no Mundo '+it.unlockWorld+'.');else showToast('Disponível no Mundo '+it.unlockWorld+'.');return false;}
+    const currency=it.currency==='gem'?'gems':'coins',price=Math.max(0,Number(it.price)||0);
+    if((Number(state[currency])||0)<price){if(typeof showToast==='function')showToast('Recursos insuficientes. Você precisa de '+price.toLocaleString('pt-BR')+(currency==='gems'?' gemas.':' moedas.'));return false;}
+    state[currency]=(Number(state[currency])||0)-price;
+    if(it.petEggTier){state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];state.petEggs.push({id:'egg-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),tier:it.petEggTier,name:it.name,emoji:it.emoji||'🥚'});}
+    else if(it.gemReward){state.gems=(Number(state.gems)||0)+Number(it.gemReward);}
+    else if(it.mysteryChest||/baú|bau|caixa de equipamentos/i.test(it.name||'')){
+      state.inventory=Array.isArray(state.inventory)?state.inventory:[];
+      state.inventory.push({name:it.name,emoji:it.emoji||'🎁',type:it.type||'Baú',mysteryChest:true,petFood:false,unlockWorld:world});
+    }else{
+      state.inventory=Array.isArray(state.inventory)?state.inventory:[];
+      state.inventory.push({name:it.name,emoji:it.emoji||'📦',type:it.type||'Item',attackBonus:Number(it.attackBonus)||0,defenseBonus:Number(it.defenseBonus)||0,petFood:!!it.petFood,quantity:1,sourceWorld:world});
+      if(it.petFood&&typeof showToast==='function')showToast('Ração adicionada ao inventário.');
+    }
+    try{if(typeof updateUI==='function')updateUI();if(typeof renderInventory==='function')renderInventory();if(typeof renderShop==='function')renderShop();if(typeof renderPet==='function')renderPet();if(typeof saveGame==='function')saveGame(false);}catch(err){console.error('Erro ao atualizar após compra:',err);}
+    if(typeof showToast==='function')showToast('✅ Compra realizada: '+it.name+'!');
+    return true;
+  };
+  if(typeof window.renderShop==='function')window.renderShop();
+})();
+</script>
