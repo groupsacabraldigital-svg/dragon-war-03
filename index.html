@@ -327,7 +327,7 @@ function renderRanking(){
 }
 function escapeRankingText(value){const el=document.createElement('span');el.textContent=String(value??'');return el.innerHTML;}
 function saveName(){let n=$("nameInput").value.trim();if(n.length<3)return showToast("Nome muito curto.");state.name=n;updateUI();saveGame(false);showToast("Nome salvo!")}
-window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","profilePhoto","level","rank","coins","gems","energy","energyUpdatedAt","points","skillPoints","inventory","skinsOwned","equippedSkin"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();renderAvatarGallery();};
+window.applyCloudPlayer=function(d){if(!d||typeof d!=="object")return;const fields=["name","profilePhoto","level","rank","coins","gems","energy","energyUpdatedAt","points","skillPoints","inventory","skinsOwned","equippedSkin","petEggs","petCollection","activePetId","friendCode","friendInviteUsed","friendInvitedBy"];for(const k of fields)if(d[k]!==undefined)state[k]=d[k];updateUI();renderInventory();renderShop();renderSkills();renderRanking();renderAvatarGallery();};
 window.gameSetCloudData=window.applyCloudPlayer;
 function saveGame(notify=true){
  // Convidados jogam apenas em memória: nenhum progresso local ou na nuvem é persistido.
@@ -422,7 +422,7 @@ async function enter(user){
       const snap=await Promise.race([getDoc(doc(db,'players',user.uid)),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
       if(snap.exists()){
         const cloud=snap.data();
-        const merged={...defaultState,...cloud,...(localData||{})};
+        const merged={...defaultState,...(localData||{}),...cloud};
         window.restoreLocalBeforeCloud=merged;
         localStorage.setItem(localKey,JSON.stringify(merged));
         try { if(typeof window.applyCloudPlayer==='function') window.applyCloudPlayer(merged); } catch(e) { console.warn('Falha aplicando dados da nuvem',e); }
@@ -430,6 +430,7 @@ async function enter(user){
         await Promise.race([setDoc(doc(db,'players',user.uid),{...defaultState,createdAt:serverTimestamp(),updatedAt:serverTimestamp()}),new Promise((_,rej)=>setTimeout(()=>rej(new Error('firestore-timeout')),5000))]);
         localStorage.setItem(localKey,JSON.stringify(defaultState));
       }
+      try{await ensureFriendCode(user);}catch(codeErr){console.warn('Código de amizade indisponível:',codeErr)}
     } catch(e) {
       console.warn('Nuvem indisponível; jogo segue com save local:',e);
       if(!localStorage.getItem(localKey)) localStorage.setItem(localKey,JSON.stringify(window.restoreLocalBeforeCloud||defaultState));
@@ -444,7 +445,7 @@ window.dragonLoadRanking=async()=>{
  return snapshot.docs.map(d=>{const p=d.data()||{};return {uid:d.id,name:typeof p.name==='string'?p.name:'',level:Number(p.level)||1,points:Number(p.points)||0};})
    .filter(p=>p.uid && p.name.trim().length>=3);
 };
-window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,profilePhoto:s.profilePhoto||null,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,energyUpdatedAt:s.energyUpdatedAt||Date.now(),inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,pet:s.pet||null,attackBonus:s.attackBonus||0,defenseBonus:s.defenseBonus||0,gameCompleted:s.gameCompleted||false,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',characterClass:s.characterClass||'Guerreiro',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
+window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={uid:u.uid,name:s.name,profilePhoto:s.profilePhoto||null,level:s.level,xp:s.xp||0,coins:s.coins,gems:s.gems,energy:s.energy,energyUpdatedAt:s.energyUpdatedAt||Date.now(),inventory:s.inventory||[],powers:s.powers||[],wins:s.wins||0,losses:s.losses||0,points:s.points||0,rank:s.rank||'Iniciante',skinsOwned:s.skinsOwned||[],equippedSkin:s.equippedSkin||'guerreiro',skillPoints:s.skillPoints||0,stageLevel:s.stageLevel||1,stagePhase:s.stagePhase||1,unlockedLevel:s.unlockedLevel||1,unlockedPhase:s.unlockedPhase||1,powerBonus:s.powerBonus||0,settings:s.settings||{sfx:true,animations:true,music:false},selectedSkill:s.selectedSkill||0,pet:s.pet||null,petEggs:s.petEggs||[],petCollection:s.petCollection||[],activePetId:s.activePetId||null,attackBonus:s.attackBonus||0,defenseBonus:s.defenseBonus||0,gameCompleted:s.gameCompleted||false,lastCompletedLevel:s.lastCompletedLevel||1,lastCompletedPhase:s.lastCompletedPhase||1,friendCode:s.friendCode||null,friendInviteUsed:!!s.friendInviteUsed,friendInvitedBy:s.friendInvitedBy||null,profileAvatar:s.profileAvatar||'knight',profileAvatarEmoji:s.profileAvatarEmoji||'🛡️',characterClass:s.characterClass||'Guerreiro',weaponEquipped:s.weaponEquipped||'Lâmina Inicial',armorEquipped:s.armorEquipped||'Armadura Inicial',updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{if(auth.currentUser)await signOut(auth);window.dragonUser=null;window.dragonIsAdmin=false;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta. O progresso de convidado não é salvo.')};
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();const btn=document.querySelector('#loginForm button[type=submit]');if(btn){btn.disabled=true;btn.textContent='CONECTANDO...'}say('Conectando ao Firebase...');try{const loginPromise=signInWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await Promise.race([loginPromise,new Promise((_,reject)=>setTimeout(()=>reject(Object.assign(new Error('Tempo limite ao conectar com o Firebase.'),{code:'dragon/login-timeout'})),20000))]);}catch(err){if(err.code==='dragon/login-timeout'){say('O login não respondeu em 20 segundos. Abra o jogo pelo endereço publicado no GitHub Pages (https://biel16santos10-design.github.io/dragon-war-2/) em vez de abrir o arquivo baixado (content:// ou file://). No Firebase, confira Authentication → Sign-in method → E-mail/senha e Settings → Authorized domains.\nCódigo: dragon/login-timeout');console.error(err)}else{authError(err)}}finally{if(btn){btn.disabled=false;btn.textContent='ENTRAR NO JOGO'}}});
 document.getElementById('registerBtn').addEventListener('click',async()=>{say('Criando conta...');try{const c=await createUserWithEmailAndPassword(auth,emailEl.value.trim(),passEl.value);await sendEmailVerification(c.user);say('Conta criada! Enviamos um link de verificação. Confirme o e-mail e entre novamente.');await signOut(auth)}catch(e){authError(e)}});
@@ -461,11 +462,48 @@ document.getElementById('guestBtn').addEventListener('click',()=>{
  say('');showToast('Você entrou como '+state.name+'. O progresso de convidado não será salvo.');
 });
 onAuthStateChanged(auth,async user=>{if(user){say('Conta autenticada. Abrindo o jogo...');try{await enter(user)}catch(e){authError(e)}}});
-// Convites de amizade: transação Firestore para evitar resgates repetidos em contas concorrentes.
-function friendCodeFor(uid){return 'DW'+uid.replace(/[^a-zA-Z0-9]/g,'').slice(-8).toUpperCase()}
-window.copyFriendCode=async()=>{const u=auth.currentUser;if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com'))return alert('Entre com uma conta Gmail autenticada para usar convites.');const code=friendCodeFor(u.uid);try{await runTransaction(db,async tx=>{const ref=doc(db,'inviteCodes',code),snap=await tx.get(ref);if(!snap.exists())tx.set(ref,{ownerUid:u.uid,createdAt:serverTimestamp(),active:true});});await navigator.clipboard.writeText(code);document.getElementById('friendCodeStatus').textContent='Seu código: '+code+' — copie e envie aos amigos.';}catch(e){document.getElementById('friendCodeStatus').textContent='Não foi possível gerar/copiar o código. Confira as regras do Firestore e tente novamente. Código: '+code;}}
-window.redeemFriendCode=async()=>{const u=auth.currentUser,field=document.getElementById('friendCodeInput'),status=document.getElementById('friendCodeStatus'),code=(field.value||'').trim().toUpperCase();if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com')){status.textContent='Somente contas autenticadas com Gmail podem resgatar convites. Login de convidado não é válido.';return;}if(!code){status.textContent='Digite um código de amizade.';return;}const own=friendCodeFor(u.uid);if(code===own){status.textContent='Você não pode usar seu próprio código.';return;}try{await runTransaction(db,async tx=>{const codeRef=doc(db,'inviteCodes',code),guestRef=doc(db,'players',u.uid);const [cs,gs]=await Promise.all([tx.get(codeRef),tx.get(guestRef)]);if(!cs.exists()||cs.data().active!==true)throw new Error('Código inválido.');const invite=cs.data();if(invite.ownerUid===u.uid)throw new Error('Você não pode usar seu próprio código.');if(gs.exists()&&gs.data().friendInviteUsed)throw new Error('Esta conta já resgatou um convite.');const inviterRef=doc(db,'players',invite.ownerUid),is=await tx.get(inviterRef);if(!is.exists())throw new Error('A conta de quem convidou não foi encontrada.');const inviter=is.data();if(inviter.friendInviteRewarded)throw new Error('Este código já recebeu recompensa de convite.');tx.set(guestRef,{friendInviteUsed:true,friendInvitedBy:invite.ownerUid,gems:(Number(gs.data()?.gems)||0)+50,petEggs:[...(Array.isArray(gs.data()?.petEggs)?gs.data().petEggs:[]),{id:'egg_friend_'+u.uid,tier:'comum',source:'amizade',createdAt:Date.now()}],updatedAt:serverTimestamp()},{merge:true});tx.set(inviterRef,{friendInviteRewarded:true,gems:(Number(inviter.gems)||0)+100,petEggs:[...(Array.isArray(inviter.petEggs)?inviter.petEggs:[]),{id:'egg_invite_'+invite.ownerUid,tier:'epico',source:'amizade',createdAt:Date.now()}],updatedAt:serverTimestamp()},{merge:true});tx.set(codeRef,{active:false,redeemedBy:u.uid,redeemedAt:serverTimestamp()},{merge:true});});status.textContent='Convite resgatado! Você ganhou 50 diamantes e um Ovo Comum. Quem convidou recebeu 100 diamantes e um Ovo Épico.';field.value='';}catch(e){status.textContent=e.message||'Falha ao validar o convite. Confira as regras do Firestore.';}}
-
+// Código individual estável por jogador. O código do convidador permanece disponível;
+// cada conta convidada só pode resgatar uma vez e não pode resgatar após alcançar nível 20.
+function randomFriendCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let out='DW';for(let i=0;i<8;i++)out+=chars[Math.floor(Math.random()*chars.length)];return out;}
+async function ensureFriendCode(user=auth.currentUser){
+ const status=document.getElementById('friendCodeStatus');
+ if(!user||!user.email||!user.email.toLowerCase().endsWith('@gmail.com')){if(status)status.textContent='Entre com sua conta Gmail para ver seu código individual.';return null;}
+ const playerRef=doc(db,'players',user.uid);let code=null;
+ await runTransaction(db,async tx=>{
+  const ps=await tx.get(playerRef);const data=ps.exists()?ps.data():{};
+  if(data.friendCode){code=String(data.friendCode);const cr=doc(db,'inviteCodes',code);const cs=await tx.get(cr);if(!cs.exists())tx.set(cr,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});}
+  else {for(let tries=0;tries<8;tries++){const candidate=randomFriendCode();const cr=doc(db,'inviteCodes',candidate);const cs=await tx.get(cr);if(!cs.exists()){code=candidate;tx.set(cr,{ownerUid:user.uid,createdAt:serverTimestamp(),active:true});tx.set(playerRef,{friendCode:candidate,updatedAt:serverTimestamp()},{merge:true});break;}}if(!code)throw new Error('Não foi possível criar um código único. Tente novamente.');}
+ });
+ if(status){const used=!!(window.restoreLocalBeforeCloud||{}).friendInviteUsed||!!state.friendInviteUsed;const capped=Number(state.level)>=20;status.textContent='Seu código: '+code+(used?' • Você já resgatou um convite.':capped?' • Nível 20 atingido: resgates bloqueados.':' • Código disponível para compartilhar.');}
+ state.friendCode=code;return code;
+}
+window.copyFriendCode=async()=>{const u=auth.currentUser;if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com'))return alert('Entre com uma conta Gmail autenticada para usar convites.');try{const code=await ensureFriendCode(u);if(!code)return;await navigator.clipboard.writeText(code);document.getElementById('friendCodeStatus').textContent='Seu código: '+code+' — copiado. Ele continua sendo seu código pessoal.';}catch(e){document.getElementById('friendCodeStatus').textContent=e.message||'Não foi possível gerar o código. Confira as regras do Firestore.';}};
+window.redeemFriendCode=async()=>{
+ const u=auth.currentUser,field=document.getElementById('friendCodeInput'),status=document.getElementById('friendCodeStatus'),code=(field.value||'').trim().toUpperCase();
+ if(!u||!u.email||!u.email.toLowerCase().endsWith('@gmail.com')){status.textContent='Somente contas autenticadas com Gmail podem resgatar convites.';return;}
+ if(Number(state.level)>=20){status.textContent='Você chegou ao nível 20 da primeira fase: não pode mais resgatar códigos. Seu código pessoal continua disponível: '+(state.friendCode||'use COPIAR MEU CÓDIGO');return;}
+ if(state.friendInviteUsed){status.textContent='Você já resgatou um convite. Seu único código disponível é o seu próprio código.';return;}
+ if(!code){status.textContent='Digite um código de amizade.';return;}
+ try{
+  const own=await ensureFriendCode(u);if(code===own){status.textContent='Você não pode resgatar seu próprio código.';return;}
+  await runTransaction(db,async tx=>{
+   const codeRef=doc(db,'inviteCodes',code),guestRef=doc(db,'players',u.uid),redemptionRef=doc(db,'inviteRedemptions',u.uid);
+   const [cs,gs,rs]=await Promise.all([tx.get(codeRef),tx.get(guestRef),tx.get(redemptionRef)]);
+   if(!cs.exists()||cs.data().active!==true)throw new Error('Código inválido ou indisponível.');
+   const guest=gs.exists()?gs.data():{};
+   if(Number(guest.level||state.level)>=20)throw new Error('Nível 20 atingido: resgates bloqueados.');
+   if(guest.friendInviteUsed||rs.exists())throw new Error('Esta conta já resgatou um convite. Seu código pessoal continua disponível.');
+   const invite=cs.data();if(invite.ownerUid===u.uid)throw new Error('Você não pode usar seu próprio código.');
+   const inviterRef=doc(db,'players',invite.ownerUid),is=await tx.get(inviterRef);if(!is.exists())throw new Error('A conta de quem convidou não foi encontrada.');const inviter=is.data();
+   const guestEggs=Array.isArray(guest.petEggs)?guest.petEggs:[];const inviterEggs=Array.isArray(inviter.petEggs)?inviter.petEggs:[];
+   tx.set(guestRef,{friendInviteUsed:true,friendInvitedBy:invite.ownerUid,gems:(Number(guest.gems)||0)+50,petEggs:[...guestEggs,{id:'egg_friend_'+u.uid,tier:'comum',source:'amizade',createdAt:Date.now()}],updatedAt:serverTimestamp()},{merge:true});
+   tx.set(inviterRef,{gems:(Number(inviter.gems)||0)+100,petEggs:[...inviterEggs,{id:'egg_invite_'+u.uid,tier:'epico',source:'amizade',createdAt:Date.now()}],updatedAt:serverTimestamp()},{merge:true});
+   tx.set(redemptionRef,{invitedUid:u.uid,inviterUid:invite.ownerUid,code,createdAt:serverTimestamp()});
+  });
+  state.friendInviteUsed=true;state.gems+=50;addPetEgg('amizade');field.value='';updateUI();renderPet();renderInventory();saveGame(false);
+  status.textContent='Convite resgatado! Você ganhou 50 gemas e um Ovo Comum. Seu código pessoal continua disponível; você não pode resgatar outro convite.';
+ }catch(e){status.textContent=e.message||'Falha ao validar o convite. Confira as regras do Firestore.';}
+};
 window.addEventListener('unhandledrejection',e=>{console.error('Erro assíncrono Dragon War:',e.reason);if(document.body.classList.contains('auth-locked') && e.reason?.code){authError(e.reason)}});
 // Integra estado do arquivo existente com o documento Firestore.
 window.gameSetCloudData=d=>{if(d)window.applyCloudPlayer?.(d)};
