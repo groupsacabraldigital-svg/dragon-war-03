@@ -132,6 +132,35 @@ body.landing-only .title{font-size:clamp(32px,9vw,48px)}
 body.landing-only .landing-profile{bottom:38px;max-height:33%;}
 }
 </style>
+
+<style id="dragon-cinematic-game-ui-theme">
+:root{--cyan:#e7b65d;--line:#75552c;--text:#f4ead5;--muted:#b6a58c}
+body{background:#03060c;color:#f4ead5}
+.app{background:radial-gradient(ellipse at 52% -15%,#5b351e55,transparent 45%),linear-gradient(180deg,#05080e,#020408 85%)}
+.topbar{background:linear-gradient(90deg,#03060cf5,#17100bf0,#03060cf5);border-bottom:1px solid #a97936;box-shadow:0 7px 28px #000a}
+.logo{color:#f7d58d;text-shadow:0 0 20px #ff9e3150;letter-spacing:2px}
+.sidebar{background:linear-gradient(180deg,#0b1018f5,#05080df7);border:1px solid #644825;border-radius:5px;box-shadow:0 12px 35px #0009}
+.nav{border-radius:3px;color:#c3d0da;border-bottom:1px solid #ffffff08}
+.nav:hover,.nav.active{background:linear-gradient(90deg,#71451b70,#18130df2);border-color:#c68a3b;color:#ffe0a1;box-shadow:inset 3px 0 #ffb847,0 0 15px #b96a1b1f}
+.panel,.card,.arena,.modalbox,.authbox{background:linear-gradient(145deg,#111923f5,#05080df7);border:1px solid #614a2b;border-radius:5px;box-shadow:0 12px 30px #0009,inset 0 1px #ffffff08}
+.section-title{color:#f4d18b;text-shadow:0 2px 12px #d8792540;border-bottom:1px solid #674923;padding-bottom:12px}
+button,.bigbtn,.buy,.iconbtn{border-radius:4px!important;text-transform:uppercase;letter-spacing:.45px}
+.bigbtn:not(.secondary),.buy,.fight,.up,.actions button{background:linear-gradient(180deg,#f8d78c,#b87525 55%,#673315)!important;border:1px solid #f6dba0!important;color:#1a0e05!important;box-shadow:0 0 0 2px #3b2414,0 5px 18px #0008}
+.bigbtn.secondary{background:linear-gradient(180deg,#273244,#0a1019)!important;border:1px solid #6d593b!important;color:#f5dfb4!important}
+input,select,textarea{background:#050a12!important;border:1px solid #604b30!important;color:#f6ead1!important;border-radius:3px!important}
+.currency{background:linear-gradient(145deg,#151b23,#070a0f);border:1px solid #775a30;border-radius:4px;color:#ffdf9b}
+.item,.shop-item,.inventory-item{background:linear-gradient(145deg,#151d27,#070a10);border:1px solid #5c482d;border-radius:4px;box-shadow:0 8px 22px #0007}
+.item:hover,.card:hover{border-color:#e6ad4d;box-shadow:0 0 22px #d68a2c22;transform:translateY(-2px)}
+.tabs .tab,.tab{border-radius:3px!important;border-color:#5c472b!important;background:#090e15!important;color:#d6c4a3!important}
+.tabs .tab.active,.tab.active{background:linear-gradient(180deg,#dba34d,#6b3c18)!important;color:#170d05!important;border-color:#f5d18a!important}
+.hero:not(.landing-hero){border:1px solid #9c6d30;background:linear-gradient(120deg,#090d15,#20130d 58%,#090d15);border-radius:5px}
+.arena{background:radial-gradient(ellipse at 50% 35%,#7d3b1d44,transparent 45%),linear-gradient(135deg,#070b13,#1b0c09 55%,#05080d);border-color:#a16c2d}
+.hpbig,.bar{background:#251b17;border-radius:2px}.hpbig i{background:linear-gradient(90deg,#e63e24,#ff9b42)}
+.rankrow{border-bottom:1px solid #604728;padding:11px 8px}
+.toast{background:#0a1019;border:1px solid #b17b37;color:#ffe5b0;border-radius:4px}
+@media(max-width:900px){.sidebar{border-radius:4px}.nav.active{box-shadow:inset 0 -2px #ffb847}}
+</style>
+
 <style id="dragon-cinematic-game-ui">
 /* Final gameplay presentation: keep the cinematic title-screen atmosphere after entering the game. */
 body.game-started .hero-actions{display:none!important}
@@ -166,34 +195,6 @@ body.game-started #home .landing-profile .card{background:linear-gradient(145deg
 @media(max-width:760px){body.game-started .main{padding:10px}body.game-started #home .hero-center{padding:25px 16px}body.game-started #home .landing-profile{margin:10px 0 0}body.game-started .main:before{inset:54px 0 0}}
 
 </style>
-<style id="dragon-cinematic-game-ui-theme">
-:root{--cyan:#e7b65d;--line:#75552c;--text:#f4ead5;--muted:#b6a58c}
-body{background:#03060c;color:#f4ead5}
-.app{background:radial-gradient(ellipse at 52% -15%,#5b351e55,transparent 45%),linear-gradient(180deg,#05080e,#020408 85%)}
-.topbar{background:linear-gradient(90deg,#03060cf5,#17100bf0,#03060cf5);border-bottom:1px solid #a97936;box-shadow:0 7px 28px #000a}
-.logo{color:#f7d58d;text-shadow:0 0 20px #ff9e3150;letter-spacing:2px}
-.sidebar{background:linear-gradient(180deg,#0b1018f5,#05080df7);border:1px solid #644825;border-radius:5px;box-shadow:0 12px 35px #0009}
-.nav{border-radius:3px;color:#c3d0da;border-bottom:1px solid #ffffff08}
-.nav:hover,.nav.active{background:linear-gradient(90deg,#71451b70,#18130df2);border-color:#c68a3b;color:#ffe0a1;box-shadow:inset 3px 0 #ffb847,0 0 15px #b96a1b1f}
-.panel,.card,.arena,.modalbox,.authbox{background:linear-gradient(145deg,#111923f5,#05080df7);border:1px solid #614a2b;border-radius:5px;box-shadow:0 12px 30px #0009,inset 0 1px #ffffff08}
-.section-title{color:#f4d18b;text-shadow:0 2px 12px #d8792540;border-bottom:1px solid #674923;padding-bottom:12px}
-button,.bigbtn,.buy,.iconbtn{border-radius:4px!important;text-transform:uppercase;letter-spacing:.45px}
-.bigbtn:not(.secondary),.buy,.fight,.up,.actions button{background:linear-gradient(180deg,#f8d78c,#b87525 55%,#673315)!important;border:1px solid #f6dba0!important;color:#1a0e05!important;box-shadow:0 0 0 2px #3b2414,0 5px 18px #0008}
-.bigbtn.secondary{background:linear-gradient(180deg,#273244,#0a1019)!important;border:1px solid #6d593b!important;color:#f5dfb4!important}
-input,select,textarea{background:#050a12!important;border:1px solid #604b30!important;color:#f6ead1!important;border-radius:3px!important}
-.currency{background:linear-gradient(145deg,#151b23,#070a0f);border:1px solid #775a30;border-radius:4px;color:#ffdf9b}
-.item,.shop-item,.inventory-item{background:linear-gradient(145deg,#151d27,#070a10);border:1px solid #5c482d;border-radius:4px;box-shadow:0 8px 22px #0007}
-.item:hover,.card:hover{border-color:#e6ad4d;box-shadow:0 0 22px #d68a2c22;transform:translateY(-2px)}
-.tabs .tab,.tab{border-radius:3px!important;border-color:#5c472b!important;background:#090e15!important;color:#d6c4a3!important}
-.tabs .tab.active,.tab.active{background:linear-gradient(180deg,#dba34d,#6b3c18)!important;color:#170d05!important;border-color:#f5d18a!important}
-.hero:not(.landing-hero){border:1px solid #9c6d30;background:linear-gradient(120deg,#090d15,#20130d 58%,#090d15);border-radius:5px}
-.arena{background:radial-gradient(ellipse at 50% 35%,#7d3b1d44,transparent 45%),linear-gradient(135deg,#070b13,#1b0c09 55%,#05080d);border-color:#a16c2d}
-.hpbig,.bar{background:#251b17;border-radius:2px}.hpbig i{background:linear-gradient(90deg,#e63e24,#ff9b42)}
-.rankrow{border-bottom:1px solid #604728;padding:11px 8px}
-.toast{background:#0a1019;border:1px solid #b17b37;color:#ffe5b0;border-radius:4px}
-@media(max-width:900px){.sidebar{border-radius:4px}.nav.active{box-shadow:inset 0 -2px #ffb847}}
-</style>
-
 </head>
 <body class="auth-locked">
 <div id="authGate"><div class="authbox"><h1>🐉 DRAGON WAR</h1>
@@ -313,7 +314,7 @@ function renderRanking(){
      clean.sort((a,b)=>Number(b.points)-Number(a.points));
      if(!clean.length){list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Nenhum jogador real no ranking ainda.</div>';return;}
      list.innerHTML=clean.slice(0,100).map((p,i)=>`<div class="rankrow ${p.uid&&p.uid===window.dragonUser?.uid?"me":""}"><div class="rankpos">${i<3?["🥇","🥈","🥉"][i]:"#"+(i+1)}</div><div class="rankname">${escapeRankingText(p.name)}</div><div class="hide-mobile">Nível ${Math.max(1,Number(p.level)||1)}</div><div class="rankpoints">${fmt(Math.max(0,Number(p.points)||0))}</div></div>`).join('');
-   }).catch(err=>{console.warn('Falha ao carregar ranking real:',err);list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Não foi possível carregar o ranking. Verifique a conexão e as regras de leitura do Firestore.</div>';});
+   }).catch(err=>{console.warn('Falha ao carregar ranking real:',err);const code=String(err&&err.code||'erro-desconhecido');let detail='Verifique a conexão com a internet.';if(code==='permission-denied')detail='O Firestore bloqueou a leitura. Ajuste as Rules para permitir leitura autenticada da coleção players.';else if(code==='unavailable'||code==='deadline-exceeded')detail='O Firebase está indisponível ou demorou para responder. Tente novamente.';list.innerHTML='<div class="panel" style="text-align:center;padding:22px"><b>Não foi possível carregar o ranking.</b><br>'+detail+'<br><small>Código: '+escapeRankingText(code)+'</small></div>';});
  } else list.innerHTML='<div class="panel" style="text-align:center;padding:22px">Ranking global indisponível: conecte-se ao Firebase.</div>';
 }
 function escapeRankingText(value){const el=document.createElement('span');el.textContent=String(value??'');return el.innerHTML;}
@@ -405,6 +406,7 @@ async function enter(user){
   }
   window.dragonIsAdmin=(user.uid==='xO3nKT5oE0MIHkzhWUqa1h0ILYw1' || (user.email==='groupsacabraldigital@gmail.com' && user.emailVerified===true));
   say(window.dragonIsAdmin?'Conta ADM reconhecida.':'Login realizado.');
+  setTimeout(()=>{try{if(typeof window.renderRanking==='function')window.renderRanking();else if(typeof renderRanking==='function')renderRanking();}catch(e){console.warn(e)}},250);
 
   // Sincronização de nuvem sem bloquear a tela do jogo.
   (async()=>{
