@@ -1371,7 +1371,7 @@ renderPet();
 <script>
 /* Ajustes solicitados: progressão por nível, kit equipável, treino com boneco, consumíveis e medalhas. */
 (function(){
-  if(!window.state)return;
+  if(typeof state==="undefined")return;
   const $=id=>document.getElementById(id);
   // Ataque cresce de forma clara conforme o nível do jogador, somando equipamentos e pet.
   const previousAttack=window.attack;
@@ -1424,5 +1424,171 @@ renderPet();
   // Mantém o nome da conquista e faz a patente visual avançar conforme o progresso, sem remover conquistas já obtidas.
   const tiers=['Bronze','Prata','Ouro'];window.getAchievementTier=function(id){const defs=window.achievementDefs||[];const a=defs.find(x=>x.id===id);if(!a)return 'Bronze';const s=state.achievementStats||{};const progress=Math.max(Number(state.level)||1,Number(s.wins)||0,Number(s.pointsEarned)||0);return tiers[progress>=50?2:progress>=10?1:0];};
   if(window.renderInventory)window.renderInventory();if(window.renderAchievements)window.renderAchievements();
+})();
+</script>
+<script>
+/* Correção final das funções solicitadas — usa o estado real do jogo. */
+(function(){
+  const $=id=>document.getElementById(id);
+  if(typeof state==='undefined') return;
+  const rarityStats={comum:{attack:100,defense:10,label:'Comum'},epico:{attack:1000,defense:100,label:'Épico'},épico:{attack:1000,defense:100,label:'Épico'},lendario:{attack:30000,defense:200,label:'Lendário'},lendário:{attack:30000,defense:200,label:'Lendário'}};
+  function rarity(p){return rarityStats[String(p?.tier||p?.rarity||'comum').toLowerCase()]||rarityStats.comum}
+  function allPets(){state.petCollection=Array.isArray(state.petCollection)?state.petCollection:[];return state.petCollection}
+  function rations(){return (state.inventory||[]).reduce((n,it)=>n+(it.petFood?Math.max(1,Number(it.quantity)||1):0),0)}
+  function useRations(amount){let left=amount;for(let i=state.inventory.length-1;i>=0&&left>0;i--){let it=state.inventory[i];if(!it.petFood)continue;let q=Math.max(1,Number(it.quantity)||1);if(q>left){it.quantity=q-left;left=0}else{left-=q;state.inventory.splice(i,1)}}return left===0}
+  window.renderPet=function(){const box=$('petDetails');if(!box)return;allPets();state.petEggs=Array.isArray(state.petEggs)?state.petEggs:[];if(typeof syncActivePet==='function')syncActivePet();const active=state.pet;let html='<div style="text-align:left;margin:8px 0"><h3>🥚 Ovos para chocar ('+state.petEggs.length+')</h3>';
+    html+=state.petEggs.length?'<div class="grid4">'+state.petEggs.map(e=>'<div class="panel item"><div class="emoji">🥚</div><h3>Ovo '+(e.tier||'Comum')+'</h3><button class="buy" onclick="hatchPetEgg(\''+e.id+'\')">CHOCAR OVO</button><button class="equip" onclick="donatePetEgg(\''+e.id+'\')">DOAR OVO</button></div>').join('')+'</div>':'<p>Nenhum ovo disponível.</p>';
+    html+='</div><hr><h3>🐾 Coleção de pets ('+state.petCollection.length+')</h3>';
+    if(!state.petCollection.length)html+='<p>Nenhum pet. Consiga um ovo na jornada ou na loja.</p>';else html+='<div class="grid4">'+state.petCollection.map(p=>{const lv=Math.max(1,Math.min(100,Number(p.level)||1)),rs=rarity(p);return '<div class="panel item"><div class="emoji">'+(p.emoji||'🐾')+'</div><h3>'+p.name+'</h3><p>'+rs.label+' • Nível '+lv+'/100</p><p>⚔️ +'+rs.attack+'% ataque<br>🛡️ -'+rs.defense+'% dano recebido</p><button class="equip" onclick="setActivePet(\''+p.id+'\')">'+(state.activePetId===p.id?'✓ PET ATIVO':'EQUIPAR PET')+'</button><button class="buy" onclick="feedPetById(\''+p.id+'\')">UPAR COM RAÇÕES</button></div>'}).join('')+'</div>';
+    if(active){const lv=Math.max(1,Math.min(100,Number(active.level)||1)),rs=rarity(active);html+='<div class="panel" style="margin-top:12px;text-align:center"><h3>Pet ativo: '+(active.emoji||'🐾')+' '+active.name+'</h3><p>Nível '+lv+'/100 • '+(active.xp||0)+' carinho</p><p>Alimente-o para melhorar os bônus de batalha.</p><p>⚔️ +'+rs.attack+'% ataque • 🛡️ -'+rs.defense+'% dano recebido</p><button class="buy" onclick="feedPet()">🍖 ALIMENTAR PET — USAR RAÇÃO</button><p class="stats">Rações disponíveis: '+rations()+'</p></div>'}
+    box.innerHTML=html;
+  };
+  window.feedPetById=function(id){const p=allPets().find(x=>x.id===id);if(!p)return;const lv=Math.max(1,Math.min(100,Number(p.level)||1));if(lv>=100)return showToast('Pet já está no nível máximo 100.');const cost=lv*10;if(rations()<cost)return showToast('Você precisa de '+cost+' rações. Você tem '+rations()+'.');useRations(cost);p.level=lv+1;p.xp=0;if(typeof syncActivePet==='function')syncActivePet();renderPet();renderInventory();updateUI();saveGame(false);showToast(p.name+' subiu para o nível '+p.level+'/100!')};
+  window.feedPet=function(){if(typeof syncActivePet==='function')syncActivePet();if(!state.pet)return showToast('Equipe um pet primeiro.');feedPetById(state.pet.id)};
+  // Ataque escala com o nível e respeita os bônus do kit e da raridade do pet.
+  const previousAttack=window.attack;
+  window.attack=function(){if(window.trainingMode){if(!window.battle)return;const lv=Math.max(1,Number(state.level)||1),gear=(state.inventory||[]).filter(i=>i.equipped).reduce((n,i)=>n+(Number(i.attackBonus)||0),0);const dmg=Math.floor((24+lv*5+(Number(state.attackBonus)||0)+gear)*(1+(lv-1)*.04));window.trainingHp=Math.max(0,(Number(window.trainingHp)||200)-dmg);window.trainingHits=(Number(window.trainingHits)||0)+1;window.battle.hp=window.trainingHp;if($('enemyHpText'))$('enemyHpText').textContent=window.trainingHp;if($('enemyHp'))$('enemyHp').style.width=(window.trainingHp/200*100)+'%';if($('trainingDummyHp'))$('trainingDummyHp').textContent=window.trainingHp;if($('trainingDummyBar'))$('trainingDummyBar').style.width=(window.trainingHp/200*100)+'%';if($('trainingStatus'))$('trainingStatus').textContent='Boneco de treino • Golpes: '+window.trainingHits+' • Dano do golpe: '+dmg;if(window.trainingHp<=0){window.trainingHp=200;window.battle.hp=200;if($('enemyHpText'))$('enemyHpText').textContent='200';if($('enemyHp'))$('enemyHp').style.width='100%';if($('trainingDummyHp'))$('trainingDummyHp').textContent='200';if($('trainingDummyBar'))$('trainingDummyBar').style.width='100%'}return;}if(previousAttack)return previousAttack.apply(this,arguments)};
+  window.startTraining=function(){window.trainingMode=true;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};openScreen('combate');const combat=$('combate');if(!combat)return;const fight=combat.querySelector('.combat');if(fight)fight.style.display='none';let d=$('trainingDummyOnly');if(!d){d=document.createElement('div');d.id='trainingDummyOnly';d.className='panel';d.style.cssText='text-align:center;padding:28px;margin-top:12px';d.innerHTML='<div style="font-size:100px">🎯</div><h2>BONECO DE TREINO</h2><div class="hpbig"><i id="trainingDummyBar" style="display:block;width:100%"></i></div><p>Resistência do alvo: <b id="trainingDummyHp">200</b></p><p class="stats">Treino sem batalha de campanha e sem recompensas de inimigos.</p><button class="fight" onclick="attack()">⚔️ TESTAR ATAQUE</button><button class="buy" onclick="resetTrainingDummy()">🔄 REINICIAR BONECO</button>';combat.appendChild(d)}d.style.display='block';if($('trainingStatus'))$('trainingStatus').textContent='Treinamento iniciado. O alvo é apenas um boneco de treino.';if($('battleEnemy'))$('battleEnemy').textContent='🎯';};
+  window.resetTrainingDummy=function(){window.trainingMode=true;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};if($('trainingDummyOnly'))$('trainingDummyOnly').style.display='block';if($('trainingDummyHp'))$('trainingDummyHp').textContent='200';if($('trainingDummyBar'))$('trainingDummyBar').style.width='100%';const f=$('combate')?.querySelector('.combat');if(f)f.style.display='none';if($('trainingStatus'))$('trainingStatus').textContent='Boneco reiniciado.'};
+  // Inventário separado em categorias; itens de equipamento ficam equipáveis individualmente.
+  window.renderInventory=function(){const s=skins.find(x=>x.id===state.equippedSkin)||skins[0];if($('equippedSkin'))$('equippedSkin').textContent=s.emoji;if($('equippedSkinName'))$('equippedSkinName').textContent=s.name;if($('equippedSkinAbility'))$('equippedSkinAbility').textContent='Habilidade: '+s.ability;const grid=$('inventoryGrid');if(!grid)return;const items=Array.isArray(state.inventory)?state.inventory:[];const cat=i=>{const t=String(i.type||'').toLowerCase(),n=String(i.name||'').toLowerCase();if(t.includes('escudo')||n.includes('escudo'))return '🛡️ Escudos';if(t.includes('armadura')||n.includes('armadura'))return '🥋 Armaduras';if(t.includes('arma')||i.attackBonus)return '⚔️ Armas';if(i.petFood||t.includes('ração')||n.includes('ração'))return '🍖 Rações';if(i.tempBuff||i.heal||i.energyRestore||i.consumable)return '🧪 Consumíveis';if(t.includes('material')||n.includes('fragmento'))return '🔮 Materiais';if(i.petArmor)return '🐾 Equipamento de pet';return '📦 Outros'};const groups=['⚔️ Armas','🥋 Armaduras','🛡️ Escudos','🧪 Consumíveis','🍖 Rações','🔮 Materiais','🐾 Equipamento de pet','📦 Outros'];grid.innerHTML=groups.map(g=>{const subset=items.map((it,i)=>({it,i})).filter(x=>cat(x.it)===g);return '<section style="grid-column:1/-1;margin:10px 0"><h2>'+g+' ('+subset.length+')</h2><div class="grid4">'+(subset.length?subset.map(({it,i})=>'<article class="panel item"><div class="emoji">'+(it.emoji||'📦')+'</div><h3>'+it.name+'</h3><p class="stats">'+(it.type||'Item')+(it.quantity?' • Quantidade: '+it.quantity:'')+(it.equipped?' • EQUIPADO':'')+'</p>'+(['⚔️ Armas','🥋 Armaduras','🛡️ Escudos'].includes(g)?'<button class="equip" onclick="toggleKitItem('+i+')">'+(it.equipped?'DESEQUIPAR':'EQUIPAR NO KIT')+'</button>':'')+((it.tempBuff||it.heal||it.energyRestore)?'<button class="buy" onclick="useInventoryMaterial('+i+')">USAR NA BATALHA</button>':'')+'<button class="equip" onclick="donateKitItem('+i+')">DOAR</button></article>').join(''):'<p class="stats">Nenhum item nesta categoria.</p>')+'</div></section>'}).join('')+skins.filter(x=>state.skinsOwned.includes(x.id)).map(x=>'<article class="panel item"><div class="emoji">'+x.emoji+'</div><h3>'+x.name+'</h3><button class="equip" onclick="equipSkin(\''+x.id+'\')">'+(state.equippedSkin===x.id?'✓ EQUIPADA':'EQUIPAR SKIN')+'</button></article>').join('')};
+  window.toggleKitItem=function(i){const it=state.inventory[i];if(!it)return;const type=String(it.type||'').toLowerCase(),name=String(it.name||'').toLowerCase(),slot=type.includes('escudo')||name.includes('escudo')?'shield':type.includes('armadura')||name.includes('armadura')?'armor':'weapon';it.equipped=!it.equipped;if(it.equipped){state.inventory.forEach((x,j)=>{if(i===j)return;const t=String(x.type||'').toLowerCase(),n=String(x.name||'').toLowerCase(),sl=t.includes('escudo')||n.includes('escudo')?'shield':t.includes('armadura')||n.includes('armadura')?'armor':(t.includes('arma')||x.attackBonus)?'weapon':'';if(sl===slot)x.equipped=false});if(slot==='weapon')state.weaponEquipped=it.name;if(slot==='armor')state.armorEquipped=it.name}renderInventory();updateUI();saveGame(false);showToast(it.equipped?'Item equipado no kit.':'Item removido do kit.')};
+  window.donateKitItem=function(i){const it=state.inventory[i];if(!it||!confirm('Doar '+it.name+'?'))return;state.inventory.splice(i,1);renderInventory();renderShop();saveGame(false)};
+  window.useInventoryMaterial=function(i){const it=state.inventory[i];if(!it)return;if(it.tempBuff){state.battleBuffs=state.battleBuffs||{};state.battleBuffs[it.tempBuff]={amount:Number(it.buffAmount)||.25,battles:1}}else if(it.heal){state.battleHeal=Number(it.heal)}else if(it.energyRestore){state.energy=Math.min(Number(state.energyMax)||100,(Number(state.energy)||0)+Number(it.energyRestore))}else return showToast('Este item não tem efeito de consumível.');if(Number(it.quantity)>1)it.quantity--;else state.inventory.splice(i,1);renderInventory();updateUI();saveGame(false);showToast('Item usado e consumido. Compre outro para usar novamente.')};
+  // Medalhas: escolher uma conquista desbloqueada e exibir a patente mais alta alcançada.
+  const defs=[{id:'login_bronze',name:'Primeiro Login',icon:'🥉'},{id:'first_win',name:'Primeira Vitória',icon:'🏅'},{id:'level5',name:'Aventureiro em Ascensão',icon:'🛡️'},{id:'level10',name:'Guerreiro de Ouro',icon:'🥇'},{id:'wins10',name:'Caçador de Dragões',icon:'🐉'},{id:'points1000',name:'Lenda do Reino',icon:'💎'},{id:'pet_hatched',name:'Laço Dracônico',icon:'🐲'},{id:'level25',name:'Ascensão Suprema',icon:'🔮'},{id:'wins100',name:'Soberano da Guerra',icon:'👑'},{id:'points10000',name:'Imortal',icon:'⬛'}];
+  window.selectProfileMedal=function(id){if(!(state.achievements||[]).includes(id))return showToast('Desbloqueie essa conquista primeiro.');state.selectedProfileMedal=id;renderAchievements();if(typeof updateLandingProfile==='function')updateLandingProfile();saveGame(false);showToast('Medalha selecionada para o perfil.')};
+  window.renderAchievements=function(){const grid=$('achievementGrid');if(!grid)return;const unlocked=state.achievements||[];const tier=(id)=>{const wins=Number(state.achievementStats?.wins)||0,lv=Number(state.level)||1,pts=Number(state.points)||0;let score=id==='login_bronze'?Math.max(1,lv):id==='first_win'?wins:id==='level5'||id==='level10'||id==='level25'?lv: id==='wins10'||id==='wins100'?wins: id==='points1000'||id==='points10000'?pts: id==='pet_hatched'?(Number(state.achievementStats?.petsHatched)||0):0;return score>=100?'Ouro':score>=10?'Prata':'Bronze'};grid.innerHTML=defs.map(a=>{const got=unlocked.includes(a.id),t=tier(a.id),medal=t==='Ouro'?'🥇':t==='Prata'?'🥈':'🥉';return '<article class="panel item"><div class="emoji">'+(got?medal:'🔒')+'</div><h3>'+a.name+'</h3><p>'+t+'</p><b>'+(got?'DESBLOQUEADA':'BLOQUEADA')+'</b>'+(got?'<button class="equip" onclick="selectProfileMedal(\''+a.id+'\')">'+(state.selectedProfileMedal===a.id?'✓ MEDALHA NO PERFIL':'USAR NO PERFIL')+'</button>':'')+'</article>'}).join('');const id=state.selectedProfileMedal,chosen=defs.find(a=>a.id===id&&unlocked.includes(id));if($('featuredAchievementEmblem'))$('featuredAchievementEmblem').textContent=chosen?(tier(id)==='Ouro'?'🥇':tier(id)==='Prata'?'🥈':'🥉'):'🏅';if($('featuredAchievementName'))$('featuredAchievementName').textContent=chosen?chosen.name+' • '+tier(id):'Selecione sua medalha';if($('achievementCount'))$('achievementCount').textContent+'';};
+  const oldBuy=window.buyItem;if(typeof oldBuy==='function')window.buyItem=function(i){const it=shop[i];if(it&&it.petEggTier)it.price=Math.max(Number(it.price)||0,it.petEggTier==='comum'?5000:it.petEggTier==='epico'||it.petEggTier==='épico'?25000:it.petEggTier==='lendario'||it.petEggTier==='lendário'?100000:50000);return oldBuy.apply(this,arguments)};
+  // A cada render, aplicar o layout corrigido sem mexer no restante do jogo.
+  if(typeof window.renderPet==='function')window.renderPet();if(typeof window.renderInventory==='function')window.renderInventory();if(typeof window.renderAchievements==='function')window.renderAchievements();
+})();
+</script>
+<script id="eldoria-world2-and-modal-fix">
+(function(){
+  if(typeof state==="undefined")return;
+  const $=id=>document.getElementById(id);
+  // Equipamentos do Mundo 2 superam claramente os itens básicos do Mundo 1.
+  if(Array.isArray(window.shop)){
+    const upgrades={
+      'Espada do Guardião':{price:65000,attackBonus:1800,unlockWorld:2},
+      'Armadura de Mithril':{price:85000,defenseBonus:250,unlockWorld:2},
+      'Machado do Colosso':{price:120000,attackBonus:3200,unlockWorld:2},
+      'Armadura das Chamas':{price:1800,defenseBonus:400,unlockWorld:2},
+      'Baú de Equipamentos II':{price:100000,unlockWorld:2}
+    };
+    window.shop.forEach(it=>{if(upgrades[it.name])Object.assign(it,upgrades[it.name]);});
+  }
+  // O Mundo 2 exige mais dano e resistência, para que as armas do Mundo 1 sejam insuficientes.
+  if(typeof window.stageEnemy==='function'){
+    const oldStageEnemy=window.stageEnemy;
+    window.stageEnemy=function(level,phase){
+      const e=oldStageEnemy.apply(this,arguments);
+      const world=Math.max(1,Number(level)||1);
+      if(world>=2){
+        const multiplier=Math.pow(2.8,world-1);
+        e.hp=Math.round(e.hp*multiplier);
+        e.dmg=Math.round(e.dmg*(1+0.65*(world-1)));
+        e.reward=Math.round(e.reward*(1+0.45*(world-1)));
+        e.points=Math.round(e.points*(1+0.4*(world-1)));
+      }
+      return e;
+    };
+  }
+  // Botões do aviso mudam conforme o contexto, evitando mostrar "Tentar novamente" após uma vitória.
+  const originalShowModal=window.showModal;
+  if(typeof originalShowModal==='function')window.showModal=function(title,message){
+    originalShowModal.apply(this,arguments);
+    const modal=$('modal'),actions=modal&&modal.querySelector('.actions');
+    if(!actions)return;
+    actions.innerHTML='';
+    const add=(label,fn)=>{const b=document.createElement('button');b.className='fight';b.textContent=label;b.onclick=fn;actions.appendChild(b);};
+    const t=String(title||'').toUpperCase();
+    if(t.includes('MUNDO 1 CONCLUÍDO')){
+      add('➡️ AVANÇAR PARA O MUNDO 2',()=>{window.closeModal();if(typeof window.renderBosses==='function')window.renderBosses();if(typeof window.openScreen==='function')window.openScreen('chefes');});
+      add('🎁 VER RECOMPENSAS',()=>{window.closeModal();if(typeof window.renderInventory==='function')window.renderInventory();if(typeof window.openScreen==='function')window.openScreen('inventario');});
+    }else if(t.includes('NOVO PET DESCOBERTO')){
+      add('✅ RECEBER PET',()=>{window.closeModal();if(typeof window.renderPet==='function')window.renderPet();if(typeof window.renderInventory==='function')window.renderInventory();});
+      add('🎁 DOAR PET',()=>{
+        const collection=Array.isArray(state.petCollection)?state.petCollection:[];
+        const last=collection[collection.length-1];
+        if(last){state.petCollection=collection.filter(p=>p.id!==last.id);if(state.activePetId===last.id){state.activePetId=state.petCollection[0]?.id||null;state.pet=state.petCollection[0]||null;}if(typeof window.syncActivePet==='function')window.syncActivePet();if(typeof window.saveGame==='function')window.saveGame(false);}
+        window.closeModal();if(typeof window.renderPet==='function')window.renderPet();if(typeof window.renderInventory==='function')window.renderInventory();if(typeof window.showToast==='function')window.showToast('Pet doado.');
+      });
+    }else{
+      add('FECHAR',()=>window.closeModal());
+      add('↻ TENTAR NOVAMENTE',()=>{window.closeModal();if(typeof window.retryCurrentStage==='function')window.retryCurrentStage();});
+    }
+  };
+  if(typeof window.renderShop==='function')window.renderShop();
+})();
+</script>
+<script id="eldoria-pets-chests-world-powers-v3">
+(function(){
+ if(typeof state==='undefined')return;
+ const $=id=>document.getElementById(id);
+ const originalBuy=window.buyItem;
+ // Baús e caixas passam a ser abertos conscientemente, com recompensa exibida para coleta.
+ window.buyItem=function(i){
+   const it=window.shop&&window.shop[i];
+   if(!it)return;
+   if(it.mysteryChest||/baú|bau|caixa de equipamentos/i.test(it.name||'')){
+     const key=it.currency==='gem'?'gems':'coins';
+     if((Number(state[key])||0)<(Number(it.price)||0))return showToast('Recursos insuficientes.');
+     state[key]-=Number(it.price)||0;
+     let reward;
+     const roll=Math.random();
+     if(roll<.30){const n=1000+Math.floor(Math.random()*4001);state.coins=(Number(state.coins)||0)+n;reward={emoji:'🪙',text:'+'+n.toLocaleString('pt-BR')+' moedas'};}
+     else if(roll<.52){const n=5+Math.floor(Math.random()*21);state.gems=(Number(state.gems)||0)+n;reward={emoji:'💎',text:'+'+n+' diamantes'};}
+     else if(roll<.75){const n=1+Math.floor(Math.random()*3);state.inventory.push({name:'Ração Mágica',emoji:'🍖',type:'Ração',petFood:true,quantity:n});reward={emoji:'🍖',text:n+' rações mágicas'};}
+     else if(roll<.92){const n=50+Math.floor(Math.random()*151);state.inventory.push({name:'Equipamento do Baú',emoji:'⚔️',type:'Arma',attackBonus:n});reward={emoji:'⚔️',text:'Arma especial (+'+n+' ataque)'};}
+     else {const n=1+Math.floor(Math.random()*3);state.points=(Number(state.points)||0)+n;reward={emoji:'✨',text:'+'+n+' pontos de poder'};}
+     updateUI();renderInventory();renderShop();saveGame(false);
+     if(typeof showModal==='function')showModal('🎁 RECOMPENSA DO BAÚ!',reward.emoji+' Você abriu '+it.name+' e recebeu: '+reward.text+'. A recompensa já foi adicionada à sua conta.');
+     else showToast('Baú aberto: '+reward.text);
+     return;
+   }
+   return originalBuy.apply(this,arguments);
+ };
+ // Cada pet possui uma habilidade própria, com bônus por raridade e evolução de super pet.
+ const petAbilities={
+  'Raposa Mística':'✨ Rapidez Mística: aumenta a chance de ataque crítico.',
+  'Guardião Ancestral':'🛡️ Barreira Ancestral: reduz o dano recebido.',
+  'Lobo da Floresta':'🐺 Caçada Selvagem: aumenta o dano do primeiro golpe.',
+  'Dragão Celestial':'🔥 Sopro Celestial: causa dano extra contra chefes.',
+  'Fênix Solar':'☀️ Renascimento Solar: chance de recuperar vida.',
+  'Fenix Solar':'☀️ Renascimento Solar: chance de recuperar vida.',
+  'Dracozinho':'🐲 Fúria Dracônica: aumenta o ataque.',
+  'Dragão de Cristal':'💎 Cristalização: aumenta ataque e defesa.',
+  'default':'⭐ Instinto Companheiro: aumenta ataque e reduz dano recebido.'
+ };
+ const petRarityRank={comum:0,especial:1,épico:2,epico:2,lendário:3,lendario:3,mítico:4,mitico:4};
+ function rarityFor(p){return p.rarity||p.tier||p.category||'Comum'}
+ function evolvePet(p){let lv=Math.max(1,Number(p.level)||1);let current=String(rarityFor(p)).toLowerCase();let target=lv>=100?'Mítico':lv>=75?'Lendário':lv>=40?'Épico':lv>=20?'Especial':'Comum';if((petRarityRank[target.toLowerCase()]||0)>(petRarityRank[current]||0))p.rarity=target;else p.rarity=rarityFor(p);p.superPet=lv>=100||!!p.superPet;return p;}
+ const oldRenderPet=window.renderPet;
+ window.renderPet=function(){
+   if(typeof oldRenderPet==='function')oldRenderPet();
+   const p=state.pet;if(!p)return;
+   evolvePet(p);
+   const box=$('petDetails');if(!box)return;
+   const name=p.name||'Dracozinho', rarity=rarityFor(p), key=Object.keys(petAbilities).find(k=>k.toLowerCase()===name.toLowerCase())||'default';
+   const lv=Math.max(1,Number(p.level)||1), rank=petRarityRank[String(rarity).toLowerCase()]||0;
+   const attack=[100,250,1000,30000,50000][rank]||100;
+   const reduction=[10,20,50,100,100][rank]||10;
+   const ability=petAbilities[key]||petAbilities.default;
+   const info=document.createElement('div');info.className='panel';info.style.cssText='margin-top:12px;padding:14px;border:1px solid #35c9ff;border-radius:12px';
+   info.innerHTML='<h3>🐾 '+name+' • '+rarity+(p.superPet?' SUPER PET':'')+'</h3><p>'+ability+'</p><p>⚔️ +'+attack+'% de ataque • 🛡️ -'+reduction+'% de dano recebido</p><p>⭐ Evolução: nível '+lv+'/100'+(lv>=100?' — forma máxima desbloqueada!':'')+'</p><p class="stats">Alimente com ração para subir de nível. Ao alcançar os marcos de evolução, a raridade e os bônus melhoram automaticamente.</p>';
+   box.appendChild(info);
+ };
+ // Mais opções de poderes aparecem conforme o mundo alcançado pelo jogador.
+ const oldRenderSkills=window.renderSkills;
+ window.renderSkills=function(){if(typeof oldRenderSkills==='function')oldRenderSkills();const grid=$('skillNodes');if(!grid)return;const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||1);const extras=[
+  {w:2,icon:'🐉',name:'Rugido Dracônico',cost:90,desc:'Dano em área'},
+  {w:3,icon:'🌑',name:'Lança das Sombras',cost:120,desc:'Ataque sombrio'},
+  {w:4,icon:'🌌',name:'Colapso Astral',cost:160,desc:'Grande dano mágico'},
+  {w:5,icon:'☄️',name:'Chuva de Meteoros',cost:220,desc:'Poder supremo'}
+ ];let panel=$('worldPowerOptions');if(!panel){panel=document.createElement('section');panel.id='worldPowerOptions';panel.className='panel';grid.parentNode.appendChild(panel);}panel.innerHTML='<h3>🌍 Poderes desbloqueados por mundo</h3><p>Mundo atual: '+world+'</p><div class="grid4">'+extras.map(x=>'<article class="panel item" style="padding:10px"><div class="emoji">'+x.icon+'</div><h3>'+x.name+'</h3><p>'+x.desc+'</p><p>⭐ '+x.cost+' pontos</p>'+(world>=x.w?'<button class="buy" onclick="unlockWorldPower('+x.w+','+x.cost+',\''+x.name.replace(/'/g,'')+'\')">DESBLOQUEAR</button>':'<p>🔒 Desbloqueia no Mundo '+x.w+'</p>')+'</article>').join('')+'</div>';};
+ window.unlockWorldPower=function(world,cost,name){if((Number(state.world)||Number(state.currentWorld)||1)<world)return showToast('Avance até o Mundo '+world+' para desbloquear.');state.unlockedWorldPowers=state.unlockedWorldPowers||[];if(state.unlockedWorldPowers.includes(name))return showToast('Esse poder já foi desbloqueado.');if((Number(state.points)||0)<cost)return showToast('Você precisa de '+cost+' pontos.');state.points-=cost;state.unlockedWorldPowers.push(name);updateUI();saveGame(false);renderSkills();showToast(name+' desbloqueado!');};
+ if(typeof window.renderPet==='function')window.renderPet();if(typeof window.renderSkills==='function')window.renderSkills();
 })();
 </script>
