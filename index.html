@@ -1720,12 +1720,16 @@ renderPet();
  window.getWorldCombatMultiplier=function(itemWorldLevel){const w=worldOf(),iw=Math.max(1,Number(itemWorldLevel)||1);return iw>=w?1:Math.pow(0.35,w-iw);};
  const originalRenderShop=window.renderShop;
  if(typeof originalRenderShop==='function')window.renderShop=function(){
-  shop.forEach(it=>{if(itemWorld[it.name])it.unlockWorld=itemWorld[it.name];else if(!it.unlockWorld){
-    if(/Lâmina Inicial|Escudo de Madeira|Ração Mágica|Baú Misterioso|Poção Superior|Poção de Mana|Pergaminho|10 Gemas/.test(it.name))it.unlockWorld=1;
-    else if(/Espada|Armadura|Escudo|Manto|25 Gemas/.test(it.name))it.unlockWorld=2;
-    else if(/Lendária|Dragão|Lâmina Rúnica|60 Gemas/.test(it.name))it.unlockWorld=3;
-    else it.unlockWorld=2;
-  }});
+  shop.forEach(it=>{
+    if(itemWorld[it.name]) { it.unlockWorld=itemWorld[it.name]; return; }
+    if(!it.unlockWorld || Number(it.unlockWorld)<1){
+      const n=String(it.name||'');
+      // Itens iniciais e utilitários continuam compráveis desde o Mundo 1.
+      if(/Lâmina Inicial|Espada de Madeira|Faca|Adaga|Escudo de Madeira|Ração|Baú Misterioso|Poção|Mana|Vida|Cura|Pergaminho|Gema|Gemas|Ovo Comum|Ovo de Mascote|Básic|Inicial|Madeira/i.test(n)) it.unlockWorld=1;
+      else if(/Deus Dragão|Celestial|Mítica|Mítico|Lendária|Lendário|Infernal|Rúnica|Colosso|Mithril|Mundo II|Equipamentos II/i.test(n)) it.unlockWorld=Math.max(2,Number(it.unlockWorld)||2);
+      else it.unlockWorld=1;
+    }
+  });
   return originalRenderShop.apply(this,arguments);
  };
  const originalStart=window.startBattle;
@@ -1744,7 +1748,7 @@ renderPet();
   window.buyItem=function(index){
     const it=shop[Number(index)];
     if(!it){if(typeof showToast==='function')showToast('Item não encontrado. Atualize a Loja e tente novamente.');return false;}
-    const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||Number(state.stageLevel)||Number(state.unlockedLevel)||1);
+    const world=Math.max(1,Number(state.world)||Number(state.currentWorld)||Math.ceil(Math.max(1,Number(state.unlockedLevel)||1)/10));
     if(Number(it.unlockWorld||1)>world){if(typeof showModal==='function')showModal('🔒 ITEM BLOQUEADO','Este item estará disponível no Mundo '+it.unlockWorld+'.');else showToast('Disponível no Mundo '+it.unlockWorld+'.');return false;}
     const currency=it.currency==='gem'?'gems':'coins',price=Math.max(0,Number(it.price)||0);
     if((Number(state[currency])||0)<price){if(typeof showToast==='function')showToast('Recursos insuficientes. Você precisa de '+price.toLocaleString('pt-BR')+(currency==='gems'?' gemas.':' moedas.'));return false;}
