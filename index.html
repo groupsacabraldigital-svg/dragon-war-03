@@ -90,6 +90,35 @@ body.landing-only .player-stat-grid span{display:block;padding:9px;background:#0
 body.landing-only .player-stat-grid strong{display:block;margin-top:5px;color:#f5d89c;font-size:12px;overflow-wrap:anywhere}
 body.landing-only .landing-profile .stats{font-size:11px;color:#899bb0}
 @media(max-width:760px){body.landing-only .topbar{min-height:54px;padding:8px 12px}body.landing-only .logo{font-size:15px}body.landing-only .logo small{font-size:9px;letter-spacing:3px}body.landing-only .landing-hero{min-height:calc(100dvh - 54px)}body.landing-only .hero-center{left:7%;top:31%;width:86%;transform:translateY(-20%)}body.landing-only .warrior{left:82%;top:20%;transform:translate(-50%,-50%) scale(.8);opacity:.5}body.landing-only .moon{right:8%;top:5%;width:105px;height:105px}body.landing-only .dragon{right:5%;top:6%;font-size:100px}body.landing-only .title{font-size:clamp(34px,10vw,54px)}body.landing-only .subtitle{letter-spacing:3px}body.landing-only .hero-actions{margin-top:20px}body.landing-only .start-campaign{padding:14px 17px;font-size:12px}body.landing-only .landing-profile{left:7%;right:7%;bottom:42px;width:auto;max-height:35%;overflow:auto}body.landing-only .landing-profile .card{padding:10px 13px}body.landing-only .landing-avatar{width:44px;height:44px;font-size:27px;margin:5px auto}body.landing-only .player-stat-grid{margin-top:7px;gap:5px}body.landing-only .player-stat-grid span{padding:5px;font-size:8px}body.landing-only .player-stat-grid strong{font-size:10px}body.landing-only .landing-profile .stats{display:none}body.landing-only .landing-hero:after{font-size:8px;letter-spacing:2px;bottom:12px}}
+
+/* Login cinematográfico + combate de ação top-down inspirado no ritmo de Soul Knight (arte e código originais) */
+#authGate{background:radial-gradient(ellipse at 50% 15%,#52251a 0%,#101a2a 38%,#02040a 78%);}
+#authGate:before{content:"🐉";position:absolute;top:4%;right:7%;font-size:clamp(90px,20vw,210px);opacity:.13;filter:drop-shadow(0 0 24px #ff5a19);pointer-events:none;animation:eldoriaDragonFloat 5s ease-in-out infinite}
+#authGate .authbox{position:relative;z-index:1;background:linear-gradient(145deg,#101b2cfa,#030711f7);border:1px solid #bd873e;border-radius:18px;box-shadow:0 0 0 1px #ffd47a22,inset 0 0 32px #d7791b10,0 25px 90px #000c}
+#authGate h1{color:#ffdc91;text-shadow:0 0 20px #f3983b55;font-family:Georgia,serif;letter-spacing:1px}
+#authGate .authbox:after{content:"⚔  FORJE SUA LENDA  ⚔";display:block;text-align:center;color:#b88b52;font-size:11px;letter-spacing:3px;margin-top:18px}
+#authGate input{border-color:#60482e;background:#050a12}#authGate input:focus{outline:1px solid #ffd06a;box-shadow:0 0 14px #e79d3c33}
+#authGate button{border-color:#e6b75d;background:linear-gradient(#bd7928,#633516);box-shadow:inset 0 1px #ffe3a0;color:#fff3d3}
+#authGate button.secondary{border-color:#4d5a6b;background:linear-gradient(#172337,#09111e)}
+@keyframes eldoriaDragonFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(4deg)}}
+.arena{isolation:isolate;background:radial-gradient(circle at 50% 42%,#344d55 0%,#17252b 30%,#10141e 64%,#03060c 100%)!important}
+.arena:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:repeating-radial-gradient(ellipse at center,transparent 0 45px,#d3a75b0b 47px 49px),linear-gradient(0deg,#0008,transparent 45%,#0003)}
+.arena:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background-image:radial-gradient(circle,#ffe7a8 0 2px,transparent 3px),radial-gradient(circle,#71eaff 0 1px,transparent 3px);background-size:71px 83px,97px 111px;opacity:.25;animation:eldoriaParticles 8s linear infinite}
+.arena .enemy,.arena .player{z-index:3;transition:filter .12s,transform .12s;filter:drop-shadow(0 0 15px #ff6b32)}
+.arena .player{filter:drop-shadow(0 0 12px #54dfff);animation:eldoriaIdle 1.8s ease-in-out infinite}
+.arena .enemy{animation:eldoriaEnemyIdle 2.4s ease-in-out infinite}
+.arena.fx-hit .enemy{animation:eldoriaHit .28s ease-out!important}
+.arena.fx-power:before{content:"";position:absolute;z-index:2;inset:0;background:radial-gradient(circle at 50% 55%,#ffe77a88,transparent 55%);animation:eldoriaFlash .42s ease-out}
+.arena .projectile{position:absolute;z-index:5;left:27%;bottom:125px;font-size:28px;pointer-events:none;filter:drop-shadow(0 0 10px #ffdb6e);animation:eldoriaProjectile .34s ease-in forwards}
+.arena .slash{position:absolute;z-index:4;left:34%;bottom:120px;font-size:70px;pointer-events:none;animation:eldoriaSlash .3s ease-out forwards}
+.arena .damage-number{position:absolute;z-index:6;left:56%;top:32%;font-weight:1000;color:#ffe57e;font-size:26px;text-shadow:0 2px 5px #000,0 0 15px #ff6a24;pointer-events:none;animation:eldoriaDamage .75s ease-out forwards}
+@keyframes eldoriaIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}@keyframes eldoriaEnemyIdle{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-8px) scale(1.03)}}
+@keyframes eldoriaHit{0%{transform:translateX(-50%) scale(1);filter:brightness(1)}35%{transform:translateX(calc(-50% + 15px)) scale(1.08);filter:brightness(2) drop-shadow(0 0 25px #fff)}100%{transform:translateX(-50%) scale(1);filter:brightness(1)}}
+@keyframes eldoriaFlash{0%{opacity:1}100%{opacity:0}}@keyframes eldoriaProjectile{0%{transform:translate(0,0) scale(.7);opacity:0}15%{opacity:1}100%{transform:translate(220px,-150px) scale(1.3);opacity:0}}
+@keyframes eldoriaSlash{0%{opacity:0;transform:rotate(-45deg) scale(.3)}35%{opacity:1;transform:rotate(20deg) scale(1.3)}100%{opacity:0;transform:rotate(65deg) scale(1.7)}}@keyframes eldoriaDamage{0%{opacity:0;transform:translateY(10px) scale(.7)}20%{opacity:1}100%{opacity:0;transform:translateY(-55px) scale(1.1)}}
+@keyframes eldoriaParticles{from{background-position:0 0,0 0}to{background-position:0 -300px,0 220px}}
+@media(prefers-reduced-motion:reduce){.arena:after,.arena .player,.arena .enemy{animation:none!important}}
+
 </style>
 <style id="interface-redesign">
 :root{--bg:#070b16;--panel:#101a2b;--cyan:#62e8ff;--gold:#ffd06a;--red:#ff6474;--green:#58e6a7;--purple:#c29aff;--text:#f4f7ff;--muted:#9aaac2;--line:rgba(130,175,220,.18)}
@@ -1128,6 +1157,22 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
   };
   if(typeof renderPetSkills==='function')renderPetSkills();
   if(typeof renderShop==='function')renderShop();
+})();
+</script>
+
+
+<script>
+/* Efeitos de combate: projéteis, impacto, dano flutuante e poder mágico. Não substitui nem altera a lógica de recompensas. */
+(function(){
+ function fx(kind){
+  const arena=document.querySelector('#combate .arena'); if(!arena)return;
+  arena.classList.remove('fx-hit','fx-power'); void arena.offsetWidth; arena.classList.add(kind==='power'?'fx-power':'fx-hit');
+  const projectile=document.createElement('span');projectile.className='projectile';projectile.textContent=kind==='power'?'🔮':'✨';arena.appendChild(projectile);setTimeout(()=>projectile.remove(),450);
+  if(kind!=='power'){const slash=document.createElement('span');slash.className='slash';slash.textContent='⚔️';arena.appendChild(slash);setTimeout(()=>slash.remove(),350)}
+  const number=document.createElement('span');number.className='damage-number';number.textContent=kind==='power'?'✦ PODER!':'✦ GOLPE!';arena.appendChild(number);setTimeout(()=>number.remove(),800);
+  setTimeout(()=>arena.classList.remove('fx-hit','fx-power'),500);
+ }
+ document.addEventListener('click',function(e){const b=e.target.closest('#combate .actions button');if(!b)return;const t=(b.textContent||'').toLowerCase();if(t.includes('atacar'))fx('hit');else if(t.includes('poder'))fx('power');else if(t.includes('curar')){const a=document.querySelector('#combate .arena');if(a){a.classList.add('fx-power');setTimeout(()=>a.classList.remove('fx-power'),500)}}});
 })();
 </script>
 
