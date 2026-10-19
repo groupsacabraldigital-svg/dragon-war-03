@@ -516,12 +516,12 @@ async function enter(user){
 window.dragonLoadRanking=async()=>{
  const current=auth.currentUser;
  if(!current) throw new Error('É necessário entrar na conta para carregar o ranking.');
- // A lista vem exclusivamente da coleção players do Firestore; nenhum jogador demonstrativo é adicionado.
- const snapshot=await getDocs(collection(db,'players'));
+ // O ranking lê apenas os campos públicos, sem expor documentos completos dos jogadores.
+ const snapshot=await getDocs(collection(db,'leaderboard'));
  return snapshot.docs.map(d=>{const p=d.data()||{};return {uid:d.id,name:typeof p.name==='string'?p.name:'',level:Number(p.level)||1,points:Number(p.points)||0};})
    .filter(p=>p.uid && p.name.trim().length>=3);
 };
-window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={...s,uid:u.uid,progressResetVersion:Number(s.progressResetVersion)||2,achievements:Array.isArray(s.achievements)?s.achievements:[],updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))])}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
+window.dragonCloudSave=async s=>{const u=auth.currentUser;if(!u)return;const payload={...s,uid:u.uid,progressResetVersion:Number(s.progressResetVersion)||2,achievements:Array.isArray(s.achievements)?s.achievements:[],updatedAt:serverTimestamp()};localStorage.setItem('dragonWarSave_'+u.uid,JSON.stringify(s));try{await Promise.race([setDoc(doc(db,'players',u.uid),payload,{merge:true}),new Promise((_,reject)=>setTimeout(()=>reject(new Error('firestore-timeout')),7000))]);await setDoc(doc(db,'leaderboard',u.uid),{uid:u.uid,name:String(s.name||u.email?.split('@')[0]||'Aventureiro').slice(0,24),level:Math.max(1,Number(s.level)||1),points:Math.max(0,Number(s.points)||0),updatedAt:serverTimestamp()},{merge:true});}catch(e){console.warn('Progresso salvo localmente; sincronização Firestore falhou:',e)}};
 window.dragonSignOut=async()=>{if(auth.currentUser)await signOut(auth);window.dragonUser=null;window.dragonIsAdmin=false;document.body.classList.remove('game-started');document.body.classList.add('landing-only');gate.style.display='grid';document.body.classList.add('auth-locked');say('Você saiu da conta. O progresso de convidado não é salvo.')};
 let enteringUid=null;
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -1183,6 +1183,78 @@ window.removeProfilePhoto=function(){state.profilePhoto=null;updateLandingProfil
   setTimeout(()=>arena.classList.remove('fx-hit','fx-power'),500);
  }
  document.addEventListener('click',function(e){const b=e.target.closest('#combate .actions button');if(!b)return;const t=(b.textContent||'').toLowerCase();if(t.includes('atacar'))fx('hit');else if(t.includes('poder'))fx('power');else if(t.includes('curar')){const a=document.querySelector('#combate .arena');if(a){a.classList.add('fx-power');setTimeout(()=>a.classList.remove('fx-power'),500)}}});
+})();
+</script>
+
+
+<script id="eldoria-final-repair-2026">
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const toast=t=>{if(typeof window.showToast==='function')window.showToast(t);else console.log(t)};
+  const persist=()=>{try{if(typeof window.updateUI==='function')window.updateUI();if(typeof window.renderMissions==='function')window.renderMissions();if(typeof window.renderInventory==='function')window.renderInventory();if(typeof window.renderPet==='function')window.renderPet();if(typeof window.saveGame==='function')window.saveGame(false);}catch(e){console.warn('Falha ao atualizar progresso:',e)}};
+
+  // Missões: usa o estado real e só libera resgate depois do objetivo concluído.
+  const missionDefs={
+    kills3:{need:3,key:'missionKills',coins:150},
+    treasure:{need:1,key:'missionExplores',coins:100},
+    training:{need:1,key:'missionTraining',gems:1},
+    story1:{need:1,key:'missionKills',coins:250}
+  };
+  window.renderMissions=function(){
+    state.claimedMissions=Array.isArray(state.claimedMissions)?state.claimedMissions:[];
+    const daily=[
+      {id:'kills3',title:'Caçador de monstros',desc:'Derrote 3 criaturas nas batalhas.',need:3,progress:Number(state.missionKills)||0,reward:150,currency:'coins',icon:'⚔️'},
+      {id:'treasure',title:'Tesouro do explorador',desc:'Conclua uma expedição de exploração.',need:1,progress:Number(state.missionExplores)||0,reward:100,currency:'coins',icon:'🪙'},
+      {id:'training',title:'Treinamento diário',desc:'Complete um treinamento.',need:1,progress:Number(state.missionTraining)||0,reward:1,currency:'gems',icon:'✨'}
+    ];
+    const story=[{id:'story1',title:'O chamado de Eldoria',desc:'Derrote seu primeiro inimigo na campanha.',need:1,progress:Number(state.missionKills)||0,reward:250,currency:'coins',icon:'📜'}];
+    const card=m=>{const claimed=state.claimedMissions.includes(m.id),done=m.progress>=m.need,pct=Math.max(0,Math.min(100,m.progress/m.need*100));return `<article class="panel mission-card"><div style="font-size:35px">${m.icon}</div><h3>${m.title}</h3><p>${m.desc}</p><div class="stats">Progresso: ${Math.min(m.progress,m.need)}/${m.need}</div><div style="height:9px;background:#263244;border-radius:9px;overflow:hidden;margin:8px 0 12px"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#b87931,#ffe18b)"></div></div><p>Recompensa: ${m.currency==='coins'?'🪙 '+m.reward:'💎 '+m.reward}</p><button class="${done&&!claimed?'buy':'fight secondary'}" ${!done||claimed?'disabled':''} onclick="claimMission('${m.id}')">${claimed?'RESGATADA':done?'RESGATAR':'NÃO CONCLUÍDA'}</button></article>`};
+    if($('missionsDaily'))$('missionsDaily').innerHTML=daily.map(card).join('');
+    if($('missionsStory'))$('missionsStory').innerHTML=story.map(card).join('');
+  };
+  window.claimMission=function(id){const m=missionDefs[id];if(!m)return;state.claimedMissions=Array.isArray(state.claimedMissions)?state.claimedMissions:[];if(state.claimedMissions.includes(id))return toast('Essa missão já foi resgatada.');if((Number(state[m.key])||0)<m.need)return toast('Objetivo ainda não concluído. Progresso: '+Math.min(Number(state[m.key])||0,m.need)+'/'+m.need+'.');state.claimedMissions.push(id);state.coins=(Number(state.coins)||0)+(m.coins||0);state.gems=(Number(state.gems)||0)+(m.gems||0);persist();toast('🎁 Recompensa resgatada!');};
+
+  // A campanha e o treino compartilham a seção visual, mas nunca compartilham o estado de batalha.
+  const originalStartBattle=window.startBattle;
+  if(typeof originalStartBattle==='function')window.startBattle=function(){window.trainingMode=false;window.trainingHits=0;const dummy=$('trainingDummyOnly');if(dummy)dummy.style.display='none';const combat=$('combate')?.querySelector('.combat');if(combat)combat.style.display='';const result=originalStartBattle.apply(this,arguments);if($('combate'))$('combate').classList.add('combat-active');return result;};
+
+  function completeTraining(){if(window.trainingCompletedThisRun)return;window.trainingCompletedThisRun=true;state.missionTraining=Math.max(1,Number(state.missionTraining)||0);const today=new Date().toDateString();state.trainingDoneDate=state.trainingDoneDate||'';if(state.trainingDoneDate!==today){state.trainingDoneDate=today;state.skillPoints=(Number(state.skillPoints)||0)+1;toast('Treinamento concluído! +1 ponto de habilidade.');}else toast('Treinamento concluído!');window.trainingMode=false;window.battle=null;if($('trainingStatus'))$('trainingStatus').textContent='Treino concluído! Missão diária atualizada.';persist();};
+  window.startTraining=function(){window.trainingMode=true;window.trainingCompletedThisRun=false;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,maxPlayerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};if(typeof window.openScreen==='function')window.openScreen('combate');const combat=$('combate')?.querySelector('.combat');if(combat)combat.style.display='none';let dummy=$('trainingDummyOnly');if(!dummy){dummy=document.createElement('div');dummy.id='trainingDummyOnly';dummy.className='panel';dummy.style.cssText='text-align:center;padding:24px;margin-top:12px';dummy.innerHTML='<div style="font-size:78px;filter:drop-shadow(0 0 16px #f6c66b)">🎯</div><h2>BONECO DE TREINO</h2><div class="hpbig"><i id="trainingDummyBar" style="width:100%"></i></div><p>Resistência: <b id="trainingDummyHp">200</b></p><p id="trainingStatus" class="stats">Acerte 5 golpes para concluir o treino.</p><button class="fight" onclick="attack()">⚔️ TESTAR ATAQUE</button><button class="buy" onclick="usePower()">✨ TESTAR PODER</button><button class="buy" onclick="resetTrainingDummy()">🔄 REINICIAR ALVO</button><button class="fight secondary" onclick="leaveTraining()">SAIR DO TREINO</button>'; $('combate').appendChild(dummy);}dummy.style.display='block';if($('trainingStatus'))$('trainingStatus').textContent='Acerte 5 golpes ou use poderes para concluir o treino.';};
+  window.leaveTraining=function(){window.trainingMode=false;window.battle=null;const d=$('trainingDummyOnly');if(d)d.style.display='none';const c=$('combate')?.querySelector('.combat');if(c)c.style.display='';if($('trainingStatus'))$('trainingStatus').textContent='Treinamento encerrado.';if(typeof window.openScreen==='function')window.openScreen('jogar');};
+  window.resetTrainingDummy=function(){window.trainingMode=true;window.trainingCompletedThisRun=false;window.trainingHits=0;window.trainingHp=200;window.battle={training:true,hp:200,max:200,playerHp:100,maxPlayerHp:100,enemy:{name:'Boneco de treino',emoji:'🎯',hp:200,dmg:0,reward:0,gems:0,points:0},turn:0};if($('trainingDummyOnly'))$('trainingDummyOnly').style.display='block';if($('trainingDummyHp'))$('trainingDummyHp').textContent='200';if($('trainingDummyBar'))$('trainingDummyBar').style.width='100%';if($('trainingStatus'))$('trainingStatus').textContent='Acerte 5 golpes ou use poderes para concluir o treino.';};
+  const previousAttack=window.attack;
+  window.attack=function(){if(!window.trainingMode)return previousAttack&&previousAttack.apply(this,arguments);if(!window.battle)return;const dmg=Math.max(1,Math.floor(24+(Number(state.level)||1)*5+(Number(state.attackBonus)||0)+(state.pet?Number(state.pet.level||1)*3:0)));window.trainingHits=(Number(window.trainingHits)||0)+1;window.trainingHp=Math.max(0,(Number(window.trainingHp)||200)-dmg);window.battle.hp=window.trainingHp;if($('trainingDummyHp'))$('trainingDummyHp').textContent=window.trainingHp;if($('trainingDummyBar'))$('trainingDummyBar').style.width=(window.trainingHp/200*100)+'%';if($('trainingStatus'))$('trainingStatus').textContent='Golpes: '+window.trainingHits+'/5 • Dano causado: '+(200-window.trainingHp);if(window.trainingHits>=5||window.trainingHp<=0)completeTraining();};
+  const previousPower=window.usePower;
+  window.usePower=function(){if(!window.trainingMode)return previousPower&&previousPower.apply(this,arguments);if(!window.battle)return;if((Number(state.energy)||0)<15)return toast('Energia insuficiente: precisa de 15.');state.energy-=15;window.trainingHits=(Number(window.trainingHits)||0)+2;window.trainingHp=Math.max(0,(Number(window.trainingHp)||200)-60-(Number(state.powerBonus)||0));window.battle.hp=window.trainingHp;if($('trainingDummyHp'))$('trainingDummyHp').textContent=window.trainingHp;if($('trainingDummyBar'))$('trainingDummyBar').style.width=(window.trainingHp/200*100)+'%';if($('trainingStatus'))$('trainingStatus').textContent='Poder usado! Progresso: '+Math.min(5,window.trainingHits)+'/5.';persist();if(window.trainingHits>=5||window.trainingHp<=0)completeTraining();};
+
+  // Conta somente vitórias reais de campanha para a missão; o boneco nunca conta como inimigo.
+  const previousWin=window.winBattle;
+  if(typeof previousWin==='function')window.winBattle=function(){const isTraining=!!window.trainingMode||!!(window.battle&&window.battle.training);if(isTraining)return;const result=previousWin.apply(this,arguments);state.missionKills=(Number(state.missionKills)||0)+1;persist();return result;};
+
+  // Corrige compra de rações: respeita a quantidade do pacote e empilha no inventário.
+  const originalBuyItem=window.buyItem;
+  window.buyItem=function(index){const it=shop[Number(index)];if(!it)return toast('Item não encontrado.');if(!it.petFood)return originalBuyItem.apply(this,arguments);const currency=it.currency==='gem'?'gems':'coins',price=Math.max(0,Number(it.price)||0);if((Number(state[currency])||0)<price)return toast('Recursos insuficientes para comprar ração.');state[currency]-=price;state.inventory=Array.isArray(state.inventory)?state.inventory:[];const qty=Math.max(1,Number(it.rationQty)||1);let stack=state.inventory.find(x=>x.petFood&&x.name===it.name);if(stack)stack.quantity=(Number(stack.quantity)||1)+qty;else state.inventory.push({name:it.name,emoji:it.emoji||'🍖',type:it.type||'Ração para pets',petFood:true,quantity:qty,purchased:true});persist();if(typeof window.renderShop==='function')window.renderShop();toast('🍖 Comprou '+qty+' ração(ões). Agora alimente seu pet na aba Pets.');return true;};
+
+  // Uma ração alimenta o pet e dá carinho/XP; ao chegar a 100 XP ele sobe de nível.
+  function rationCount(){return (state.inventory||[]).reduce((n,it)=>n+(it.petFood?Math.max(1,Number(it.quantity)||1):0),0);}
+  function consumeOneRation(){for(let i=(state.inventory||[]).length-1;i>=0;i--){const it=state.inventory[i];if(!it.petFood)continue;const q=Math.max(1,Number(it.quantity)||1);if(q>1)it.quantity=q-1;else state.inventory.splice(i,1);return true;}return false;}
+  window.feedPetById=function(id){state.petCollection=Array.isArray(state.petCollection)?state.petCollection:[];let p=state.petCollection.find(x=>x.id===id);if(!p&&state.pet&&(!id||state.pet.id===id))p=state.pet;if(!p)return toast('Você precisa ter um pet na coleção.');if(rationCount()<1)return toast('Você não tem ração. Compre Ração para Pets na Loja.');const lv=Math.max(1,Number(p.level)||1);if(lv>=100)return toast('Seu pet já está no nível máximo 100.');consumeOneRation();p.xp=(Number(p.xp)||0)+10;if(p.xp>=100){p.xp-=100;p.level=Math.min(100,lv+1);toast('🐉 '+p.name+' subiu para o nível '+p.level+'!');}else toast('🐾 '+p.name+' foi alimentado! Carinho '+p.xp+'/100.');if(typeof window.syncActivePet==='function')window.syncActivePet();persist();};
+  window.feedPet=function(){if(typeof window.syncActivePet==='function')window.syncActivePet();const p=state.pet||(state.petCollection||[]).find(x=>x.id===state.activePetId)||(state.petCollection||[])[0];if(!p)return toast('Escolha ou consiga um pet primeiro.');window.feedPetById(p.id);};
+
+  // Retrato redondo/ilustrado e movimento de batalha, sem cartões quadrados como personagem.
+  const css=document.createElement('style');css.textContent=`
+  #battleEnemy{display:inline-grid;place-items:center;width:clamp(100px,24vw,170px);height:clamp(100px,24vw,170px);border-radius:50%;font-size:clamp(58px,13vw,105px);background:radial-gradient(circle at 35% 25%,#516b89,#131a2b 65%,#070b13);border:2px solid #d9a957;box-shadow:0 0 0 7px #d9a95715,0 0 30px #f59e0b44;animation:eldoriaFloat 2.6s ease-in-out infinite;}
+  #combate .combat-active .combat,#combate .combat{overflow:hidden}#combate .combat-active #battleEnemy{animation:eldoriaEnemy 2.4s ease-in-out infinite}
+  .eldoria-hero-sprite{width:72px;height:110px;position:relative;margin:8px auto 0;filter:drop-shadow(0 0 12px #4bdcff44);animation:eldoriaHero 1.8s ease-in-out infinite;}
+  .eldoria-hero-sprite:before{content:'🧑🏻‍🎤';position:absolute;top:0;left:12px;font-size:43px;filter:drop-shadow(0 0 3px #000)}.eldoria-hero-sprite:after{content:'🛡️';position:absolute;top:42px;left:0;font-size:38px;transform:rotate(-14deg);}.eldoria-hero-sprite span{position:absolute;top:43px;right:0;font-size:42px;transform:rotate(25deg)}
+  @keyframes eldoriaFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.035)}}@keyframes eldoriaEnemy{0%,100%{filter:drop-shadow(0 0 18px #f97316)}50%{filter:drop-shadow(0 0 34px #ef4444);transform:translateY(-5px)}}@keyframes eldoriaHero{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+  .eldoria-hit{animation:eldoriaHit .22s ease-in-out 2!important}@keyframes eldoriaHit{0%,100%{transform:translateX(0)}30%{transform:translateX(-8px)}70%{transform:translateX(8px)}}
+  `;document.head.appendChild(css);
+  const combat=$('combate');if(combat&&!combat.querySelector('.eldoria-hero-sprite')){const arena=combat.querySelector('.combat');if(arena){const hero=document.createElement('div');hero.className='eldoria-hero-sprite';hero.innerHTML='<span>⚔️</span>';hero.setAttribute('aria-label','Herói de Eldoria');const enemy=$('battleEnemy');if(enemy&&enemy.parentNode)enemy.parentNode.insertBefore(hero,enemy);}}
+  const prevAttackFx=window.attack;window.attack=function(){const wasTraining=!!window.trainingMode;const before=window.battle&&window.battle.hp;const r=prevAttackFx&&prevAttackFx.apply(this,arguments);if(!wasTraining&&before!==undefined){const e=$('battleEnemy');if(e){e.classList.remove('eldoria-hit');void e.offsetWidth;e.classList.add('eldoria-hit');}}return r;};
+  // Atualiza a interface de missões após carregar ou abrir o jogo.
+  try{if(typeof window.renderMissions==='function')window.renderMissions();if(typeof window.renderPet==='function')window.renderPet();}catch(e){}
 })();
 </script>
 
